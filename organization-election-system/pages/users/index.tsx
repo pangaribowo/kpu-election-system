@@ -1,52 +1,95 @@
-import { GetStaticProps } from "next";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useVoting } from "../../components/VotingContext";
 import { useRouter } from "next/router";
-import React from "react";
 
-import { User } from "../../interfaces";
-import { sampleUserData } from "../../utils/sample-data";
-import Layout from "../../components/Layout";
-import List from "../../components/List";
-
-type Props = {
-  items: User[];
-};
-
-const WithStaticProps = ({ items }: Props) => {
+const UsersPage = () => {
   const { currentUser, isAuthChecked } = useVoting();
   const router = useRouter();
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthChecked && !currentUser) {
       router.replace("/login");
+      return;
     }
+    if (!isAuthChecked) return;
+    setLoading(true);
+    fetch("/api/users", {
+      headers: { "x-user-auth": currentUser?.username || "demo" },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Gagal mengambil data user");
+        return res.json();
+      })
+      .then((data) => {
+        setUsers(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, [currentUser, isAuthChecked, router]);
 
   if (!isAuthChecked) return null;
   if (!currentUser) return null;
 
   return (
-    <Layout title="Users List | Next.js + TypeScript Example">
-      <h1>Users List</h1>
-      <p>
-        Example fetching data from inside <code>getStaticProps()</code>.
-      </p>
-      <p>You are currently on: /users</p>
-      <List items={items} />
-      <p>
-        <Link href="/">Go home</Link>
-      </p>
-    </Layout>
+    <div className="main-container">
+      <section className="section active">
+        <h1 className="section-title">Daftar User</h1>
+        {loading && <div>Loading...</div>}
+        {error && <div style={{color:'red'}}>{error}</div>}
+        {!loading && !error && (
+          <ul className="user-list">
+            {users.map((user) => (
+              <li key={user.username} className="user-item">
+                <Link href={`/users/${user.username}`}>{user.name} <span className="user-role">({user.role})</span></Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      <style jsx>{`
+        .main-container {
+          max-width: 700px;
+          margin: 40px auto;
+          background: #fff;
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+          padding: 32px 24px;
+        }
+        .section-title {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #2563eb;
+          margin-bottom: 18px;
+        }
+        .user-list {
+          list-style: none;
+          padding: 0;
+        }
+        .user-item {
+          padding: 12px 0;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .user-item:last-child {
+          border-bottom: none;
+        }
+        .user-role {
+          color: #64748b;
+          font-size: 0.95em;
+        }
+        a {
+          color: #2563eb;
+          text-decoration: underline;
+        }
+      `}</style>
+    </div>
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
-  // Example for including static props in a Next.js function component page.
-  // Don't forget to include the respective types for any props passed into
-  // the component.
-  const items: User[] = sampleUserData;
-  return { props: { items } };
-};
-
-export default WithStaticProps;
+export default UsersPage;
