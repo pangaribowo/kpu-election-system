@@ -1,4 +1,7 @@
 import { GetStaticProps, GetStaticPaths } from "next";
+import { useVoting } from "../../components/VotingContext";
+import { useRouter } from "next/router";
+import React from "react";
 
 import { User } from "../../interfaces";
 import { sampleUserData } from "../../utils/sample-data";
@@ -11,6 +14,18 @@ type Props = {
 };
 
 const StaticPropsDetail = ({ item, errors }: Props) => {
+  const { currentUser, isAuthChecked } = useVoting();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (isAuthChecked && !currentUser) {
+      router.replace("/login");
+    }
+  }, [currentUser, isAuthChecked, router]);
+
+  if (!isAuthChecked) return null;
+  if (!currentUser) return null;
+
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -23,16 +38,12 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
 
   return (
     <Layout
-      title={`${
-        item ? item.name : "User Detail"
-      } | Next.js + TypeScript Example`}
+      title={`${item ? item.name : "User Detail"} | Next.js + TypeScript Example`}
     >
       {item && <ListDetail item={item} />}
     </Layout>
   );
 };
-
-export default StaticPropsDetail;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on users
@@ -45,9 +56,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return { paths, fallback: false };
 };
 
-// This function gets called at build time on server-side.
-// It won't be called on client-side, so you can even do
-// direct database queries.
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     const id = params?.id;
@@ -59,3 +67,5 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     return { props: { errors: err.message } };
   }
 };
+
+export default StaticPropsDetail;
