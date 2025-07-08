@@ -1,16 +1,7 @@
-const isGithubActions = process.env.GITHUB_ACTIONS || false;
-let assetPrefix = '';
-let basePath = '';
-
-if (isGithubActions) {
-  const repo = process.env.GITHUB_REPOSITORY.replace(/.*\//, '');
-  assetPrefix = `/${repo}/`;
-  basePath = `/${repo}`;
-}
-
+const repo = 'kpu-election-system';
 module.exports = {
-  assetPrefix,
-  basePath,
+  assetPrefix: `/${repo}/`,
+  basePath: `/${repo}`,
   images: { unoptimized: true },
   trailingSlash: true,
   output: 'export',
