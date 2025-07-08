@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "vite": {
+    "root": "public",
+    "publicDir": "public",
+    "build": {
+      "outDir": "dist"
+    }
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

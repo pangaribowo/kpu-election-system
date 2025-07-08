@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pemilihan Ketua Organisasi</title>
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Sistem Pemilihan</h1>
+                <p>Ketua Organisasi 2026</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Login sebagai:</label>
+                    <select id="role" required>
+                        <option value="">Pilih Role</option>
+                        <option value="admin">Administrator</option>
+                        <option value="user">Pemilih</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            
+            <div class="login-info">
+                <h4>Akun Demo:</h4>
+                <p><strong>Admin:</strong> admin / admin123</p>
+                <p><strong>User:</strong> user / user123</p>
+            </div>
+            
+            <div class="login-footer">
+                <button id="show-manual" class="btn-secondary">Lihat Manual</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="container" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="title">
+                    <span class="title-text">PEMILIHAN KETUA</span>
+                    <span class="title-sub">ORGANISASI 2026</span>
+                </h1>
+                <div class="user-info">
+                    <span id="current-user">Selamat datang, </span>
+                    <button id="logout-btn" class="btn-logout">Logout</button>
+                </div>
+            </div>
+            <div class="neon-line"></div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" data-tab="voting">VOTING</button>
+            <button class="nav-btn" data-tab="quickcount">QUICK COUNT</button>
+            <button class="nav-btn admin-only" data-tab="admin" style="display: none;">ADMIN</button>
+            <button class="nav-btn" data-tab="manual">MANUAL</button>
+        </nav>
+
+        <!-- Voting Section -->
+        <section id="voting" class="section active">
+            <div class="voting-container">
+                <h2 class="section-title">PILIH KANDIDAT ANDA</h2>
+                <div id="candidates-list" class="candidates-grid">
+                    <!-- Kandidat akan dimuat dari JavaScript -->
+                </div>
+                <div class="vote-status" id="vote-status"></div>
+            </div>
+        </section>
+
+        <!-- Quick Count Section -->
+        <section id="quickcount" class="section">
+            <div class="quickcount-container">
+                <h2 class="section-title">QUICK COUNT REAL-TIME</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-votes">0</div>
+                        <div class="stat-label">Total Suara</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="participation-rate">0%</div>
+                        <div class="stat-label">Partisipasi</div>
+                    </div>
+                </div>
+                <div id="results-chart" class="results-chart">
+                    <!-- Hasil akan dimuat dari JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Section -->
+        <section id="admin" class="section">
+            <div class="admin-container">
+                <h2 class="section-title">PANEL ADMIN</h2>
+                
+                <div class="admin-form">
+                    <h3>Tambah Kandidat Baru</h3>
+                    <form id="add-candidate-form">
+                        <div class="form-group">
+                            <label for="candidate-name">Nama Kandidat:</label>
+                            <input type="text" id="candidate-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="candidate-vision">Visi:</label>
+                            <textarea id="candidate-vision" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="candidate-color">Warna Tema:</label>
+                            <select id="candidate-color">
+                                <option value="blue">Biru</option>
+                                <option value="green">Hijau</option>
+                                <option value="orange">Orange</option>
+                                <option value="purple">Ungu</option>
+                                <option value="red">Merah</option>
+                                <option value="indigo">Indigo</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Tambah Kandidat</button>
+                    </form>
+                </div>
+
+                <div class="admin-actions">
+                    <button id="reset-votes" class="btn-danger">Reset Semua Suara</button>
+                    <button id="export-results" class="btn-secondary">Export Hasil</button>
+                    <button id="manage-users" class="btn-secondary">Kelola User</button>
+                </div>
+
+                <div class="candidates-management">
+                    <h3>Kelola Kandidat</h3>
+                    <div id="admin-candidates-list">
+                        <!-- Daftar kandidat untuk admin -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Manual Section -->
+        <section id="manual" class="section">
+            <div class="manual-container">
+                <h2 class="section-title">MANUAL PENGGUNAAN</h2>
+                
+                <div class="manual-content">
+                    <div class="manual-nav">
+                        <button class="manual-nav-btn active" data-manual="overview">Overview</button>
+                        <button class="manual-nav-btn" data-manual="login">Login</button>
+                        <button class="manual-nav-btn" data-manual="voting">Voting</button>
+                        <button class="manual-nav-btn" data-manual="quickcount">Quick Count</button>
+                        <button class="manual-nav-btn" data-manual="admin">Admin</button>
+                        <button class="manual-nav-btn" data-manual="faq">FAQ</button>
+                    </div>
+                    
+                    <div class="manual-sections">
+                        <!-- Overview -->
+                        <div id="manual-overview" class="manual-section active">
+                            <h3>📋 Overview Sistem</h3>
+                            <p>Sistem Pemilihan Ketua Organisasi adalah aplikasi web yang dirancang untuk memfasilitasi proses pemilihan secara digital dengan fitur-fitur berikut:</p>
+                            
+                            <div class="feature-grid">
+                                <div class="feature-card">
+                                    <h4>🗳️ Sistem Voting</h4>
+                                    <p>Pemilihan kandidat yang aman dan mudah digunakan</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h4>📊 Quick Count</h4>
+                                    <p>Perhitungan suara real-time dengan visualisasi grafik</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h4>👨‍💼 Panel Admin</h4>
+                                    <p>Kelola kandidat, reset data, dan export hasil</p>
+                                </div>
+                                <div class="feature-card">
+                                    <h4>🔐 Sistem Login</h4>
+                                    <p>Autentikasi user dengan role Admin dan Pemilih</p>
+                                </div>
+                            </div>
+                            
+                            <h4>Keunggulan Sistem:</h4>
+                            <ul>
+                                <li>✅ Interface yang user-friendly dan responsif</li>
+                                <li>✅ Keamanan data dengan sistem login</li>
+                                <li>✅ Real-time counting dan reporting</li>
+                                <li>✅ Export hasil dalam format text</li>
+                                <li>✅ Dapat digunakan di desktop dan mobile</li>
+                            </ul>
+                        </div>
+
+                        <!-- Login -->
+                        <div id="manual-login" class="manual-section">
+                            <h3>🔐 Panduan Login</h3>
+                            
+                            <h4>Langkah-langkah Login:</h4>
+                            <ol>
+                                <li>Buka aplikasi di browser</li>
+                                <li>Masukkan username dan password</li>
+                                <li>Pilih role (Administrator atau Pemilih)</li>
+                                <li>Klik tombol "Login"</li>
+                            </ol>
+                            
+                            <h4>Akun Demo yang Tersedia:</h4>
+                            <div class="demo-accounts">
+                                <div class="account-card">
+                                    <h5>👨‍💼 Administrator</h5>
+                                    <p><strong>Username:</strong> admin</p>
+                                    <p><strong>Password:</strong> admin123</p>
+                                    <p><strong>Akses:</strong> Semua fitur termasuk panel admin</p>
+                                </div>
+                                <div class="account-card">
+                                    <h5>👤 Pemilih</h5>
+                                    <p><strong>Username:</strong> user</p>
+                                    <p><strong>Password:</strong> user123</p>
+                                    <p><strong>Akses:</strong> Voting dan Quick Count</p>
+                                </div>
+                            </div>
+                            
+                            <div class="warning-box">
+                                <h5>⚠️ Catatan Penting:</h5>
+                                <p>Pastikan memilih role yang sesuai saat login. Admin memiliki akses penuh, sedangkan Pemilih hanya dapat melakukan voting dan melihat hasil.</p>
+                            </div>
+                        </div>
+
+                        <!-- Voting -->
+                        <div id="manual-voting" class="manual-section">
+                            <h3>🗳️ Panduan Voting</h3>
+                            
+                            <h4>Cara Melakukan Voting:</h4>
+                            <ol>
+                                <li>Login sebagai Pemilih</li>
+                                <li>Pilih tab "VOTING"</li>
+                                <li>Baca profil dan visi setiap kandidat</li>
+                                <li>Klik tombol "PILIH" pada kandidat pilihan Anda</li>
+                                <li>Konfirmasi pilihan Anda</li>
+                                <li>Sistem akan menampilkan notifikasi berhasil</li>
+                            </ol>
+                            
+                            <h4>Informasi Kandidat:</h4>
+                            <p>Setiap kartu kandidat menampilkan:</p>
+                            <ul>
+                                <li>Nomor urut kandidat</li>
+                                <li>Nama lengkap kandidat</li>
+                                <li>Visi dan misi kandidat</li>
+                                <li>Tombol untuk memilih</li>
+                            </ul>
+                            
+                            <div class="info-box">
+                                <h5>ℹ️ Informasi Penting:</h5>
+                                <ul>
+                                    <li>Setiap user hanya dapat memilih satu kali</li>
+                                    <li>Pilihan tidak dapat diubah setelah dikonfirmasi</li>
+                                    <li>Status voting akan ditampilkan di bagian bawah</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Quick Count -->
+                        <div id="manual-quickcount" class="manual-section">
+                            <h3>📊 Panduan Quick Count</h3>
+                            
+                            <h4>Fitur Quick Count:</h4>
+                            <p>Quick Count menampilkan hasil pemilihan secara real-time dengan informasi:</p>
+                            
+                            <h5>Statistik Umum:</h5>
+                            <ul>
+                                <li><strong>Total Suara:</strong> Jumlah total suara yang masuk</li>
+                                <li><strong>Partisipasi:</strong> Persentase partisipasi pemilih</li>
+                            </ul>
+                            
+                            <h5>Grafik Hasil:</h5>
+                            <ul>
+                                <li>Nama kandidat dan jumlah suara</li>
+                                <li>Bar chart dengan persentase</li>
+                                <li>Urutan berdasarkan perolehan suara tertinggi</li>
+                            </ul>
+                            
+                            <h4>Cara Mengakses:</h4>
+                            <ol>
+                                <li>Login dengan akun Admin atau Pemilih</li>
+                                <li>Klik tab "QUICK COUNT"</li>
+                                <li>Data akan ter-update otomatis setiap 5 detik</li>
+                            </ol>
+                            
+                            <div class="tip-box">
+                                <h5>💡 Tips:</h5>
+                                <p>Halaman Quick Count akan refresh otomatis untuk menampilkan data terbaru. Anda juga dapat refresh manual dengan berganti tab.</p>
+                            </div>
+                        </div>
+
+                        <!-- Admin -->
+                        <div id="manual-admin" class="manual-section">
+                            <h3>👨‍💼 Panduan Admin</h3>
+                            
+                            <h4>Akses Panel Admin:</h4>
+                            <p>Panel Admin hanya dapat diakses oleh user dengan role Administrator.</p>
+                            
+                            <h4>Fitur-fitur Admin:</h4>
+                            
+                            <h5>1. Tambah Kandidat Baru</h5>
+                            <ul>
+                                <li>Isi nama kandidat</li>
+                                <li>Masukkan visi dan misi</li>
+                                <li>Pilih warna tema</li>
+                                <li>Klik "Tambah Kandidat"</li>
+                            </ul>
+                            
+                            <h5>2. Kelola Kandidat</h5>
+                            <ul>
+                                <li>Lihat daftar semua kandidat</li>
+                                <li>Hapus kandidat yang tidak diinginkan</li>
+                                <li>Edit informasi kandidat</li>
+                            </ul>
+                            
+                            <h5>3. Reset Semua Suara</h5>
+                            <ul>
+                                <li>Menghapus semua data voting</li>
+                                <li>Reset status pemilih</li>
+                                <li>Memulai pemilihan dari awal</li>
+                            </ul>
+                            
+                            <h5>4. Export Hasil</h5>
+                            <ul>
+                                <li>Download laporan dalam format text</li>
+                                <li>Berisi statistik lengkap</li>
+                                <li>Timestamp export</li>
+                            </ul>
+                            
+                            <div class="warning-box">
+                                <h5>⚠️ Peringatan:</h5>
+                                <p>Fitur Reset Semua Suara akan menghapus semua data voting secara permanen. Pastikan untuk export hasil terlebih dahulu jika diperlukan.</p>
+                            </div>
+                        </div>
+
+                        <!-- FAQ -->
+                        <div id="manual-faq" class="manual-section">
+                            <h3>❓ Frequently Asked Questions</h3>
+                            
+                            <div class="faq-item">
+                                <h4>Q: Bagaimana jika lupa password?</h4>
+                                <p>A: Untuk demo ini, gunakan akun yang tersedia (admin/admin123 atau user/user123). Pada implementasi nyata, hubungi administrator sistem.</p>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4>Q: Bisakah mengubah pilihan setelah voting?</h4>
+                                <p>A: Tidak, setiap user hanya dapat memilih satu kali dan tidak dapat mengubah pilihan.</p>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4>Q: Apakah data aman?</h4>
+                                <p>A: Data disimpan secara lokal di browser. Untuk keamanan maksimal, gunakan HTTPS dan database server.</p>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4>Q: Bagaimana cara menambah kandidat?</h4>
+                                <p>A: Login sebagai Admin, masuk ke panel Admin, dan gunakan form "Tambah Kandidat Baru".</p>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4>Q: Apakah bisa digunakan di mobile?</h4>
+                                <p>A: Ya, sistem ini responsive dan dapat digunakan di smartphone dan tablet.</p>
+                            </div>
+                            
+                            <div class="faq-item">
+                                <h4>Q: Bagaimana cara export hasil?</h4>
+                                <p>A: Login sebagai Admin, masuk ke panel Admin, dan klik tombol "Export Hasil".</p>
+                            </div>
+                            
+                            <h4>🛠️ Troubleshooting</h4>
+                            <div class="troubleshooting">
+                                <h5>Masalah: Tidak bisa login</h5>
+                                <p><strong>Solusi:</strong> Pastikan username, password, dan role sudah benar. Coba refresh halaman.</p>
+                                
+                                <h5>Masalah: Data tidak tersimpan</h5>
+                                <p><strong>Solusi:</strong> Pastikan browser mendukung localStorage dan tidak dalam mode incognito.</p>
+                                
+                                <h5>Masalah: Quick Count tidak update</h5>
+                                <p><strong>Solusi:</strong> Refresh halaman atau ganti tab untuk memperbarui data.</p>
+                            </div>
+                            
+                            <div class="contact-box">
+                                <h5>📞 Butuh Bantuan?</h5>
+                                <p>Jika mengalami masalah teknis, hubungi administrator sistem atau tim IT organisasi Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="src/script.js"></script>
+</body>
+</html>
