@@ -10,7 +10,7 @@ const AboutPage = () => {
           Aplikasi ini digunakan untuk pemilihan ketua organisasi secara online, dilengkapi fitur voting, quick count, panel admin, dan manual penggunaan.
         </p>
     <p>
-          <Link href="/">Kembali ke Dashboard</Link>
+          <Link href="/" legacyBehavior>Kembali ke Dashboard</Link>
     </p>
       </section>
       <style jsx>{`
@@ -34,7 +34,7 @@ const AboutPage = () => {
         }
       `}</style>
     </div>
-);
+  );
 };
 
 export default AboutPage;

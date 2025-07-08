@@ -41,51 +41,51 @@ const UserDetailPage = () => {
   if (!currentUser) return null;
 
     return (
-    <div className="main-container">
-      <section className="section active">
-        <h1 className="section-title">Detail User</h1>
-        {loading && <div>Loading...</div>}
-        {error && <div style={{color:'red'}}>{error}</div>}
-        {!loading && !error && user && (
-          <div className="user-detail">
-            <div><b>Username:</b> {user.username}</div>
-            <div><b>Nama:</b> {user.name}</div>
-            <div><b>Role:</b> {user.role}</div>
-          </div>
-        )}
-        <p style={{marginTop:24}}>
-          <Link href="/users">Kembali ke Daftar User</Link>
-        </p>
-      </section>
-      <style jsx>{`
-        .main-container {
-          max-width: 700px;
-          margin: 40px auto;
-          background: #fff;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-          padding: 32px 24px;
-        }
-        .section-title {
-          font-size: 2rem;
-          font-weight: 700;
-          color: #2563eb;
-          margin-bottom: 18px;
-        }
-        .user-detail {
-          font-size: 1.1rem;
-          background: #f1f5f9;
-          border-radius: 8px;
-          padding: 18px 20px;
-          margin-bottom: 16px;
-        }
-        a {
-          color: #2563eb;
-          text-decoration: underline;
-        }
-      `}</style>
-    </div>
-  );
+      <div className="main-container">
+        <section className="section active">
+          <h1 className="section-title">Detail User</h1>
+          {loading && <div>Loading...</div>}
+          {error && <div style={{color:'red'}}>{error}</div>}
+          {!loading && !error && user && (
+            <div className="user-detail">
+              <div><b>Username:</b> {user.username}</div>
+              <div><b>Nama:</b> {user.name}</div>
+              <div><b>Role:</b> {user.role}</div>
+            </div>
+          )}
+          <p style={{marginTop:24}}>
+            <Link href="/users" legacyBehavior>Kembali ke Daftar User</Link>
+          </p>
+        </section>
+        <style jsx>{`
+          .main-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 32px 24px;
+          }
+          .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 18px;
+          }
+          .user-detail {
+            font-size: 1.1rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+          }
+          a {
+            color: #2563eb;
+            text-decoration: underline;
+          }
+        `}</style>
+      </div>
+    );
 };
 
 export default UserDetailPage;
