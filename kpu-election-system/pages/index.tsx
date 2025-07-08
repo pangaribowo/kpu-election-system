@@ -45,7 +45,7 @@ const Dashboard = () => {
       </div>
       <div className="dashboard-quicklinks">
         {quickLinks.map((l) => (
-          <Link href={l.href} key={l.href} className="dashboard-link">{l.label}</Link>
+          <Link href={l.href} key={l.href} className="dashboard-link" legacyBehavior>{l.label}</Link>
         ))}
       </div>
       <style jsx>{`
@@ -111,7 +111,7 @@ const Dashboard = () => {
         }
       `}</style>
     </div>
-  )
+  );
 }
 
 export default Dashboard
