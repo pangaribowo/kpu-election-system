@@ -1,28 +1,48 @@
 import React, { useEffect } from 'react'
 import { useVoting } from './VotingContext'
+import { supabase } from '../lib/supabaseClient'
 
 const QuickCount = () => {
   const { candidates, votes, setVotes, setCandidates } = useVoting()
   const totalVoters = 1000
 
-  // Simulasi suara masuk otomatis (20% chance setiap 5 detik)
+  // Ambil quick count dari backend dan subscribe realtime
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() < 0.2 && candidates.length > 0) {
-        const randomCandidate = candidates[Math.floor(Math.random() * candidates.length)]
-        const updatedVotes = { ...votes }
-        updatedVotes[randomCandidate.id] = (updatedVotes[randomCandidate.id] || 0) + 1
-        setVotes(updatedVotes)
-        setCandidates(
-          candidates.map((c) =>
-            c.id === randomCandidate.id ? { ...c, votes: (updatedVotes[randomCandidate.id] || 0) } : c
-          )
-        )
+    const fetchQuickCount = async () => {
+      try {
+        const res = await fetch('/api/voting')
+        const data = await res.json()
+        if (res.ok && data.hasil) {
+          const newVotes: Record<number, number> = {}
+          const newCandidates = data.hasil.map((k: any) => {
+            newVotes[k.id] = k.suara
+            return {
+              id: k.id,
+              name: k.nama,
+              vision: k.visi,
+              color: candidates.find((c) => c.id === k.id)?.color || 'blue',
+              votes: k.suara,
+            }
+          })
+          setVotes(newVotes)
+          setCandidates(newCandidates)
+        }
+      } catch (err) {
+        // Biarkan silent error
       }
-    }, 5000)
-    return () => clearInterval(interval)
+    }
+    fetchQuickCount()
+    // Subscribe ke perubahan tabel voting
+    const channel = supabase.channel('realtime-voting')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
+        fetchQuickCount()
+      })
+      .subscribe()
+    return () => {
+      supabase.removeChannel(channel)
+    }
     // eslint-disable-next-line
-  }, [candidates, votes])
+  }, [])
 
   const totalVotes = Object.values(votes).reduce((sum, v) => sum + v, 0)
   const participationRate = ((totalVotes / totalVoters) * 100).toFixed(1)

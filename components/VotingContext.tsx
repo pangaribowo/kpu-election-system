@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { supabase } from '../lib/supabaseClient'
 
 // Tipe data kandidat, user, dsb
 export type Candidate = {
@@ -106,6 +107,65 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
     } else {
       localStorage.removeItem('currentUser')
     }
+  }, [currentUser])
+
+  // Ambil quick count dari backend saat user login
+  useEffect(() => {
+    async function fetchQuickCount() {
+      if (currentUser && currentUser.role === 'user') {
+        try {
+          const res = await fetch('/api/voting')
+          const data = await res.json()
+          if (res.ok && data.hasil) {
+            const newVotes: Record<number, number> = {}
+            const newCandidates = data.hasil.map((k: any) => {
+              newVotes[k.id] = k.suara
+              return {
+                id: k.id,
+                name: k.nama,
+                vision: k.visi,
+                color: candidates.find((c) => c.id === k.id)?.color || 'blue',
+                votes: k.suara,
+              }
+            })
+            setVotes(newVotes)
+            setCandidates(newCandidates)
+          }
+        } catch (err) {
+          // Biarkan silent error
+        }
+      }
+    }
+    fetchQuickCount()
+    // Subscribe ke perubahan tabel voting (realtime)
+    const channel = supabase.channel('realtime-voting-context')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
+        fetchQuickCount()
+      })
+      .subscribe()
+    return () => {
+      supabase.removeChannel(channel)
+    }
+    // eslint-disable-next-line
+  }, [currentUser])
+
+  // Cek status voting user ke backend saat login
+  useEffect(() => {
+    async function fetchVotingStatus() {
+      if (currentUser && currentUser.role === 'user') {
+        try {
+          const res = await fetch(`/api/voting?username=${encodeURIComponent(currentUser.username)}`)
+          const data = await res.json()
+          setHasVoted(!!data.hasVoted)
+        } catch (err) {
+          setHasVoted(false)
+        }
+      } else {
+        setHasVoted(false)
+      }
+    }
+    fetchVotingStatus()
+    // eslint-disable-next-line
   }, [currentUser])
 
   return (
