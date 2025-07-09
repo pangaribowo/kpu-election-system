@@ -33,10 +33,20 @@
       "static/chunks/main.js",
       "static/chunks/pages/login.js"
     ],
-    "/manual": [
+    "/quickcount": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/manual.js"
+      "static/chunks/pages/quickcount.js"
+    ],
+    "/users": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/users.js"
+    ],
+    "/voting": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/voting.js"
     ]
   },
   "ampFirstPages": []
