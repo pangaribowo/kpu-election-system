@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useVoting } from './VotingContext'
+import { supabase } from '../lib/supabaseClient'
+import { useRouter } from 'next/router'
 
 const LoginScreen = () => {
   const {
@@ -10,9 +12,10 @@ const LoginScreen = () => {
   } = useVoting()
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   // Login refs
-  const usernameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
   const roleRef = useRef<HTMLSelectElement>(null)
 
@@ -20,34 +23,51 @@ const LoginScreen = () => {
   const regUsernameRef = useRef<HTMLInputElement>(null)
   const regPasswordRef = useRef<HTMLInputElement>(null)
   const regNameRef = useRef<HTMLInputElement>(null)
-  const regRoleRef = useRef<HTMLSelectElement>(null)
+  const regEmailRef = useRef<HTMLInputElement>(null)
+  const regPhoneRef = useRef<HTMLInputElement>(null)
+
+  // OTP/Phone login state
+  const [otpPhone, setOtpPhone] = useState('')
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpLoading, setOtpLoading] = useState(false)
 
   // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const username = usernameRef.current?.value.trim() || ''
+    const email = emailRef.current?.value.trim() || ''
     const password = passwordRef.current?.value.trim() || ''
     const role = roleRef.current?.value as 'admin' | 'user'
-    if (!username || !password || !role) {
+    if (!email || !password || !role) {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
+      return
+    }
+    // Validasi email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setNotification({ message: 'Format email tidak valid!', type: 'error' })
       return
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+      // Supabase Auth signIn
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       })
-      const result = await res.json()
-      if (!res.ok) {
-        setNotification({ message: result.error || 'Login gagal', type: 'error' })
-      } else if (result.user.role !== role) {
-        setNotification({ message: 'Role tidak sesuai!', type: 'error' })
+      if (error) {
+        setNotification({ message: error.message || 'Login gagal', type: 'error' })
+      } else if (!data.user?.email_confirmed_at) {
+        setNotification({ message: 'Akun belum diverifikasi. Silakan cek email Anda.', type: 'error' })
       } else {
-        setCurrentUser({ username: result.user.username, role: result.user.role, name: result.user.name })
-        setActiveTab('voting')
-        setNotification({ message: `Selamat datang, ${result.user.name}!`, type: 'success' })
+        // Ambil data user dari user_metadata
+        const userMeta = data.user.user_metadata || {}
+        if (userMeta.role !== role) {
+          setNotification({ message: 'Role tidak sesuai!', type: 'error' })
+        } else {
+          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name })
+          setActiveTab('voting')
+          setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
+        }
       }
     } catch (err) {
       setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
@@ -62,30 +82,75 @@ const LoginScreen = () => {
     const username = regUsernameRef.current?.value.trim() || ''
     const password = regPasswordRef.current?.value.trim() || ''
     const name = regNameRef.current?.value.trim() || ''
-    const role = regRoleRef.current?.value as 'admin' | 'user'
-    if (!username || !password || !name || !role) {
+    const email = regEmailRef.current?.value.trim() || ''
+    const phone = regPhoneRef.current?.value.trim() || ''
+    // Validasi input
+    if (!username || !password || !name || !email || !phone) {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
+      return
+    }
+    // Validasi email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setNotification({ message: 'Format email tidak valid!', type: 'error' })
+      return
+    }
+    // Validasi nomor HP (minimal 10 digit)
+    const phoneRegex = /^\d{10,}$/
+    if (!phoneRegex.test(phone)) {
+      setNotification({ message: 'Nomor HP tidak valid!', type: 'error' })
       return
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, name, role })
+      // Supabase Auth signUp (email & phone)
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username,
+            name,
+            phone,
+            role: 'user',
+          },
+          emailRedirectTo: window.location.origin + '/login',
+        },
       })
-      const result = await res.json()
-      if (!res.ok) {
-        setNotification({ message: result.error || 'Registrasi gagal', type: 'error' })
+      if (error) {
+        setNotification({ message: error.message || 'Registrasi gagal', type: 'error' })
       } else {
-        setCurrentUser({ username: result.user.username, role: result.user.role, name: result.user.name })
-        setActiveTab('voting')
-        setNotification({ message: `Registrasi & login sukses! Selamat datang, ${result.user.name}!`, type: 'success' })
+        setNotification({ message: 'Registrasi berhasil! Silakan cek email untuk verifikasi.', type: 'success' })
+        setTab('login')
       }
     } catch (err) {
       setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Handle send OTP
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!otpPhone) {
+      setNotification({ message: 'Masukkan nomor HP!', type: 'error' })
+      return
+    }
+    setOtpLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithOtp({ phone: otpPhone })
+      if (error) {
+        setNotification({ message: error.message || 'Gagal mengirim OTP', type: 'error' })
+      } else {
+        setOtpSent(true)
+        setNotification({ message: 'OTP dikirim! Silakan cek SMS Anda.', type: 'success' })
+        router.push(`/verify-otp?phone=${encodeURIComponent(otpPhone)}`)
+      }
+    } catch (err) {
+      setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
+    } finally {
+      setOtpLoading(false)
     }
   }
 
@@ -120,14 +185,15 @@ const LoginScreen = () => {
           <p>Ketua Organisasi 2026</p>
         </div>
         {tab === 'login' ? (
+          <>
           <form id="login-form" className="login-form" onSubmit={handleLogin}>
             <div className="form-group">
-              <label htmlFor="username">Username:</label>
-              <input type="text" id="username" ref={usernameRef} required />
+              <label htmlFor="login-email">Email:</label>
+              <input type="email" id="login-email" ref={emailRef} required placeholder="Masukkan email Anda" />
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password:</label>
-              <input type="password" id="password" ref={passwordRef} required />
+              <label htmlFor="login-password">Password:</label>
+              <input type="password" id="login-password" ref={passwordRef} required placeholder="Masukkan password Anda" />
             </div>
             <div className="form-group">
               <label htmlFor="role">Login sebagai:</label>
@@ -139,6 +205,15 @@ const LoginScreen = () => {
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
           </form>
+          <div style={{ margin: '24px 0', textAlign: 'center', fontWeight: 600 }}>atau</div>
+          <form id="otp-login-form" className="login-form" onSubmit={handleSendOtp}>
+            <div className="form-group">
+              <label htmlFor="otp-phone">Login via Nomor HP (OTP):</label>
+              <input type="tel" id="otp-phone" value={otpPhone} onChange={e => setOtpPhone(e.target.value)} required placeholder="08xxxxxxxxxx" />
+            </div>
+            <button type="submit" className="btn-primary" disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
+          </form>
+          </>
         ) : (
           <form id="register-form" className="login-form" onSubmit={handleRegister}>
             <div className="form-group">
@@ -153,7 +228,14 @@ const LoginScreen = () => {
               <label htmlFor="reg-name">Nama Lengkap:</label>
               <input type="text" id="reg-name" ref={regNameRef} required />
             </div>
-            {/* Role dihapus dari form register, semua user akan didaftarkan sebagai user oleh backend */}
+            <div className="form-group">
+              <label htmlFor="reg-email">Email:</label>
+              <input type="email" id="reg-email" ref={regEmailRef} required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="reg-phone">Nomor HP:</label>
+              <input type="tel" id="reg-phone" ref={regPhoneRef} required />
+            </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
           </form>
         )}

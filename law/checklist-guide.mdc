@@ -1,0 +1,81 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+>> selalu isi dengan [x] jika sudah dikerjakan, selalu re-check setiap checklist
+>> selalu centang checklist yang sudah tereksekusi dengan [x], pastikan selalu re-check kode sebelum melakukan centang [x] checklist yang telah ada.
+
+1. Urutan Prioritas Bertahap & Krusial
+
+Tahap 1: Fondasi Sistem & Autentikasi
+[ ] 1.1. Setup koneksi database (Supabase/PostgreSQL)
+[ ] 1.2. Buat tabel user & kandidat di database
+[ ] 1.3. Implementasi API autentikasi (login, register)
+[ ] 1.4. Migrasi login frontend agar terhubung ke API & database
+[ ] 1.5. Audit sistem register & login (cek keamanan, validasi, role)
+[ ] 1.6. Pastikan hanya admin yang berwenang bisa membuat akun admin (tidak boleh register admin dari halaman publik)
+[ ] 1.7. Update register: role user saja, admin hanya bisa dibuat oleh admin lewat panel admin (bukan dari halaman register umum)
+
+Tahap 2: Fitur Voting (Core)
+[ ] 2.1. Buat tabel voting/suara di database
+[ ] 2.2. Implementasi API voting (submit suara, validasi)
+[ ] 2.3. Migrasi form voting di frontend agar submit ke API
+[ ] 2.4. Validasi: user hanya bisa voting satu kali
+
+Tahap 3: Quick Count & Hasil
+[ ] 3.1. Implementasi API untuk quick count (ambil hasil suara)
+[ ] 3.2. Migrasi tampilan quick count di frontend agar fetch dari API
+
+Tahap 4: CRUD Data Pendukung
+[ ] 4.1. Implementasi API CRUD user & kandidat (khusus admin)
+[ ] 4.2. Migrasi halaman admin panel agar fetch & update data via API
+[ ] 4.3. Validasi: hanya admin yang bisa akses fitur CRUD
+
+Tahap 5: Manual, Notifikasi, & Fitur Lain
+[ ] 5.1. Implementasi API & migrasi data manual/panduan
+[ ] 5.2. Implementasi notifikasi/log aktivitas (jika diperlukan)
+
+Tahap 6: Keamanan & Validasi
+[ ] 6.1. Hash password di backend
+[ ] 6.2. Validasi input (frontend & backend)
+[ ] 6.3. Proteksi route (role-based access)
+[ ] 6.4. Audit keamanan register/login: pastikan tidak ada user bisa register sebagai admin dari halaman publik
+
+Tahap 7: Testing & Dokumentasi
+[ ] 7.1. Unit test API utama (auth, voting, quick count)
+[ ] 7.2. Integration test alur utama
+[ ] 7.3. Update dokumentasi pengembangan
+
+---
+
+## Audit & Best Practice Register/Login
+- [ ] Register hanya boleh untuk role user (bukan admin)
+- [ ] Pembuatan akun admin hanya bisa dilakukan oleh admin lewat panel admin (bukan dari halaman register umum)
+- [ ] Validasi input ketat (username, password, role)
+- [ ] Proteksi API register agar tidak bisa membuat admin dari endpoint publik
+- [ ] Audit seluruh endpoint auth secara berkala
+
+---
+
+## Workflow Eksekusi
+1. Selesaikan Tahap 1 (fondasi, autentikasi, audit register/login)
+2. Lanjut ke Tahap 2 (voting), Tahap 3 (quick count), dst sesuai checklist
+3. Setiap selesai satu tahap, lakukan audit dan testing
+4. Update checklist dan dokumentasi setiap ada perubahan
+[x] Register wajib input email & nomor HP
+[x] Verifikasi email (link) wajib sebelum bisa login/voting
+[x] Validasi input ketat (email, phone, username, password)
+[x] Proteksi endpoint register/login dari abuse (rate limit, unique email/phone, captcha opsional)
+[x] Hanya user yang sudah verifikasi email yang bisa login/voting
+[x] Login hanya dengan email & password (bukan username)
+[x] (Opsional) Login via phone/OTP (Supabase Auth phone/OTP)
+[x] (Opsional) Notifikasi phone/OTP jika fitur ini diaktifkan
+[x] Implementasi halaman input OTP (/verify-otp)
+[x] Integrasi Supabase Auth signInWithOtp & verifyOtp
+[x] Proteksi: hanya user yang sudah verifikasi OTP yang bisa login/voting
+[x] Notifikasi: instruksi cek SMS untuk OTP
+[ ] Uji register, verifikasi email, login, voting (E2E)
+[ ] Uji login dengan email/phone yang belum diverifikasi (harus gagal)
+[ ] Uji login dengan email/phone yang sudah diverifikasi (harus sukses)
+[x] Update dokumentasi dan checklist di @/law

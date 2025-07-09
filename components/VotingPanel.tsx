@@ -1,5 +1,6 @@
 import React from 'react'
 import { useVoting } from './VotingContext'
+import { supabase } from '../lib/supabaseClient'
 
 const VotingPanel = () => {
   const {
@@ -13,25 +14,59 @@ const VotingPanel = () => {
     setNotification,
   } = useVoting()
 
-  const handleVote = (candidateId: number) => {
+  const handleVote = async (candidateId: number) => {
     if (currentUser?.role !== 'user') {
       setNotification({ message: 'Hanya pemilih yang dapat melakukan voting!', type: 'error' })
+      return
+    }
+    // Cek status verifikasi email
+    const session = supabase.auth.getSession && (await supabase.auth.getSession()).data.session
+    if (!session?.user?.email_confirmed_at) {
+      setNotification({ message: 'Akun Anda belum diverifikasi. Silakan cek email Anda.', type: 'error' })
       return
     }
     if (hasVoted) {
       setNotification({ message: 'Anda sudah melakukan voting!', type: 'error' })
       return
     }
-    const updatedVotes = { ...votes }
-    updatedVotes[candidateId] = (updatedVotes[candidateId] || 0) + 1
-    setVotes(updatedVotes)
-    setHasVoted(true)
-    setCandidates(
-      candidates.map((c) =>
-        c.id === candidateId ? { ...c, votes: (updatedVotes[candidateId] || 0) } : c
-      )
-    )
-    setNotification({ message: `Terima kasih! Anda telah memilih ${candidates.find((c) => c.id === candidateId)?.name}`, type: 'success' })
+    try {
+      const res = await fetch('/api/voting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kandidat_id: candidateId, username: currentUser.username })
+      })
+      const result = await res.json()
+      if (!res.ok) {
+        setNotification({ message: result.error || 'Voting gagal', type: 'error' })
+        return
+      }
+      // Ambil quick count terbaru setelah voting
+      const quickCountRes = await fetch('/api/voting')
+      const quickCountData = await quickCountRes.json()
+      if (quickCountRes.ok && quickCountData.hasil) {
+        // Update votes dan candidates dari hasil backend
+        const newVotes: Record<number, number> = {}
+        const newCandidates = quickCountData.hasil.map((k: any) => {
+          newVotes[k.id] = k.suara
+          return {
+            id: k.id,
+            name: k.nama,
+            vision: k.visi,
+            color: candidates.find((c) => c.id === k.id)?.color || 'blue',
+            votes: k.suara,
+          }
+        })
+        setVotes(newVotes)
+        setCandidates(newCandidates)
+      }
+      // Fetch status voting user ke backend
+      const statusRes = await fetch(`/api/voting?username=${encodeURIComponent(currentUser.username)}`)
+      const statusData = await statusRes.json()
+      setHasVoted(!!statusData.hasVoted)
+      setNotification({ message: `Terima kasih! Anda telah memilih ${candidates.find((c) => c.id === candidateId)?.name}`, type: 'success' })
+    } catch (err) {
+      setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
+    }
   }
 
   // Status voting

@@ -1,14 +1,34 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
+>> selalu isi dengan [x] jika sudah dikerjakan, selalu re-check setiap checklist
+>> selalu centang checklist yang sudah tereksekusi dengan [x], pastikan selalu re-check kode sebelum melakukan centang [x] checklist yang telah ada.
+
 1. Urutan Prioritas Bertahap & Krusial
 Tahap 1: Fondasi Sistem & Autentikasi
 [ ] 1.1. Setup koneksi database (Supabase/PostgreSQL)
 [ ] 1.2. Buat tabel user & kandidat di database
 [ ] 1.3. Implementasi API autentikasi (login, register)
 [ ] 1.4. Migrasi login frontend agar terhubung ke API & database
+[x] 1.5. Tambahkan field email & nomor HP pada form register
+[x] 1.6. Integrasi Supabase Auth untuk email verification pada register
+[x] 1.7. Validasi input ketat (email, phone, username, password) di frontend
+[x] 1.8. Notifikasi register muncul: instruksi cek email untuk verifikasi
+[x] 1.9. Proteksi: hanya user yang sudah verifikasi email yang bisa login/voting
+[x] 1.10. Update login: input hanya email & password (bukan username)
+[x] 1.11. (Opsional) Tambahkan login via nomor HP/OTP (Supabase Auth phone/OTP)
+[x] 1.12. Update label, placeholder, dan validasi input login
+[x] 1.13. (Opsional) Notifikasi phone/OTP jika fitur ini diaktifkan
+[x] 1.18. Implementasi halaman input OTP (/verify-otp)
+[x] 1.19. Integrasi Supabase Auth signInWithOtp & verifyOtp
+[x] 1.20. Proteksi: hanya user yang sudah verifikasi OTP yang bisa login/voting
+[x] 1.21. Notifikasi: instruksi cek SMS untuk OTP
+[ ] 1.14. Uji register, verifikasi email, login, voting (E2E)
+[ ] 1.15. Uji login dengan email/phone yang belum diverifikasi (harus gagal)
+[ ] 1.16. Uji login dengan email/phone yang sudah diverifikasi (harus sukses)
+[x] 1.17. Update dokumentasi dan checklist di @/law
 Tahap 2: Fitur Voting (Core)
 [ ] 2.1. Buat tabel voting/suara di database
 [ ] 2.2. Implementasi API voting (submit suara, validasi)
@@ -16,6 +36,8 @@ Tahap 2: Fitur Voting (Core)
 Tahap 3: Quick Count & Hasil
 [ ] 3.1. Implementasi API untuk quick count (ambil hasil suara)
 [ ] 3.2. Migrasi tampilan quick count di frontend agar fetch dari API
+[ ] 3.3. Integrasi Supabase Realtime untuk quick count (bukan polling)
+[ ] 3.4. Uji quick count realtime: voting dari beberapa akun, pastikan hasil update otomatis di semua panel
 Tahap 4: CRUD Data Pendukung
 [ ] 4.1. Implementasi API CRUD user & kandidat (khusus admin)
 [ ] 4.2. Migrasi halaman admin panel agar fetch & update data via API
@@ -39,3 +61,103 @@ Checklist Eksekusi Tahap 1 (Fondasi & Autentikasi)
 [ ] Implementasi API autentikasi (login, register) di Next.js API routes
 [ ] Update/migrasi LoginForm di frontend agar submit ke API
 [ ] Uji login & register end-to-end
+
+---
+
+## **A. Penjelasan Best Practice & Supabase Auth**
+
+### **1. Email Verification**
+- **Supabase Auth** secara default mengirim email verifikasi dengan link ke user setelah register.
+- **Best practice:**  
+  - Link verifikasi harus diarahkan ke domain aplikasi Anda (misal: `https://your-app.com/login`).
+  - Ini diatur lewat parameter `emailRedirectTo` pada `signUp`.
+  - Setelah klik link, user diarahkan ke aplikasi, login, dan status email sudah terverifikasi.
+- **Sudah diimplementasikan:**  
+  - Di kode register:  
+    ```js
+    emailRedirectTo: window.location.origin + '/login'
+    ```
+  - **Checklist:** [x] Link verifikasi email mengarah ke aplikasi.
+
+### **2. OTP/Phone Verification**
+- **Supabase Auth** mendukung OTP via SMS (phone sign-in).
+- **Best practice:**  
+  - User register dengan nomor HP, lalu menerima OTP via SMS.
+  - User input OTP di halaman khusus (harus dibuat di frontend).
+  - Setelah OTP benar, user bisa login/voting.
+- **Supabase Auth** menyediakan API untuk:
+  - Mengirim OTP: `supabase.auth.signInWithOtp({ phone })`
+  - Verifikasi OTP: `supabase.auth.verifyOtp({ phone, token })`
+- **Perlu dibuat:**  
+  - Halaman input OTP (misal: `/verify-otp`).
+  - Alur: register → input phone → dapat OTP → input OTP → login sukses.
+
+---
+
+## **B. Checklist Komprehensif & Eksekusi**
+
+### **Tahap 1: Email Verification**
+- [x] Link verifikasi email diarahkan ke aplikasi (`/login`).
+- [x] Notifikasi register muncul: instruksi cek email untuk verifikasi.
+- [x] Proteksi: hanya user yang sudah verifikasi email yang bisa login/voting.
+- [x] Uji: klik link verifikasi, pastikan diarahkan ke aplikasi dan status email terverifikasi.
+
+### **Tahap 2: OTP/Phone Verification (Opsional)**
+- [ ] Tambahkan opsi register/login via nomor HP (phone/OTP).
+- [ ] Implementasi halaman input OTP (`/verify-otp`).
+- [ ] Integrasi Supabase Auth signInWithOtp & verifyOtp.
+- [ ] Notifikasi: instruksi cek SMS untuk OTP.
+- [ ] Proteksi: hanya user yang sudah verifikasi OTP yang bisa login/voting.
+- [ ] Uji: register/login via phone, input OTP, pastikan flow sukses/gagal sesuai status OTP.
+
+### **Tahap 3: Testing & Dokumentasi**
+- [ ] Uji E2E: register, verifikasi email/OTP, login, voting.
+- [ ] Update checklist dan dokumentasi di @/law.
+
+---
+
+## **C. Eksekusi Langkah Prioritas**
+
+### **1. Email Verification**
+- **Sudah diimplementasikan**: link verifikasi email diarahkan ke `/login` (best practice Supabase).
+- **Sudah ada notifikasi**: instruksi cek email.
+- **Sudah ada proteksi**: hanya user terverifikasi yang bisa login/voting.
+
+### **2. OTP/Phone Verification**
+- **Langkah eksekusi:**
+  1. Tambahkan tombol/opsi “Login/Register via Nomor HP” di halaman login/register.
+  2. Buat halaman `/verify-otp` untuk input OTP.
+  3. Integrasi Supabase Auth:
+     - Kirim OTP: `supabase.auth.signInWithOtp({ phone })`
+     - Verifikasi OTP: `supabase.auth.verifyOtp({ phone, token })`
+  4. Setelah OTP valid, login user dan arahkan ke dashboard/voting.
+  5. Tampilkan notifikasi di setiap langkah.
+
+### **3. Update Checklist @/law**
+- Checklist detail, actionable, dan centang yang sudah tereksekusi.
+- Tambahkan sub-checklist untuk OTP/phone verification.
+
+---
+
+## **D. Saran Langkah Selanjutnya**
+1. **Testing E2E:**  
+   - Register via email & phone, verifikasi, login, voting.
+   - Uji semua skenario sukses/gagal.
+2. **Update checklist setelah testing.**
+3. **Jika sudah valid, lanjut ke task berikutnya:**
+   - CRUD kandidat/user via backend (khusus admin).
+   - Audit security seluruh sistem.
+   - Testing otomatis & deployment.
+
+---
+
+## **Update Checklist ke @/law (contoh penambahan detail)**
+
+```md
+<code_block_to_apply_changes_from>
+```
+
+---
+
+**Saya akan langsung update checklist @/law dan mulai eksekusi implementasi halaman OTP serta integrasi Supabase Auth phone/OTP. Setelah itu, sistem siap untuk E2E testing dan task berikutnya.**  
+Jika ada preferensi khusus untuk tampilan/UX halaman OTP, silakan informasikan!

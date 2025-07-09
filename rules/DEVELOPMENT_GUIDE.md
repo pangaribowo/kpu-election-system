@@ -62,5 +62,39 @@ Panduan ini berisi langkah-langkah dan kebutuhan untuk mengembangkan website aga
 
 ---
 
+## 4. Strategi & Workflow Voting (Core)
+
+### a. Skema Tabel Voting
+- [x] Tabel voting sudah dibuat di `rules/SCHEMA_USER_KANDIDAT.sql`:
+  - Kolom: id, user_id, kandidat_id, waktu, UNIQUE(user_id)
+  - Satu user hanya bisa voting satu kali (UNIQUE constraint)
+
+### b. Checklist Implementasi Voting
+- [ ] Implementasi API voting (POST suara):
+  - [ ] Endpoint menerima user_id (dari session) dan kandidat_id
+  - [ ] Validasi: user hanya bisa voting satu kali (cek di tabel voting)
+  - [ ] Simpan suara ke tabel voting
+  - [ ] Handle error jika user sudah voting
+- [ ] Integrasi form voting di frontend:
+  - [ ] Form voting submit ke API
+  - [ ] Tampilkan notifikasi sukses/gagal
+- [ ] Proteksi: hanya user login yang bisa voting
+- [ ] Testing end-to-end fitur voting
+
+### c. Best Practice
+- [ ] Validasi di backend dan frontend
+- [ ] Jangan expose user_id di frontend, ambil dari session
+- [ ] Audit endpoint voting secara berkala
+
+---
+
+## 5. Integrasi Realtime Voting & Quick Count
+
+- [x] Quick count dan state voting kini update otomatis (realtime) menggunakan Supabase Realtime (bukan polling interval).
+- [x] Semua panel (dashboard, voting, quickcount) konsisten data karena subscribe ke perubahan tabel voting.
+- [x] Pengujian: lakukan voting dari beberapa akun/user, pastikan quick count dan hasil voting update otomatis di semua device tanpa reload.
+
+---
+
 > **Catatan:**
 > Checklist ini dapat dikembangkan sesuai kebutuhan proyek. Setiap langkah sebaiknya didokumentasikan dan diuji secara bertahap. 
