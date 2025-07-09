@@ -1,8 +1,7 @@
-const repo = 'kpu-election-system';
-module.exports = {
-  assetPrefix: `/${repo}/`,
-  basePath: `/${repo}`,
-  images: { unoptimized: true },
-  trailingSlash: true,
-  output: 'export',
-}; 
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  // images: { unoptimized: true }, // aktifkan jika memang perlu
+};
+
+module.exports = nextConfig; 
