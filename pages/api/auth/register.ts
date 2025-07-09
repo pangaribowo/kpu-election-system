@@ -6,8 +6,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
-  const { username, password, name, role } = req.body
-  if (!username || !password || !name || !role) {
+  const { username, password, name } = req.body
+  // Force role to 'user' for all public registration
+  const role = 'user'
+  if (!username || !password || !name) {
     return res.status(400).json({ error: 'Semua field wajib diisi' })
   }
 
