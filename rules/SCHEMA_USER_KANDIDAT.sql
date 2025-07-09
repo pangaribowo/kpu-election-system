@@ -1,17 +1,28 @@
--- Skema Tabel User
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL, -- hashed
-    role VARCHAR(10) NOT NULL CHECK (role IN ('admin', 'user')),
-    name VARCHAR(100) NOT NULL
+-- Tabel users
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'user')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Skema Tabel Kandidat
-CREATE TABLE candidates (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    vision TEXT NOT NULL,
-    color VARCHAR(20) NOT NULL,
-    votes INTEGER DEFAULT 0
+-- Tabel kandidat
+CREATE TABLE IF NOT EXISTS kandidat (
+  id SERIAL PRIMARY KEY,
+  nama VARCHAR(100) NOT NULL UNIQUE,
+  visi TEXT,
+  misi TEXT,
+  foto_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabel voting
+CREATE TABLE IF NOT EXISTS voting (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  kandidat_id INTEGER REFERENCES kandidat(id) ON DELETE CASCADE,
+  waktu TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id)
 ); 
