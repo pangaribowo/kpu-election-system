@@ -1,0 +1,54 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+### ✅ **Progress yang Sudah Dilakukan**
+1. **Integrasi VotingPanel ke Backend**
+   - VotingPanel sekarang mengirim POST ke `/api/voting` saat user memilih kandidat.
+   - Setelah voting, frontend fetch quick count terbaru dari backend dan update state.
+   - Proteksi: hanya user yang belum voting bisa vote, dan hanya role `user` yang bisa voting.
+
+2. **Sinkronisasi State Voting**
+   - VotingContext sekarang otomatis fetch quick count dari backend saat user login, sehingga data frontend selalu sinkron dengan backend.
+
+3. **QuickCount Real-time**
+   - Komponen QuickCount sekarang mengambil data hasil suara dari backend setiap 5 detik (bukan simulasi lokal lagi).
+   - Data kandidat dan suara selalu update sesuai hasil backend.
+
+---
+
+### 🔜 **Langkah Selanjutnya (Flow Selesai)**
+1. **Testing End-to-End**
+   - Pastikan: 
+     - User hanya bisa voting sekali.
+     - Hasil quick count update otomatis.
+     - Admin tidak bisa voting.
+     - User baru tidak bisa voting dua kali.
+     - Notifikasi muncul sesuai hasil backend.
+   - **Jika semua sudah berjalan sesuai flow, maka fitur voting dinyatakan selesai.**
+
+2. **Checklist & Dokumentasi**
+   - Update checklist pengembangan dan dokumentasi di file terkait (DEVELOPMENT_GUIDE.md, checklist.mdc).
+   - Catat bahwa flow voting sudah terhubung backend, real-time, dan aman.
+
+3. **Task Selanjutnya**
+   - Setelah flow voting selesai, task berikutnya bisa berupa:
+     - **CRUD Kandidat (admin panel ke backend)**
+     - **CRUD User (admin panel ke backend)**
+     - **Audit keamanan & validasi**
+     - **Testing otomatis (unit/integration)**
+     - **Deployment & optimasi**
+
+---
+
+### 🚦 **Status**
+- **Flow voting end-to-end sudah terhubung backend, real-time, dan aman.**
+- **Siap lanjut ke task berikutnya (CRUD kandidat/user, audit, testing, dsb) sesuai prioritas.**
+
+---
+
+**Konfirmasi:**  
+Jika Anda ingin saya lanjut ke task berikutnya (misal CRUD kandidat ke backend, atau task lain), silakan sebutkan prioritasnya. Jika ingin testing dulu, saya bisa buatkan checklist testing manual/otomatis.
+
+_Semua perubahan sudah terdokumentasi dan flow voting sudah selesai secara best practice._

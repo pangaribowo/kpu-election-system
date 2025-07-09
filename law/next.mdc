@@ -1,0 +1,15 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Saran Langkah Selanjutnya (Agar Workflow On-Track & Best Practice):
+Selesaikan satu tahap secara penuh sebelum lanjut ke tahap berikutnya.
+Setelah Tahap 1 (register/login) selesai dan aman, langsung lanjut ke Tahap 2 (voting):
+Implementasi API voting
+Integrasi form voting di frontend
+Proteksi akses voting
+Testing end-to-end
+Setelah voting selesai, lanjut ke quick count, lalu CRUD kandidat/admin.
+Lakukan audit dan update checklist setiap selesai satu tahap.
+Dokumentasikan setiap perubahan penting di file ini dan di dokumentasi proyek.
