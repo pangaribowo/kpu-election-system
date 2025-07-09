@@ -1,4 +1,4 @@
-import LoginForm from '../components/LoginForm'
+import LoginScreen from '../components/LoginForm'
 import { useVoting } from '../components/VotingContext'
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -16,7 +16,7 @@ const LoginPage = () => {
   if (!isAuthChecked) return null
   if (currentUser) return null
 
-  return <LoginForm />
+  return <LoginScreen />
 }
 
 export default LoginPage 

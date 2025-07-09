@@ -13,7 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Cek apakah username sudah ada
+<<<<<<< Updated upstream
   const { data: existingUser, error: findError } = await supabase
+=======
+  const { data: existingUser } = await supabase
+>>>>>>> Stashed changes
     .from('users')
     .select('id')
     .eq('username', username)

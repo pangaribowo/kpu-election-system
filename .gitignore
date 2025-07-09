@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .env
+<<<<<<< Updated upstream
 gento/
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
@@ -43,3 +44,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+=======
+law/
+>>>>>>> Stashed changes
