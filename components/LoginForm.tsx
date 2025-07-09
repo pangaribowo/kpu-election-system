@@ -153,14 +153,7 @@ const LoginScreen = () => {
               <label htmlFor="reg-name">Nama Lengkap:</label>
               <input type="text" id="reg-name" ref={regNameRef} required />
             </div>
-            <div className="form-group">
-              <label htmlFor="reg-role">Daftar sebagai:</label>
-              <select id="reg-role" ref={regRoleRef} required>
-                <option value="">Pilih Role</option>
-                <option value="admin">Administrator</option>
-                <option value="user">Pemilih</option>
-              </select>
-            </div>
+            {/* Role dihapus dari form register, semua user akan didaftarkan sebagai user oleh backend */}
             <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
           </form>
         )}
