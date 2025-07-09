@@ -15,10 +15,7 @@ const LoginScreen = () => {
   const usernameRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
   const roleRef = useRef<HTMLSelectElement>(null)
-  const [loading, setLoading] = useState(false)
 
-<<<<<<< Updated upstream
-=======
   // Register refs
   const regUsernameRef = useRef<HTMLInputElement>(null)
   const regPasswordRef = useRef<HTMLInputElement>(null)
@@ -26,7 +23,6 @@ const LoginScreen = () => {
   const regRoleRef = useRef<HTMLSelectElement>(null)
 
   // Handle Login
->>>>>>> Stashed changes
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     const username = usernameRef.current?.value.trim() || ''
@@ -57,9 +53,6 @@ const LoginScreen = () => {
       setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
     } finally {
       setLoading(false)
-<<<<<<< Updated upstream
-    }
-=======
     }
   }
 
@@ -94,7 +87,6 @@ const LoginScreen = () => {
     } finally {
       setLoading(false)
     }
->>>>>>> Stashed changes
   }
 
   const handleShowManual = () => {
@@ -127,27 +119,6 @@ const LoginScreen = () => {
           <h1>Sistem Pemilihan</h1>
           <p>Ketua Organisasi 2026</p>
         </div>
-<<<<<<< Updated upstream
-        <form id="login-form" className="login-form" onSubmit={handleLogin}>
-          <div className="form-group">
-            <label htmlFor="username">Username:</label>
-            <input type="text" id="username" ref={usernameRef} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password:</label>
-            <input type="password" id="password" ref={passwordRef} required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="role">Login sebagai:</label>
-            <select id="role" ref={roleRef} required>
-              <option value="">Pilih Role</option>
-              <option value="admin">Administrator</option>
-              <option value="user">Pemilih</option>
-            </select>
-          </div>
-          <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
-        </form>
-=======
         {tab === 'login' ? (
           <form id="login-form" className="login-form" onSubmit={handleLogin}>
             <div className="form-group">
@@ -193,7 +164,6 @@ const LoginScreen = () => {
             <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
           </form>
         )}
->>>>>>> Stashed changes
         <div className="login-info">
           <h4>Akun Demo:</h4>
           <p><strong>Admin:</strong> admin / admin123</p>
