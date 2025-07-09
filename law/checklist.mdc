@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+1. Urutan Prioritas Bertahap & Krusial
+Tahap 1: Fondasi Sistem & Autentikasi
+[ ] 1.1. Setup koneksi database (Supabase/PostgreSQL)
+[ ] 1.2. Buat tabel user & kandidat di database
+[ ] 1.3. Implementasi API autentikasi (login, register)
+[ ] 1.4. Migrasi login frontend agar terhubung ke API & database
+Tahap 2: Fitur Voting (Core)
+[ ] 2.1. Buat tabel voting/suara di database
+[ ] 2.2. Implementasi API voting (submit suara, validasi)
+[ ] 2.3. Migrasi form voting di frontend agar submit ke API
+Tahap 3: Quick Count & Hasil
+[ ] 3.1. Implementasi API untuk quick count (ambil hasil suara)
+[ ] 3.2. Migrasi tampilan quick count di frontend agar fetch dari API
+Tahap 4: CRUD Data Pendukung
+[ ] 4.1. Implementasi API CRUD user & kandidat (khusus admin)
+[ ] 4.2. Migrasi halaman admin panel agar fetch & update data via API
+Tahap 5: Manual, Notifikasi, & Fitur Lain
+[ ] 5.1. Implementasi API & migrasi data manual/panduan
+[ ] 5.2. Implementasi notifikasi/log aktivitas (jika diperlukan)
+Tahap 6: Keamanan & Validasi
+[ ] 6.1. Hash password di backend
+[ ] 6.2. Validasi input (frontend & backend)
+[ ] 6.3. Proteksi route (role-based access)
+Tahap 7: Testing & Dokumentasi
+[ ] 7.1. Unit test API utama (auth, voting, quick count)
+[ ] 7.2. Integration test alur utama
+[ ] 7.3. Update dokumentasi pengembangan
+Checklist Komprehensif & Eksekusi Strategi
+Saya akan mulai dari Tahap 1 (fondasi & autentikasi), karena ini adalah pondasi sistem dan menjadi syarat utama fitur lain berjalan.
+Checklist Eksekusi Tahap 1 (Fondasi & Autentikasi)
+[ ] Cek/siapkan koneksi Supabase di lib/supabaseClient.ts
+[ ] Rancang skema tabel user & kandidat (nama, email, password, role, dsb)
+[ ] Buat/migrasi tabel user & kandidat di database
+[ ] Implementasi API autentikasi (login, register) di Next.js API routes
+[ ] Update/migrasi LoginForm di frontend agar submit ke API
+[ ] Uji login & register end-to-end
