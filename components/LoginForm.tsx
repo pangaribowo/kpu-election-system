@@ -1,9 +1,8 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useVoting } from './VotingContext'
 
 const LoginForm = () => {
   const {
-    users,
     setCurrentUser,
     setActiveTab,
     setNotification,
@@ -12,8 +11,9 @@ const LoginForm = () => {
   const usernameRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
   const roleRef = useRef<HTMLSelectElement>(null)
+  const [loading, setLoading] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     const username = usernameRef.current?.value.trim() || ''
     const password = passwordRef.current?.value.trim() || ''
@@ -22,14 +22,28 @@ const LoginForm = () => {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
       return
     }
-    const user = users[username]
-    if (!user || user.password !== password || user.role !== role) {
-      setNotification({ message: 'Username, password, atau role tidak valid!', type: 'error' })
-      return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      const result = await res.json()
+      if (!res.ok) {
+        setNotification({ message: result.error || 'Login gagal', type: 'error' })
+      } else if (result.user.role !== role) {
+        setNotification({ message: 'Role tidak sesuai!', type: 'error' })
+      } else {
+        setCurrentUser({ username: result.user.username, role: result.user.role, name: result.user.name })
+        setActiveTab('voting')
+        setNotification({ message: `Selamat datang, ${result.user.name}!`, type: 'success' })
+      }
+    } catch (err) {
+      setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
+    } finally {
+      setLoading(false)
     }
-    setCurrentUser({ username, role: user.role, name: user.name })
-    setActiveTab('voting')
-    setNotification({ message: `Selamat datang, ${user.name}!`, type: 'success' })
   }
 
   const handleShowManual = () => {
@@ -63,7 +77,7 @@ const LoginForm = () => {
               <option value="user">Pemilih</option>
             </select>
           </div>
-          <button type="submit" className="btn-primary">Login</button>
+          <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
         </form>
         <div className="login-info">
           <h4>Akun Demo:</h4>

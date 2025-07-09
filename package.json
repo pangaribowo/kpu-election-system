@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",
+    "bcryptjs": "^3.0.2",
     "next": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
