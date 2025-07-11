@@ -1071,6 +1071,48 @@ input, button, select, textarea {
   @apply text-yellow-500 dark:text-yellow-400; /* Adjusted icon colors */
 }
 
+/* Tombol Toggle Dark Mode */
+.darkmode-toggle-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 1001;
+  background: #f3f4f6;
+  color: #2563eb;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.darkmode-toggle-btn:hover {
+  background: #e0e7ef;
+  color: #1e40af;
+  transform: scale(1.08);
+}
+.darkmode-toggle-btn.active {
+  background: #2563eb;
+  color: #fff;
+}
+.dark .darkmode-toggle-btn {
+  background: #23272f;
+  color: #60a5fa;
+}
+.dark .darkmode-toggle-btn:hover {
+  background: #18181b;
+  color: #fff;
+}
+.dark .darkmode-toggle-btn.active {
+  background: #60a5fa;
+  color: #23272f;
+}
+
 
 @media (max-width: 900px) {
   .sidebar {
@@ -1282,4 +1324,545 @@ input, button, select, textarea {
   .sidebar.open {
     transform: translateX(0);
   }
+}
+
+/* Dark mode khusus halaman login */
+.dark .login-screen {
+  background: linear-gradient(135deg, #18181b, #23272f);
+}
+.dark .login-container {
+  background: #23272f;
+  color: #f3f4f6;
+  box-shadow: 0 2px 16px rgba(31,38,135,0.18);
+  border: 1px solid #27272a;
+}
+.dark .login-header h1 {
+  color: #60a5fa;
+}
+.dark .login-header p {
+  color: #a1a1aa;
+}
+.dark .login-form {
+  color: #f3f4f6;
+}
+.dark .login-info {
+  background: #18181b;
+  color: #a1a1aa;
+  border: 1px solid #27272a;
+}
+.dark .login-info h4 {
+  color: #60a5fa;
+}
+.dark .login-info p {
+  color: #a1a1aa;
+}
+.dark .login-footer {
+  color: #a1a1aa;
+}
+
+/* Input box di dark mode (login & register) */
+.dark .login-container input,
+.dark .login-container textarea,
+.dark .login-container select {
+  background: #18181b;
+  color: #f3f4f6;
+  border: 1px solid #27272a;
+}
+
+.dark .login-container input:focus,
+.dark .login-container textarea:focus,
+.dark .login-container select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb33;
+  outline: none;
+}
+
+/* Tab login/register di dark mode */
+.dark .login-container .login-tab-btn {
+  background: #23272f;
+  color: #a1a1aa;
+}
+.dark .login-container .login-tab-btn.active {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+/* Tab login/register di mode terang */
+.login-container .login-tab-btn {
+  background: #fff;
+  color: var(--text-secondary);
+  transition: background 0.3s, color 0.3s;
+  border-radius: 8px 8px 0 0;
+  border: none;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+}
+.login-container .login-tab-btn.active {
+  background: var(--accent-primary);
+  color: #fff;
+  z-index: 1;
+}
+
+/* Judul besar modern halaman login */
+.login-title h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--accent-primary);
+  text-align: center;
+  font-family: 'Inter', system-ui, sans-serif;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.login-title .login-title-accent {
+  width: 80px;
+  height: 4px;
+  background: var(--accent-primary);
+  border-radius: 2px;
+  margin: 0 auto 0.5rem auto;
+}
+@media (max-width: 600px) {
+  .login-title h1 {
+    font-size: 1.5rem;
+  }
+  .login-title .login-title-accent {
+    width: 48px;
+    height: 3px;
+  }
+}
+.dark .login-title h1 {
+  color: #60a5fa;
+}
+.dark .login-title .login-title-accent {
+  background: #60a5fa;
+}
+
+/* Input icon group */
+.input-icon-group {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+.input-icon-group input {
+  padding-left: 36px;
+}
+
+/* Modal overlay for forgot password */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-box {
+  background: #fff;
+  padding: 32px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  min-width: 320px;
+  max-width: 90vw;
+  animation: fadeIn 0.3s;
+}
+.dark .modal-box {
+  background: #23272f;
+  color: #f3f4f6;
+}
+.forgot-link {
+  color: var(--accent-primary);
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s;
+}
+.forgot-link:hover {
+  color: var(--accent-secondary);
+}
+/* Animasi transisi antar tab/form */
+.fade-in {
+  animation: fadeIn 0.4s;
+}
+
+/* Tombol Google modern */
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: #fff;
+  color: #222;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s, border-color 0.2s;
+  padding: 12px 0;
+  gap: 10px;
+  margin-bottom: 8px;
+  min-height: 48px;
+  cursor: pointer;
+}
+.btn-google:hover {
+  background: #f1f5f9;
+  color: #111;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  border-color: #cbd5e1;
+}
+.btn-google:active {
+  background: #e0e7ef;
+  color: #111;
+}
+.btn-google:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.google-logo {
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  width: 22px;
+  height: 22px;
+}
+
+/* Dark mode untuk tombol Google */
+.dark .btn-google {
+  background: #23272f;
+  color: #f3f4f6;
+  border-color: #27272a;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.dark .btn-google:hover {
+  background: #18181b;
+  color: #fff;
+  border-color: #334155;
+}
+.dark .btn-google:active {
+  background: #18181b;
+  color: #fff;
+}
+.dark .btn-google:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.login-or-separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0 16px 0;
+}
+.login-or-separator::before,
+.login-or-separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid #e5e7eb;
+  margin: 0 12px;
+}
+.login-or-text {
+  color: #64748b;
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Tombol Logout Modern */
+.btn-logout-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.08);
+  border: none;
+  outline: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  text-decoration: none;
+}
+.btn-logout-modern:hover, .btn-logout-modern:focus {
+  background: linear-gradient(90deg, #fecaca 0%, #f87171 100%);
+  color: #b91c1c;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.18);
+  transform: scale(1.04);
+}
+.btn-logout-modern:active {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.btn-logout-modern:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.btn-logout-modern svg {
+  color: #dc2626;
+  transition: color 0.2s, transform 0.2s;
+}
+.btn-logout-modern:hover svg {
+  color: #b91c1c;
+  transform: rotate(-10deg) scale(1.1);
+}
+.btn-logout-modern span {
+  color: #dc2626;
+  text-decoration: none !important;
+}
+.dark .btn-logout-modern {
+  background: linear-gradient(90deg, #7f1d1d 0%, #991b1b 100%);
+  color: #fca5a5;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.18);
+}
+.dark .btn-logout-modern:hover, .dark .btn-logout-modern:focus {
+  background: linear-gradient(90deg, #991b1b 0%, #ef4444 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.28);
+}
+.dark .btn-logout-modern:active {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+.dark .btn-logout-modern svg {
+  color: #fca5a5;
+}
+.dark .btn-logout-modern:hover svg {
+  color: #fff;
+}
+.dark .btn-logout-modern span {
+  color: #fca5a5 !important;
+}
+
+/* Tombol Close Sidebar Modern */
+.btn-close-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #dbeafe 0%, #2563eb22 100%);
+  color: #2563eb;
+  border: none;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+}
+.btn-close-modern:hover, .btn-close-modern:focus {
+  background: linear-gradient(90deg, #2563eb22 0%, #2563eb44 100%);
+  color: #1e40af;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.18);
+  transform: scale(1.08);
+}
+.btn-close-modern:active {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+.btn-close-modern:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.btn-close-modern svg {
+  color: #2563eb;
+  transition: color 0.2s, transform 0.2s;
+}
+.btn-close-modern:hover svg {
+  color: #1e40af;
+  transform: rotate(-10deg) scale(1.1);
+}
+.dark .btn-close-modern {
+  background: linear-gradient(90deg, #1e293b 0%, #2563eb33 100%);
+  color: #60a5fa;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.18);
+}
+.dark .btn-close-modern:hover, .dark .btn-close-modern:focus {
+  background: linear-gradient(90deg, #2563eb33 0%, #60a5fa44 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.28);
+}
+.dark .btn-close-modern:active {
+  background: #1e293b;
+  color: #60a5fa;
+}
+.dark .btn-close-modern svg {
+  color: #60a5fa;
+}
+.dark .btn-close-modern:hover svg {
+  color: #fff;
+}
+
+/* Tombol Hamburger Modern */
+.btn-hamburger-modern {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #dbeafe 0%, #2563eb22 100%);
+  color: #2563eb;
+  border: none;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+  position: relative;
+  z-index: 200;
+}
+.btn-hamburger-modern:hover, .btn-hamburger-modern:focus {
+  background: linear-gradient(90deg, #2563eb22 0%, #2563eb44 100%);
+  color: #1e40af;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.18);
+  transform: scale(1.08);
+}
+.btn-hamburger-modern:active {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+.btn-hamburger-modern:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+/* Hamburger bar modern */
+.btn-hamburger-modern .hamburger-bar {
+  width: 28px;
+  height: 3px;
+  background: #2563eb;
+  border-radius: 9em;
+  margin: 0;
+  transition: background 0.3s, transform 0.3s;
+}
+.btn-hamburger-modern .hamburger-bar + .hamburger-bar {
+  margin-top: 7px;
+}
+.btn-hamburger-modern:hover .hamburger-bar {
+  background: #1e40af;
+}
+.dark .btn-hamburger-modern {
+  background: linear-gradient(90deg, #1e293b 0%, #2563eb33 100%);
+  color: #60a5fa;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.18);
+}
+.dark .btn-hamburger-modern:hover, .dark .btn-hamburger-modern:focus {
+  background: linear-gradient(90deg, #2563eb33 0%, #60a5fa44 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.28);
+}
+.dark .btn-hamburger-modern:active {
+  background: #1e293b;
+  color: #60a5fa;
+}
+.dark .btn-hamburger-modern .hamburger-bar {
+  background: #60a5fa;
+}
+.dark .btn-hamburger-modern:hover .hamburger-bar {
+  background: #fff;
+}
+
+/* Dashboard Styles Modern */
+.dashboard-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  text-align: center;
+  transition: background 0.3s, color 0.3s;
+}
+.dark .dashboard-container {
+  background: #23272f;
+  color: #f3f4f6;
+}
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 8px;
+  transition: color 0.3s;
+}
+.dark .dashboard-title {
+  color: #60a5fa;
+}
+.dashboard-role {
+  color: #64748b;
+  margin-bottom: 24px;
+  transition: color 0.3s;
+}
+.dark .dashboard-role {
+  color: #a1a1aa;
+}
+.dashboard-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+.dashboard-stat {
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 18px 28px;
+  min-width: 120px;
+  box-shadow: 0 1px 4px rgba(59,130,246,0.07);
+  transition: background 0.3s, color 0.3s;
+}
+.dark .dashboard-stat {
+  background: #18181b;
+}
+.stat-label {
+  color: #64748b;
+  font-size: 1rem;
+  margin-bottom: 6px;
+  transition: color 0.3s;
+}
+.dark .stat-label {
+  color: #a1a1aa;
+}
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2563eb;
+  transition: color 0.3s;
+}
+.dark .stat-value {
+  color: #60a5fa;
+}
+
+/* Container utama dashboard dan section mendukung dark mode */
+.container, .main-container, .section, .dashboard-container {
+  background: #fff;
+  transition: background 0.3s, color 0.3s;
+}
+.dark .container, .dark .main-container, .dark .section, .dark .dashboard-container {
+  background: #23272f;
+  color: #f3f4f6;
 }
