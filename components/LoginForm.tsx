@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
+import { Mail, Lock, Eye, EyeOff, KeyRound, User, Phone } from 'lucide-react'
 
 const LoginScreen = () => {
   const {
@@ -35,6 +36,11 @@ const LoginScreen = () => {
   const [otpPhone, setOtpPhone] = useState('')
   const [otpSent, setOtpSent] = useState(false)
   const [otpLoading, setOtpLoading] = useState(false)
+
+  // Forgot password state
+  const [showForgot, setShowForgot] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [forgotLoading, setForgotLoading] = useState(false)
 
   // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
@@ -201,6 +207,34 @@ const LoginScreen = () => {
     }
   }
 
+  // Social login Google
+  const handleGoogleLogin = async () => {
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
+      if (error) setNotification({ message: error.message, type: 'error' })
+    } finally {
+      setLoading(false)
+    }
+  }
+  // Forgot password
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!forgotEmail) {
+      setNotification({ message: 'Masukkan email untuk reset password!', type: 'error' })
+      return
+    }
+    setForgotLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail)
+      if (error) setNotification({ message: error.message, type: 'error' })
+      else setNotification({ message: 'Link reset password dikirim ke email Anda.', type: 'success' })
+      setShowForgot(false)
+    } finally {
+      setForgotLoading(false)
+    }
+  }
+
   const handleShowManual = () => {
     setCurrentUser({ username: 'guest', role: 'user', name: 'Guest' })
     setActiveTab('manual')
@@ -218,122 +252,168 @@ const LoginScreen = () => {
   return (
     <div id="login-screen" className="login-screen">
       <div className="login-container">
-        <div className="flex justify-center mb-6 border-b border-gray-200 dark:border-gray-700">
+        {/* Judul besar modern di atas tab */}
+        <div className="login-title" style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--accent-primary)', textAlign: 'center', fontFamily: 'Inter, system-ui, sans-serif', marginBottom: 8, textTransform: 'uppercase' }}>
+            Sistem Voting KPU
+          </h1>
+          <div style={{ width: 80, height: 4, background: 'var(--accent-primary)', borderRadius: 2, margin: '0 auto 0.5rem auto' }} />
+        </div>
+        <div className="flex justify-center mb-6 transition-all duration-300">
           <button
-            className={`px-6 py-3 text-sm font-medium transition-colors duration-150 focus:outline-none
-              ${tab === 'login'
-                ? 'border-b-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-              }`}
+            className={`login-tab-btn ${tab === 'login' ? 'active' : ''}`}
+            style={{marginRight: 8, padding: '8px 24px', borderRadius: '8px 8px 0 0', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}
             onClick={() => setTab('login')}
           >
             Login
           </button>
           <button
-            className={`px-6 py-3 text-sm font-medium transition-colors duration-150 focus:outline-none
-              ${tab === 'register'
-                ? 'border-b-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
-              }`}
+            className={`login-tab-btn ${tab === 'register' ? 'active' : ''}`}
+            style={{padding: '8px 24px', borderRadius: '8px 8px 0 0', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}
             onClick={() => setTab('register')}
           >
             Register
           </button>
         </div>
-        <div className="login-header">
-          <h1>Sistem Pemilihan</h1>
-          <p>Ketua Organisasi 2026</p>
-        </div>
         {tab === 'login' ? (
           <>
-            <form id="login-form" className="login-form space-y-5" onSubmit={handleLogin}>
-              <div className="form-group">
-                <label htmlFor="login-email" className={formLabelClass}>Email:</label>
-                <input type="email" id="login-email" ref={emailRef} required placeholder="Masukkan email Anda" className={formInputClass} />
-                <small className={formHelperClass}>Contoh: user@email.com</small>
+          <form id="login-form" className="login-form fade-in" onSubmit={handleLogin}>
+            <div className="form-group">
+              <label htmlFor="login-email">Email:</label>
+              <div className="input-icon-group">
+                <Mail size={18} className="input-icon" />
+                <input type="email" id="login-email" ref={emailRef} required placeholder="Masukkan email Anda" />
               </div>
-              <div className="form-group">
-                <label htmlFor="login-password" className={formLabelClass}>Password:</label>
-                <div className={passwordWrapperClass}>
-                  <input type={showLoginPassword ? 'text' : 'password'} id="login-password" ref={passwordRef} required placeholder="Masukkan password Anda" className={formInputClass} />
-                  <button type="button" className={showPasswordButtonClass} onClick={() => setShowLoginPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                    {showLoginPassword ? '🙈' : '👁️'}
-                  </button>
-                </div>
-                <small className={formHelperClass}>Password minimal 8 karakter</small>
+              <small className="input-helper">Contoh: user@email.com</small>
+            </div>
+            <div className="form-group">
+              <label htmlFor="login-password">Password:</label>
+              <div className="input-icon-group">
+                <Lock size={18} className="input-icon" />
+                <input type={showLoginPassword ? 'text' : 'password'} id="login-password" ref={passwordRef} required placeholder="Masukkan password Anda" />
+                <button type="button" className="show-password-btn" onClick={() => setShowLoginPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
+                  {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-              <div className="form-group">
-                <label htmlFor="role" className={formLabelClass}>Login sebagai:</label>
-                <select id="role" ref={roleRef} required className={formInputClass}>
-                  <option value="">Pilih Role</option>
-                  <option value="admin">Administrator</option>
-                  <option value="user">Pemilih</option>
-                </select>
+              <small className="input-helper">Password minimal 8 karakter</small>
+            </div>
+            <div className="form-group">
+              <label htmlFor="login-role">Role:</label>
+              <select id="login-role" ref={roleRef} required>
+                <option value="">Pilih Role</option>
+                <option value="admin">Petugas</option>
+                <option value="user">Pemilih</option>
+              </select>
+            </div>
+            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
+            <div className="flex justify-end mt-2">
+              <button type="button" className="forgot-link" onClick={() => setShowForgot(true)}>Lupa password?</button>
+            </div>
+          </form>
+          <div className="login-or-separator">
+            <span className="login-or-text">atau</span>
+          </div>
+          <button type="button" className="btn-google w-full mt-2 flex items-center justify-center gap-2" onClick={handleGoogleLogin} disabled={loading} style={{fontWeight:600}}>
+            <span className="google-logo" style={{display:'flex',alignItems:'center',marginRight:12}}>
+              {/* SVG Google G resmi */}
+              <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <g>
+                  <path d="M19.6 10.23c0-.68-.06-1.36-.18-2.02H10v3.82h5.42c-.23 1.23-.93 2.27-1.98 2.97v2.47h3.2c1.87-1.72 2.96-4.25 2.96-7.24z" fill="#4285F4"/>
+                  <path d="M10 20c2.7 0 4.97-.9 6.63-2.44l-3.2-2.47c-.89.6-2.02.96-3.43.96-2.64 0-4.87-1.78-5.67-4.18H1.05v2.62C2.79 17.98 6.13 20 10 20z" fill="#34A853"/>
+                  <path d="M4.33 12.87A5.99 5.99 0 0 1 4 10c0-.99.18-1.95.33-2.87V4.51H1.05A9.98 9.98 0 0 0 0 10c0 1.64.39 3.19 1.05 4.49l3.28-2.62z" fill="#FBBC05"/>
+                  <path d="M10 3.96c1.47 0 2.78.51 3.81 1.51l2.85-2.85C14.97.9 12.7 0 10 0 6.13 0 2.79 2.02 1.05 5.51l3.28 2.62C5.13 5.74 7.36 3.96 10 3.96z" fill="#EA4335"/>
+                </g>
+              </svg>
+            </span>
+            <span>Login dengan Google</span>
+          </button>
+          <div className="login-or-separator">
+            <span className="login-or-text">atau login dengan nomor HP</span>
+          </div>
+          <form id="otp-login-form" className="login-form fade-in" onSubmit={handleSendOtp}>
+            <div className="form-group">
+              <label htmlFor="otp-phone">Nomor HP:</label>
+              <div className="input-icon-group">
+                <Phone size={18} className="input-icon" />
+                <input type="tel" id="otp-phone" value={otpPhone} onChange={e => setOtpPhone(e.target.value)} required placeholder="Contoh: +6281234567890" />
               </div>
-              <button type="submit" className={formButtonClass} disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
-            </form>
-            <div className="my-6 text-center text-sm font-semibold text-gray-500 dark:text-gray-400">atau</div>
-            <form id="otp-login-form" className="login-form space-y-5" onSubmit={handleSendOtp}>
-              <div className="form-group">
-                <label htmlFor="otp-phone" className={formLabelClass}>Login via Nomor HP (OTP):</label>
-                <input type="tel" id="otp-phone" value={otpPhone} onChange={e => setOtpPhone(e.target.value)} required placeholder="+628xxxxxxxxxx" className={formInputClass} />
-                <small className={formHelperClass}>Masukkan nomor HP format internasional, contoh: <b>+6281234567890</b></small>
+            </div>
+            <button type="submit" className="btn-primary w-full" disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
+          </form>
+          {/* Modal forgot password */}
+          {showForgot && (
+            <div className="modal-overlay">
+              <div className="modal-box">
+                <h4>Reset Password</h4>
+                <form onSubmit={handleForgotPassword}>
+                  <div className="form-group">
+                    <label htmlFor="forgot-email">Email:</label>
+                    <input type="email" id="forgot-email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required />
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <button type="submit" className="btn-primary" disabled={forgotLoading}>{forgotLoading ? 'Mengirim...' : 'Kirim Link Reset'}</button>
+                    <button type="button" className="btn-secondary" onClick={() => setShowForgot(false)}>Batal</button>
+                  </div>
+                </form>
               </div>
-              <button type="submit" className={formButtonClass} disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
-            </form>
+            </div>
+          )}
           </>
         ) : (
-          <form id="register-form" className="login-form space-y-5" onSubmit={handleRegister}>
+          <form id="register-form" className="login-form fade-in" onSubmit={handleRegister}>
             <div className="form-group">
-              <label htmlFor="reg-username" className={formLabelClass}>Username:</label>
-              <input type="text" id="reg-username" ref={regUsernameRef} required placeholder="Masukkan username unik" className={formInputClass} />
-              <small className={formHelperClass}>Hanya huruf/angka, tanpa spasi. Contoh: user123</small>
+              <label htmlFor="reg-username">Username:</label>
+              <div className="input-icon-group">
+                <User size={18} className="input-icon" />
+                <input type="text" id="reg-username" ref={regUsernameRef} required placeholder="Username unik" />
+              </div>
             </div>
             <div className="form-group">
-              <label htmlFor="reg-password" className={formLabelClass}>Password:</label>
-              <div className={passwordWrapperClass}>
-                <input type={showRegPassword ? 'text' : 'password'} id="reg-password" ref={regPasswordRef} required placeholder="Min. 8 karakter" className={formInputClass} />
-                <button type="button" className={showPasswordButtonClass} onClick={() => setShowRegPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                  {showRegPassword ? '🙈' : '👁️'}
+              <label htmlFor="reg-name">Nama Lengkap:</label>
+              <div className="input-icon-group">
+                <User size={18} className="input-icon" />
+                <input type="text" id="reg-name" ref={regNameRef} required placeholder="Nama lengkap Anda" />
+              </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="reg-email">Email:</label>
+              <div className="input-icon-group">
+                <Mail size={18} className="input-icon" />
+                <input type="email" id="reg-email" ref={regEmailRef} required placeholder="Email aktif" />
+              </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="reg-phone">Nomor HP:</label>
+              <div className="input-icon-group">
+                <Phone size={18} className="input-icon" />
+                <input type="tel" id="reg-phone" ref={regPhoneRef} required placeholder="Contoh: +6281234567890" />
+              </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="reg-password">Password:</label>
+              <div className="input-icon-group">
+                <Lock size={18} className="input-icon" />
+                <input type={showRegPassword ? 'text' : 'password'} id="reg-password" ref={regPasswordRef} required placeholder="Password minimal 8 karakter" />
+                <button type="button" className="show-password-btn" onClick={() => setShowRegPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
+                  {showRegPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              <small className={formHelperClass}>Password minimal 8 karakter</small>
             </div>
             <div className="form-group">
-              <label htmlFor="reg-confirm-password" className={formLabelClass}>Konfirmasi Password:</label>
-              <div className={passwordWrapperClass}>
-                <input type={showRegConfirmPassword ? 'text' : 'password'} id="reg-confirm-password" ref={regConfirmPasswordRef} required placeholder="Ulangi password" className={formInputClass} />
-                <button type="button" className={showPasswordButtonClass} onClick={() => setShowRegConfirmPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                  {showRegConfirmPassword ? '🙈' : '👁️'}
+              <label htmlFor="reg-confirm-password">Konfirmasi Password:</label>
+              <div className="input-icon-group">
+                <Lock size={18} className="input-icon" />
+                <input type={showRegConfirmPassword ? 'text' : 'password'} id="reg-confirm-password" ref={regConfirmPasswordRef} required placeholder="Ulangi password" />
+                <button type="button" className="show-password-btn" onClick={() => setShowRegConfirmPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
+                  {showRegConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              <small className={formHelperClass}>Ulangi password yang sama</small>
             </div>
-            <div className="form-group">
-              <label htmlFor="reg-name" className={formLabelClass}>Nama Lengkap:</label>
-              <input type="text" id="reg-name" ref={regNameRef} required placeholder="Masukkan nama lengkap Anda" className={formInputClass} />
-              <small className={formHelperClass}>Contoh: Budi Santoso</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-email" className={formLabelClass}>Email:</label>
-              <input type="email" id="reg-email" ref={regEmailRef} required placeholder="Masukkan email aktif" className={formInputClass} />
-              <small className={formHelperClass}>Contoh: user@email.com</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-phone" className={formLabelClass}>Nomor HP:</label>
-              <input type="tel" id="reg-phone" ref={regPhoneRef} required placeholder="+628xxxxxxxxxx" className={formInputClass} />
-              <small className={formHelperClass}>Format internasional, contoh: <b>+6281234567890</b></small>
-            </div>
-            <button type="submit" className={formButtonClass} disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
+            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
           </form>
         )}
-        <div className="login-info mt-8">
-          <h4>Akun Demo:</h4>
-          <p><strong>Admin:</strong> admin@example.com / admin123</p>
-          <p><strong>User:</strong> user@example.com / user123</p>
-        </div>
-        <div className="login-footer mt-6">
-          <button id="show-manual" className="btn-secondary bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-500 text-white py-2 px-4 rounded-lg text-sm" type="button" onClick={handleShowManual}>Lihat Manual</button>
+        <div className="login-footer">
+          <button id="show-manual" className="btn-secondary" type="button" onClick={handleShowManual}>Lihat Manual</button>
         </div>
       </div>
     </div>
