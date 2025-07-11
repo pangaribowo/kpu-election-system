@@ -59,7 +59,7 @@ const RegisterForm = () => {
         <label htmlFor="reg-role">Daftar sebagai:</label>
         <select id="reg-role" ref={roleRef} required>
           <option value="">Pilih Role</option>
-          <option value="admin">Administrator</option>
+          <option value="admin">Petugas</option>
           <option value="user">Pemilih</option>
         </select>
       </div>
