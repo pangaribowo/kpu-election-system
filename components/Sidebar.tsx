@@ -90,11 +90,11 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
   return (
     <aside
       ref={sidebarRef}
-      className={sidebarClass + ' overflow-auto z-[300]'}
+      className={sidebarClass + ' overflow-auto z-[300] bg-white dark:bg-gray-900'}
       style={{ transitionProperty: 'width, box-shadow, background, transform', boxShadow: '0 8px 32px 0 rgba(31,38,135,0.15)', zIndex: 300 }}
     >
       {/* Header modern */}
-      <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative">
+      <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative bg-white dark:bg-gray-900">
         {/* Tombol close di kanan atas (z-50, paling atas) */}
         <button
           type="button"
@@ -143,7 +143,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
         </ul>
       </nav>
       {/* Footer modern */}
-      <div className="sidebar-footer mt-auto mb-6 flex flex-col items-center gap-3 px-2">
+      <div className="sidebar-footer mt-auto mb-6 flex flex-col items-center gap-3 px-2 bg-white dark:bg-gray-900">
         <button
           type="button"
           onClick={handleLogout}
