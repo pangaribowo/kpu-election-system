@@ -160,4 +160,9 @@ Checklist Eksekusi Tahap 1 (Fondasi & Autentikasi)
 ---
 
 **Saya akan langsung update checklist @/law dan mulai eksekusi implementasi halaman OTP serta integrasi Supabase Auth phone/OTP. Setelah itu, sistem siap untuk E2E testing dan task berikutnya.**  
-Jika ada preferensi khusus untuk tampilan/UX halaman OTP, silakan informasikan!
+Jika ada preferensi khusus untuk tampilan/UX halaman OTP, silakan informasikan!**
+```
+[x] Refactor Sidebar agar lebih modern, rapi, dan sesuai best practice UI/UX 2025
+[x] Perbesar gap antar menu, tambah padding vertikal nav, divider sebelum logout, dan margin bawah menu utama
+[x] Testing visual sidebar: pastikan menu tidak menempel, ada spasi antar menu, dan divider jelas
+[x] Update dokumentasi dan checklist setelah perubahan sidebar

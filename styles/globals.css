@@ -1,4 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+/* Import Inter dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+html, body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #222;
+  background: #f9f9fb;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Terapkan juga ke elemen utama agar konsisten */
+input, button, select, textarea {
+  font-family: inherit;
+}
 
 * {
   margin: 0;
@@ -22,14 +39,6 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-body {
-  font-family: "Inter", sans-serif;
-  background: var(--primary-bg);
-  color: var(--text-primary);
-  min-height: 100vh;
-  line-height: 1.6;
 }
 
 /* Login Styles */
@@ -797,6 +806,14 @@ body {
   }
 }
 
+@keyframes notif-fade-in {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.notification-fade-in {
+  animation: notif-fade-in 0.3s;
+}
+
 /* Color Themes for Candidates */
 .theme-blue .candidate-number {
   background: #2563eb;
@@ -928,4 +945,258 @@ body {
   .section {
     display: block !important;
   }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: 2px 0 16px rgba(0,0,0,0.07);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 16px 0;
+  transition: transform 0.2s;
+}
+.sidebar-header {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2563eb;
+  padding: 24px 24px 12px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f9f9fb;
+}
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 0 0 0;
+}
+.sidebar-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 0;
+}
+.sidebar-profile {
+  margin-bottom: 12px;
+  padding: 0 24px;
+}
+.sidebar-item {
+  margin-bottom: 4px;
+  padding: 0 24px;
+}
+.sidebar-link {
+  display: block;
+  padding: 10px 0;
+  color: #222;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar-link.active, .sidebar-link:hover {
+  background: #2563eb22;
+  color: #2563eb;
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 24px 0 24px;
+  border-top: 1px solid #f1f5f9;
+  background: #f9f9fb;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.sidebar-user {
+  font-size: 0.98rem;
+  color: #444;
+  margin-bottom: 4px;
+}
+.btn-logout {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-logout:hover {
+  background: #b91c1c;
+}
+
+/* Responsive sidebar (mobile) */
+.sidebar-hamburger {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 200;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hamburger-bar {
+  width: 28px;
+  height: 3px;
+  background: #2563eb;
+  border-radius: 2px;
+}
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.12);
+  z-index: 99;
+}
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Dark mode global support */
+html {
+  transition: background 0.3s, color 0.3s;
+}
+body {
+  @apply bg-white text-gray-900 transition-colors duration-300;
+}
+html.dark body {
+  @apply bg-gray-900 text-gray-100 transition-colors duration-300;
+}
+
+/* Optional: transisi smooth untuk elemen utama */
+.sidebar, .sidebar-header, .sidebar-footer, .sidebar-menu, .sidebar-link, .btn-logout {
+  transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Tambahan dark mode untuk elemen utama */
+.dark .sidebar {
+  background: #18181b;
+}
+.dark .sidebar-header {
+  background: #23272f;
+  color: #f3f4f6;
+}
+.dark .sidebar-footer {
+  background: #23272f;
+  border-top-color: #27272a;
+}
+.dark .sidebar-link {
+  color: #e5e7eb;
+}
+.dark .sidebar-link.active, .dark .sidebar-link:hover {
+  background: #2563eb33;
+  color: #60a5fa;
+}
+.dark .header {
+  background: #23272f;
+  color: #f3f4f6;
+}
+.dark .container {
+  background: #18181b;
+  color: #f3f4f6;
+}
+.dark .candidate-card {
+  background: #23272f;
+  border-color: #27272a;
+  color: #f3f4f6;
+}
+.dark .manual-content {
+  background: #23272f;
+}
+.dark .feature-card {
+  background: #23272f;
+  border-color: #27272a;
+  color: #f3f4f6;
+}
+.dark .stat-card {
+  background: #23272f;
+  border-color: #27272a;
+  color: #f3f4f6;
+}
+.dark .results-chart {
+  background: #23272f;
+  border-color: #27272a;
+  color: #f3f4f6;
+}
+.dark .result-item {
+  background: #18181b;
+  color: #f3f4f6;
+}
+.dark .admin-form, .dark .candidates-management, .dark .account-card, .dark .info-box, .dark .warning-box, .dark .tip-box, .dark .contact-box {
+  background: #23272f;
+  border-color: #27272a;
+  color: #f3f4f6;
+}
+.dark .btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+.dark .btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+.dark .btn-secondary {
+  background: #64748b;
+  color: #fff;
+}
+.dark .vote-btn {
+  background: #2563eb;
+  color: #fff;
+}
+.dark .vote-btn:disabled {
+  background: #334155;
+  color: #a1a1aa;
+}
+.dark .nav {
+  background: #23272f;
+}
+.dark .nav-btn {
+  color: #a1a1aa;
+}
+.dark .nav-btn.active {
+  background: #2563eb;
+  color: #fff;
+}
+.dark .section-title, .dark .candidate-name, .dark .candidate-number, .dark .stat-number, .dark .result-name, .dark .admin-form h3, .dark .candidates-management h3, .dark .feature-card h4, .dark .faq-item h4 {
+  color: #60a5fa;
+}
+.dark .manual-section, .dark .manual-section.active {
+  color: #f3f4f6;
+}
+.dark .manual-section h3, .dark .manual-section h4, .dark .manual-section h5 {
+  color: #60a5fa;
+}
+.dark .manual-section p, .dark .manual-section ul, .dark .manual-section ol, .dark .manual-section li {
+  color: #a1a1aa;
+}
+.dark .feature-card p, .dark .account-card p, .dark .faq-item p, .dark .troubleshooting p {
+  color: #a1a1aa;
+}
+.dark .sidebar-footer, .dark .sidebar-user {
+  color: #a1a1aa;
+}
+.dark .btn-logout {
+  background: #dc2626;
+  color: #fff;
+}
+.dark .btn-logout:hover {
+  background: #b91c1c;
+}
+/* Transisi warna smooth */
+.sidebar, .sidebar-header, .sidebar-footer, .sidebar-link, .header, .container, .candidate-card, .manual-content, .feature-card, .stat-card, .results-chart, .result-item, .admin-form, .candidates-management, .account-card, .info-box, .warning-box, .tip-box, .contact-box, .btn-primary, .btn-danger, .btn-secondary, .vote-btn, .nav, .nav-btn, .section, .manual-nav, .manual-nav-btn, .manual-sections, .login-container, .login-header, .login-info, .login-footer, .form-group input, .form-group textarea, .form-group select, .sidebar-link.active, .sidebar-link:hover, .sidebar-footer, .sidebar-user, .btn-logout, .sidebar-profile, .sidebar-item, .sidebar-menu, .sidebar-nav, .sidebar-overlay, .sidebar-hamburger, .hamburger-bar, .container, .header-content, .title, .title-text, .title-sub, .neon-line, .section-title, .candidates-grid, .candidate-number, .candidate-name, .candidate-vision, .vote-status, .status-success, .status-warning, .stats-grid, .stat-number, .stat-label, .results-chart h3, .result-info, .result-name, .result-votes, .result-bar, .result-fill, .result-percentage, .admin-container, .admin-form h3, .form-group label, .admin-actions, .candidates-management h3, .btn-primary:hover, .btn-danger:hover, .btn-secondary:hover, .vote-btn:hover:not(:disabled), .vote-btn:disabled, .manual-section, .manual-section.active, .manual-section h3, .manual-section h4, .manual-section h5, .manual-section p, .manual-section ul, .manual-section ol, .manual-section li, .feature-grid, .feature-card h4, .feature-card p, .demo-accounts, .account-card h5, .account-card p, .faq-item, .faq-item h4, .faq-item p, .troubleshooting, .troubleshooting h5, .troubleshooting p {
+  transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }

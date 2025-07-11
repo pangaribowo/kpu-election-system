@@ -85,6 +85,8 @@ Panduan ini berisi langkah-langkah dan kebutuhan untuk mengembangkan website aga
 - [ ] Validasi di backend dan frontend
 - [ ] Jangan expose user_id di frontend, ambil dari session
 - [ ] Audit endpoint voting secara berkala
+- [ ] Sinkronisasi data user dari Supabase Auth ke tabel users custom (email, phone, dsb.)
+- [ ] Validasi nomor HP format internasional di frontend (contoh: +6281234567890)
 
 ---
 
