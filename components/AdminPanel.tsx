@@ -124,58 +124,62 @@ const AdminPanel = () => {
   }
 
   return (
-    <section id="admin" className="section active">
-      <div className="admin-container">
-        <h2 className="section-title">PANEL ADMIN</h2>
-        <div className="admin-form">
-          <h3>Tambah Kandidat Baru</h3>
-          <form id="add-candidate-form" onSubmit={handleAddCandidate}>
+    <section id="admin" className="section active py-8 px-4">
+      <div className="admin-container container mx-auto">
+        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
+          PANEL ADMIN
+        </h2>
+        <div className="admin-form bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 sm:p-8 mb-8">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Tambah Kandidat Baru</h3>
+          <form id="add-candidate-form" onSubmit={handleAddCandidate} className="space-y-6">
             <div className="form-group">
-              <label htmlFor="candidate-name">Nama Kandidat:</label>
-              <input type="text" id="candidate-name" ref={nameRef} required />
+              <label htmlFor="candidate-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kandidat:</label>
+              <input type="text" id="candidate-name" ref={nameRef} required className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100" />
             </div>
             <div className="form-group">
-              <label htmlFor="candidate-vision">Visi:</label>
-              <textarea id="candidate-vision" ref={visionRef} required></textarea>
+              <label htmlFor="candidate-vision" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Visi:</label>
+              <textarea id="candidate-vision" ref={visionRef} required rows={3} className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"></textarea>
             </div>
             <div className="form-group">
-              <label htmlFor="candidate-color">Warna Tema:</label>
-              <select id="candidate-color" ref={colorRef} defaultValue="blue">
+              <label htmlFor="candidate-color" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Warna Tema:</label>
+              <select id="candidate-color" ref={colorRef} defaultValue="blue" className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100">
                 <option value="blue">Biru</option>
                 <option value="green">Hijau</option>
-                <option value="orange">Orange</option>
+                <option value="orange">Oranye</option>
                 <option value="purple">Ungu</option>
                 <option value="red">Merah</option>
                 <option value="indigo">Indigo</option>
               </select>
             </div>
-            <button type="submit" className="btn-primary">Tambah Kandidat</button>
+            <button type="submit" className="btn-primary w-full sm:w-auto">Tambah Kandidat</button>
           </form>
         </div>
-        <div className="admin-actions">
-          <button id="reset-votes" className="btn-danger" onClick={handleResetVotes}>Reset Semua Suara</button>
-          <button id="export-results" className="btn-secondary" onClick={handleExportResults}>Export Hasil</button>
-          <button id="manage-users" className="btn-secondary" onClick={handleManageUsers}>Kelola User</button>
+
+        <div className="admin-actions grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <button id="reset-votes" className="btn-danger w-full" onClick={handleResetVotes}>Reset Semua Suara</button>
+          <button id="export-results" className="btn-secondary bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white w-full" onClick={handleExportResults}>Export Hasil</button>
+          <button id="manage-users" className="btn-secondary bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600 text-white w-full" onClick={handleManageUsers}>Kelola User</button>
         </div>
-        <div className="candidates-management">
-          <h3>Kelola Kandidat</h3>
-          <div id="admin-candidates-list">
-            {candidates.map((candidate) => (
-              <div key={candidate.id} className="result-item">
-                <div className="result-info">
-                  <div className="result-name">{candidate.name}</div>
-                  <div className="result-votes">{candidate.vision}</div>
+
+        <div className="candidates-management bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 sm:p-8">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6">Kelola Kandidat</h3>
+          <div id="admin-candidates-list" className="space-y-4">
+            {candidates.length > 0 ? candidates.map((candidate) => (
+              <div key={candidate.id} className="result-item flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-md shadow">
+                <div className="result-info mb-2 sm:mb-0">
+                  <div className="result-name text-lg font-medium text-gray-800 dark:text-gray-100">{candidate.name}</div>
+                  <div className="result-votes text-sm text-gray-600 dark:text-gray-300 truncate max-w-xs sm:max-w-md">{candidate.vision}</div>
                 </div>
-                <button className="btn-danger" onClick={() => handleRemoveCandidate(candidate.id)}>
+                <button className="btn-danger mt-2 sm:mt-0 sm:ml-4 px-3 py-1.5 text-sm" onClick={() => handleRemoveCandidate(candidate.id)}>
                   Hapus
                 </button>
               </div>
-            ))}
+            )) : <p className="text-gray-600 dark:text-gray-400">Belum ada kandidat.</p>}
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default AdminPanel 

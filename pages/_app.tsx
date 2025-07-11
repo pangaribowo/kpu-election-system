@@ -62,24 +62,23 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Notification />
       {/* Kontainer baris atas: hamburger kiri */}
       {!isLoginPage && (
-        <div className="fixed top-4 left-0 z-[200] flex flex-row items-center px-4">
+        <div className="fixed top-4 left-4 z-[200]"> {/* Adjusted left padding */}
           <button
-            className="group p-2 rounded-full hover:scale-110 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 min-w-[40px] min-h-[40px]"
+            className="hamburger-container group p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 min-w-[40px] min-h-[40px] flex items-center justify-center"
             onClick={() => setSidebarOpen(!isSidebarOpen)}
             aria-label={isSidebarOpen && isMobile ? 'Tutup Sidebar' : 'Buka Sidebar'}
           >
-            <span className="block transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6 group-active:scale-95">
-              <Hamburger
-                toggled={isSidebarOpen}
-                toggle={() => setSidebarOpen(!isSidebarOpen)}
-                size={28}
-                rounded
-                color="#2563eb"
-                duration={0.5}
-                distance="sm"
-                direction="left"
-              />
-            </span>
+            {/* Hamburger component itself should not have a background by default from the library if possible, or override it */}
+            <Hamburger
+              toggled={isSidebarOpen}
+              toggle={() => setSidebarOpen(!isSidebarOpen)} // This toggle might be redundant if onClick is on button
+              size={24} // Slightly smaller for a tighter look
+              rounded
+              color={isDark ? "#93c5fd" : "#2563eb"} // Adapts color to dark/light mode: light blue for dark, standard blue for light
+              duration={0.5}
+              distance="sm"
+              direction="left"
+            />
           </button>
         </div>
       )}

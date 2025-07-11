@@ -38,56 +38,34 @@ const UsersPage = () => {
   if (!currentUser) return null;
 
   return (
-    <div className="main-container">
+    <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <section className="section active">
-        <h1 className="section-title">Daftar User</h1>
-        {loading && <div>Loading...</div>}
-        {error && <div style={{color:'red'}}>{error}</div>}
+        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">
+          Daftar User
+        </h1>
+        {loading && <div className="text-gray-600 dark:text-gray-300">Loading...</div>}
+        {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
         {!loading && !error && (
-          <ul className="user-list">
+          <ul className="user-list list-none p-0">
             {users.map((user) => (
-              <li key={user.username} className="user-item">
-                <Link href={`/users/${user.username}`} legacyBehavior>{user.name} <span className="user-role">({user.role})</span></Link>
+              <li
+                key={user.username}
+                className="user-item py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+              >
+                <Link
+                  href={`/users/${user.username}`}
+                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-150"
+                >
+                  {user.name}{" "}
+                  <span className="user-role text-sm text-gray-500 dark:text-gray-400">
+                    ({user.role})
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>
         )}
       </section>
-      <style jsx>{`
-        .main-container {
-          max-width: 700px;
-          margin: 40px auto;
-          background: #fff;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-          padding: 32px 24px;
-        }
-        .section-title {
-          font-size: 2rem;
-          font-weight: 700;
-          color: #2563eb;
-          margin-bottom: 18px;
-        }
-        .user-list {
-          list-style: none;
-          padding: 0;
-        }
-        .user-item {
-          padding: 12px 0;
-          border-bottom: 1px solid #e2e8f0;
-        }
-        .user-item:last-child {
-          border-bottom: none;
-        }
-        .user-role {
-          color: #64748b;
-          font-size: 0.95em;
-        }
-        a {
-          color: #2563eb;
-          text-decoration: underline;
-        }
-      `}</style>
     </div>
   );
 };

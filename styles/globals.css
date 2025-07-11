@@ -1030,36 +1030,16 @@ input, button, select, textarea {
 }
 
 /* Responsive sidebar (mobile) */
-.sidebar-hamburger {
-  position: fixed;
-  top: 18px;
-  left: 18px;
-  z-index: 200;
-  background: transparent; /* Explicitly set to transparent */
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 4px; /* Add some padding to make it easier to click */
-  border-radius: 4px; /* Optional: for a softer look */
+/* Hamburger styling is now primarily handled by Tailwind classes in _app.tsx */
+/* The .sidebar-hamburger and .hamburger-bar classes can be removed if no longer used by custom CSS */
+/* Keep this comment for clarity or remove if styles are fully migrated */
+
+/* Ensure the hamburger-react component itself doesn't add a background if possible, or override specific classes if necessary */
+.hamburger-react {
+  /* Example: Override if the library adds its own background */
+  /* background: transparent !important; */
 }
-.sidebar-hamburger:hover {
-  background: rgba(0,0,0,0.05); /* Subtle hover for light mode */
-}
-.dark .sidebar-hamburger:hover {
-  background: rgba(255,255,255,0.1); /* Subtle hover for dark mode */
-}
-.hamburger-bar {
-  width: 28px;
-  height: 3px;
-  background: #2563eb; /* Blue in light mode */
-  border-radius: 2px;
-  transition: background 0.3s;
-}
-.dark .hamburger-bar {
-  background: #60a5fa; /* Lighter blue in dark mode for visibility */
-}
+
 .sidebar-overlay {
   position: fixed;
   top: 0;
@@ -1072,19 +1052,23 @@ input, button, select, textarea {
 
 /* Tombol Close Sidebar */
 .sidebar-close-btn {
-  @apply absolute top-4 right-4 z-50 p-1.5 rounded-full bg-red-600/90 hover:bg-red-700/90 dark:bg-red-500/90 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 hover:scale-110 active:scale-95 min-w-[32px] min-h-[32px] text-white;
+  /* Tailwind classes are now applied directly in Sidebar.tsx for positioning within the flex container */
+  /* Base styles for appearance */
+  @apply p-1.5 rounded-full bg-red-600/90 hover:bg-red-700/90 dark:bg-red-500/90 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 hover:scale-110 active:scale-95 min-w-[32px] min-h-[32px] text-white;
 }
 .sidebar-close-btn svg {
-  @apply text-red-200;
+  @apply text-red-200 dark:text-red-300; /* Adjusted dark mode icon color for better visibility */
 }
 
 /* Tombol Dark Mode Sidebar */
 .sidebar-darkmode-btn {
-  @apply absolute top-4 left-4 z-40 p-1.5 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow hover:scale-110 transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 min-w-[32px] min-h-[32px];
+  /* Tailwind classes are now applied directly in Sidebar.tsx for positioning within the flex container */
+  /* Base styles for appearance */
+  @apply p-1.5 rounded-full bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 shadow hover:scale-110 transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 min-w-[32px] min-h-[32px];
   line-height: 0; /* Untuk memastikan ikon center */
 }
 .sidebar-darkmode-btn svg {
-  @apply text-yellow-400;
+  @apply text-yellow-500 dark:text-yellow-400; /* Adjusted icon colors */
 }
 
 
@@ -1113,118 +1097,189 @@ html.dark body {
   transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Tambahan dark mode untuk elemen utama */
-.dark .sidebar {
-  background: #18181b;
+/* Tailwind CSS @tailwind base; @tailwind components; @tailwind utilities; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Inter dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+html, body {
+  font-family: 'Inter', system-ui, sans-serif;
+  @apply text-base font-normal text-gray-800 bg-gray-50; /* Default light mode */
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.dark .sidebar-header {
-  background: #23272f;
-  color: #f3f4f6;
+
+html.dark, html.dark body {
+  @apply text-gray-200 bg-gray-900; /* Default dark mode */
 }
-.dark .sidebar-footer {
-  background: #23272f;
-  border-top-color: #27272a;
+
+/* Terapkan juga ke elemen utama agar konsisten */
+input, button, select, textarea {
+  font-family: inherit;
 }
-.dark .sidebar-link {
-  color: #e5e7eb;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Global transition for dark mode */
+  @apply transition-colors duration-300;
 }
-.dark .sidebar-link.active, .dark .sidebar-link:hover {
-  background: #2563eb33;
-  color: #60a5fa;
+
+
+/* Styles for components like Sidebar, Header, etc., are now primarily using Tailwind classes. */
+/* Specific global overrides or complex component styles can remain here. */
+
+/* Example: Ensure .prose styles for ManualSection are correctly applied for dark mode */
+.dark .prose {
+  /* This uses @tailwindcss/typography dark mode variants */
+  /* You might need to customize further if default is not sufficient */
 }
-/* .dark .header styling is now handled by Tailwind directly in Header.tsx */
-.dark .container {
-  background: #18181b;
-  color: #f3f4f6;
+.prose h3 {
+    @apply text-blue-600 dark:text-blue-400; /* Example for ManualSection headings */
 }
-.dark .candidate-card {
-  background: #23272f;
-  border-color: #27272a;
-  color: #f3f4f6;
+.prose h4 {
+    @apply text-gray-700 dark:text-gray-300;
 }
-.dark .manual-content {
-  background: #23272f;
+.prose h5 {
+    @apply text-gray-600 dark:text-gray-400;
 }
-.dark .feature-card {
-  background: #23272f;
-  border-color: #27272a;
-  color: #f3f4f6;
+.prose p, .prose ul, .prose ol, .prose li {
+    @apply text-gray-700 dark:text-gray-300;
 }
-.dark .stat-card {
-  background: #23272f;
-  border-color: #27272a;
-  color: #f3f4f6;
+.prose a {
+    @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300;
 }
-.dark .results-chart {
-  background: #23272f;
-  border-color: #27272a;
-  color: #f3f4f6;
+.prose .feature-card {
+    @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow;
 }
-.dark .result-item {
-  background: #18181b;
-  color: #f3f4f6;
+.prose .account-card {
+    @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow;
 }
-.dark .admin-form, .dark .candidates-management, .dark .account-card, .dark .info-box, .dark .warning-box, .dark .tip-box, .dark .contact-box {
-  background: #23272f;
-  border-color: #27272a;
-  color: #f3f4f6;
+.prose .warning-box, .prose .info-box, .prose .tip-box, .prose .contact-box {
+    @apply p-4 rounded-lg my-4;
 }
-.dark .btn-primary {
-  background: #2563eb;
-  color: #fff;
+.prose .warning-box { @apply bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700; }
+.prose .warning-box h5 { @apply text-yellow-700 dark:text-yellow-300; }
+.prose .info-box { @apply bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700; }
+.prose .info-box h5 { @apply text-blue-700 dark:text-blue-300; }
+.prose .tip-box { @apply bg-green-50 dark:bg-green-900/30 border border-green-300 dark:border-green-700; }
+.prose .tip-box h5 { @apply text-green-700 dark:text-green-300; }
+.prose .contact-box { @apply bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600; }
+.prose .contact-box h5 { @apply text-gray-700 dark:text-gray-300; }
+
+
+/* Login Styles (can be refactored to Tailwind or kept if complex) */
+.login-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  @apply bg-gradient-to-br from-blue-600 to-indigo-700; /* Tailwind gradient */
 }
-.dark .btn-danger {
-  background: #dc2626;
-  color: #fff;
+
+.login-container {
+  @apply bg-white dark:bg-gray-800 p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md text-center;
 }
-.dark .btn-secondary {
-  background: #64748b;
-  color: #fff;
+
+.login-header h1 {
+  @apply text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2;
 }
-.dark .vote-btn {
-  background: #2563eb;
-  color: #fff;
+
+.login-header p {
+  @apply text-gray-600 dark:text-gray-300 mb-8;
 }
-.dark .vote-btn:disabled {
-  background: #334155;
-  color: #a1a1aa;
+
+.login-form {
+  @apply text-left mb-6;
 }
-.dark .nav {
-  background: #23272f;
+
+.login-info {
+  @apply bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6 text-left;
 }
-.dark .nav-btn {
-  color: #a1a1aa;
+
+.login-info h4 {
+  @apply text-blue-600 dark:text-blue-400 mb-1 text-sm font-semibold;
 }
-.dark .nav-btn.active {
-  background: #2563eb;
-  color: #fff;
+
+.login-info p {
+  @apply text-xs text-gray-500 dark:text-gray-400 mb-1;
 }
-.dark .section-title, .dark .candidate-name, .dark .candidate-number, .dark .stat-number, .dark .result-name, .dark .admin-form h3, .dark .candidates-management h3, .dark .feature-card h4, .dark .faq-item h4 {
-  color: #60a5fa;
+
+.login-footer {
+  @apply text-center;
 }
-.dark .manual-section, .dark .manual-section.active {
-  color: #f3f4f6;
+
+
+/* General button styling if not using Tailwind's @apply for all buttons */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-colors;
 }
-.dark .manual-section h3, .dark .manual-section h4, .dark .manual-section h5 {
-  color: #60a5fa;
+/* ... other global button styles if needed ... */
+
+
+/* Sidebar button styles (already defined with @apply) */
+.sidebar-close-btn {
+  @apply p-1.5 rounded-full bg-red-600/90 hover:bg-red-700/90 dark:bg-red-500/90 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 hover:scale-110 active:scale-95 min-w-[32px] min-h-[32px] text-white;
 }
-.dark .manual-section p, .dark .manual-section ul, .dark .manual-section ol, .dark .manual-section li {
-  color: #a1a1aa;
+.sidebar-close-btn svg {
+  @apply text-red-200 dark:text-red-300;
 }
-.dark .feature-card p, .dark .account-card p, .dark .faq-item p, .dark .troubleshooting p {
-  color: #a1a1aa;
+.sidebar-darkmode-btn {
+  @apply p-1.5 rounded-full bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 shadow hover:scale-110 transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 min-w-[32px] min-h-[32px];
+  line-height: 0;
 }
-.dark .sidebar-footer, .dark .sidebar-user {
-  color: #a1a1aa;
+.sidebar-darkmode-btn svg {
+  @apply text-yellow-500 dark:text-yellow-400;
 }
-.dark .btn-logout {
-  background: #dc2626;
-  color: #fff;
+
+/* Specific candidate theme colors for numbers and fills */
+/* These are kept as they are specific color mappings */
+.theme-blue .candidate-number, .bg-blue-500 { background-color: #3b82f6 !important; } /* Tailwind blue-500 */
+.theme-green .candidate-number, .bg-green-500 { background-color: #22c55e !important; } /* Tailwind green-500 */
+.theme-orange .candidate-number, .bg-orange-500 { background-color: #f97316 !important; } /* Tailwind orange-500 */
+.theme-purple .candidate-number, .bg-purple-500 { background-color: #a855f7 !important; } /* Tailwind purple-500 */
+.theme-red .candidate-number, .bg-red-500 { background-color: #ef4444 !important; } /* Tailwind red-500 */
+.theme-indigo .candidate-number, .bg-indigo-500 { background-color: #6366f1 !important; } /* Tailwind indigo-500 */
+
+/* Ensure vote button disabled state is styled for dark mode */
+.vote-btn:disabled {
+  @apply bg-gray-400 dark:bg-gray-600 cursor-not-allowed;
 }
-.dark .btn-logout:hover {
-  background: #b91c1c;
+
+/* Ensure form elements are styled for dark mode */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  @apply bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400;
 }
-/* Transisi warna smooth */
-.sidebar, .sidebar-header, .sidebar-footer, .sidebar-link, .header, .container, .candidate-card, .manual-content, .feature-card, .stat-card, .results-chart, .result-item, .admin-form, .candidates-management, .account-card, .info-box, .warning-box, .tip-box, .contact-box, .btn-primary, .btn-danger, .btn-secondary, .vote-btn, .nav, .nav-btn, .section, .manual-nav, .manual-nav-btn, .manual-sections, .login-container, .login-header, .login-info, .login-footer, .form-group input, .form-group textarea, .form-group select, .sidebar-link.active, .sidebar-link:hover, .sidebar-footer, .sidebar-user, .btn-logout, .sidebar-profile, .sidebar-item, .sidebar-menu, .sidebar-nav, .sidebar-overlay, .sidebar-hamburger, .hamburger-bar, .container, .header-content, .title, .title-text, .title-sub, .neon-line, .section-title, .candidates-grid, .candidate-number, .candidate-name, .candidate-vision, .vote-status, .status-success, .status-warning, .stats-grid, .stat-number, .stat-label, .results-chart h3, .result-info, .result-name, .result-votes, .result-bar, .result-fill, .result-percentage, .admin-container, .admin-form h3, .form-group label, .admin-actions, .candidates-management h3, .btn-primary:hover, .btn-danger:hover, .btn-secondary:hover, .vote-btn:hover:not(:disabled), .vote-btn:disabled, .manual-section, .manual-section.active, .manual-section h3, .manual-section h4, .manual-section h5, .manual-section p, .manual-section ul, .manual-section ol, .manual-section li, .feature-grid, .feature-card h4, .feature-card p, .demo-accounts, .account-card h5, .account-card p, .faq-item, .faq-item h4, .faq-item p, .troubleshooting, .troubleshooting h5, .troubleshooting p {
-  transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+
+/* Remove old .dark utility classes if they are fully replaced by Tailwind's dark: prefix */
+/* Example: .dark .sidebar {} can be removed if sidebar uses dark:bg-gray-800 etc. */
+
+/* The long list of elements for transition can be simplified by applying transition on '*' or body/html */
+/* Already handled by applying transition-colors on '*' */
+
+/* Responsive Sidebar (already using Tailwind classes in _app.tsx and Sidebar.tsx) */
+/* .sidebar-overlay and media queries for sidebar transform are fine. */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.2); /* Slightly darker overlay */
+  @apply backdrop-blur-sm z-[99];
+}
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
 }
