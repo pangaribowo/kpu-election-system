@@ -1300,6 +1300,11 @@ input, button, select, textarea {
   @apply bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400;
 }
 
+/* Label form di dark mode agar kontras dan mudah dibaca */
+.dark .form-group label {
+  color: #f3f4f6;
+}
+
 /* Remove old .dark utility classes if they are fully replaced by Tailwind's dark: prefix */
 /* Example: .dark .sidebar {} can be removed if sidebar uses dark:bg-gray-800 etc. */
 
