@@ -8,6 +8,7 @@ import Notification from '../components/Notification'
 import dynamic from 'next/dynamic'
 import type { FC } from 'react'
 import { Moon, Sun } from 'lucide-react'
+import DarkModeToggle from '../components/DarkModeToggle'
 
 // Import Hamburger dari hamburger-react (dynamic agar SSR aman)
 const Hamburger = dynamic(() => import('hamburger-react').then(mod => mod.default), { ssr: false }) as FC<any>;
@@ -60,25 +61,32 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <VotingProvider>
       <Notification />
+      {/* Toggle dark mode global, hanya jika bukan halaman login */}
+      {!isLoginPage && (
+        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 2000 }}>
+          <DarkModeToggle />
+        </div>
+      )}
       {/* Kontainer baris atas: hamburger kiri */}
       {!isLoginPage && (
         <div className="fixed top-4 left-4 z-[200]"> {/* Adjusted left padding */}
           <button
-            className="hamburger-container group p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800 min-w-[40px] min-h-[40px] flex items-center justify-center"
+            className="btn-hamburger-modern"
             onClick={() => setSidebarOpen(!isSidebarOpen)}
             aria-label={isSidebarOpen && isMobile ? 'Tutup Sidebar' : 'Buka Sidebar'}
           >
-            {/* Hamburger component itself should not have a background by default from the library if possible, or override it */}
-            <Hamburger
-              toggled={isSidebarOpen}
-              toggle={() => setSidebarOpen(!isSidebarOpen)} // This toggle might be redundant if onClick is on button
-              size={24} // Slightly smaller for a tighter look
-              rounded
-              color={isDark ? "#93c5fd" : "#2563eb"} // Adapts color to dark/light mode: light blue for dark, standard blue for light
-              duration={0.5}
-              distance="sm"
-              direction="left"
-            />
+            <span className="block transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6 group-active:scale-95">
+              <Hamburger
+                toggled={isSidebarOpen}
+                toggle={() => setSidebarOpen(!isSidebarOpen)}
+                size={28}
+                rounded
+                color={isDark ? '#60a5fa' : '#2563eb'}
+                duration={0.5}
+                distance="sm"
+                direction="left"
+              />
+            </span>
           </button>
         </div>
       )}
