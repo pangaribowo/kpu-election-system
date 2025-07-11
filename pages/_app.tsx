@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic'
 import type { FC } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import DarkModeToggle from '../components/DarkModeToggle'
+import Header from '../components/Header'
 
 // Import Hamburger dari hamburger-react (dynamic agar SSR aman)
 const Hamburger = dynamic(() => import('hamburger-react').then(mod => mod.default), { ssr: false }) as FC<any>;
@@ -61,19 +62,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <VotingProvider>
       <Notification />
-      {/* Toggle dark mode global, hanya jika bukan halaman login */}
+      {/* Hamburger selalu tampil di kiri atas */}
       {!isLoginPage && (
-        <div style={{ position: 'fixed', top: 24, right: 24, zIndex: 2000 }}>
-          <DarkModeToggle />
-        </div>
-      )}
-      {/* Kontainer baris atas: hamburger kiri */}
-      {!isLoginPage && (
-        <div className="fixed top-4 left-4 z-[200]"> {/* Adjusted left padding */}
+        <div className="fixed top-4 left-4 z-[10]">
           <button
             className="btn-hamburger-modern"
-            onClick={() => setSidebarOpen(!isSidebarOpen)}
-            aria-label={isSidebarOpen && isMobile ? 'Tutup Sidebar' : 'Buka Sidebar'}
+            onClick={() => setSidebarOpen(true)}
+            aria-label={isSidebarOpen ? 'Tutup Sidebar' : 'Buka Sidebar'}
           >
             <span className="block transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6 group-active:scale-95">
               <Hamburger
@@ -90,15 +85,27 @@ function MyApp({ Component, pageProps }: AppProps) {
           </button>
         </div>
       )}
-      {/* Overlay hanya di mobile + sidebar open */}
-      {isMobile && isSidebarOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/30 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-      )}
-      {/* Sidebar hanya render jika open, kirim prop dark mode */}
+      {/* Sidebar overlay dan overlay hitam */}
       {!isLoginPage && isSidebarOpen && (
-        <Sidebar open={isSidebarOpen} setOpen={setSidebarOpen} isMobile={isMobile} mode={sidebarMode} isDark={isDark} toggleDarkMode={toggleDarkMode} />
+        <>
+          {/* Overlay hitam, klik untuk menutup sidebar */}
+          <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setSidebarOpen(false)} />
+          {/* Sidebar overlay */}
+          <div className="fixed inset-y-0 left-0 w-64 z-50">
+            <Sidebar
+              open={isSidebarOpen}
+              setOpen={setSidebarOpen}
+              isMobile={isMobile}
+              mode={sidebarMode}
+              isDark={isDark}
+              toggleDarkMode={toggleDarkMode}
+            />
+          </div>
+        </>
       )}
-      <div className={!isLoginPage && !isMobile && isSidebarOpen ? 'ml-64 transition-all duration-500' : ''}>
+      {/* Main content selalu full width, tidak ada margin kiri */}
+      <div className="min-h-screen flex flex-col transition-all duration-500">
+        {!isLoginPage && <Header />}
         <Component {...pageProps} />
       </div>
     </VotingProvider>
