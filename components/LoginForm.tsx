@@ -253,24 +253,22 @@ const LoginScreen = () => {
     <div id="login-screen" className="login-screen">
       <div className="login-container">
         {/* Judul besar modern di atas tab */}
-        <div className="login-title" style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--accent-primary)', textAlign: 'center', fontFamily: 'Inter, system-ui, sans-serif', marginBottom: 8, textTransform: 'uppercase' }}>
-            Sistem Voting KPU
-          </h1>
-          <div style={{ width: 80, height: 4, background: 'var(--accent-primary)', borderRadius: 2, margin: '0 auto 0.5rem auto' }} />
+        <div className="login-title mb-8">
+          <h1 className="text-3xl sm:text-4xl font-extrabold uppercase mb-2 text-blue-600 dark:text-blue-400 text-center font-sans">Sistem Voting KPU</h1>
+          <div className="w-20 h-1 rounded bg-blue-600 dark:bg-blue-400 mx-auto mb-2" />
         </div>
         <div className="flex justify-center mb-6 transition-all duration-300">
           <button
-            className={`login-tab-btn ${tab === 'login' ? 'active' : ''}`}
-            style={{marginRight: 8, padding: '8px 24px', borderRadius: '8px 8px 0 0', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}
+            className={`login-tab-btn ${tab === 'login' ? 'active' : ''} px-6 py-2 rounded-t-lg font-semibold text-base focus:outline-none transition-colors duration-200 ${tab === 'login' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white' : 'bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}
             onClick={() => setTab('login')}
+            type="button"
           >
             Login
           </button>
           <button
-            className={`login-tab-btn ${tab === 'register' ? 'active' : ''}`}
-            style={{padding: '8px 24px', borderRadius: '8px 8px 0 0', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}
+            className={`login-tab-btn ${tab === 'register' ? 'active' : ''} px-6 py-2 rounded-t-lg font-semibold text-base focus:outline-none transition-colors duration-200 ${tab === 'register' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white' : 'bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}
             onClick={() => setTab('register')}
+            type="button"
           >
             Register
           </button>
@@ -305,7 +303,7 @@ const LoginScreen = () => {
                 <option value="user">Pemilih</option>
               </select>
             </div>
-            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
+            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
             <div className="flex justify-end mt-2">
               <button type="button" className="forgot-link" onClick={() => setShowForgot(true)}>Lupa password?</button>
             </div>
@@ -338,7 +336,7 @@ const LoginScreen = () => {
                 <input type="tel" id="otp-phone" value={otpPhone} onChange={e => setOtpPhone(e.target.value)} required placeholder="Contoh: +6281234567890" />
               </div>
             </div>
-            <button type="submit" className="btn-primary w-full" disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
+            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
           </form>
           {/* Modal forgot password */}
           {showForgot && (
@@ -352,7 +350,7 @@ const LoginScreen = () => {
                   </div>
                   <div className="flex gap-2 mt-2">
                     <button type="submit" className="btn-primary" disabled={forgotLoading}>{forgotLoading ? 'Mengirim...' : 'Kirim Link Reset'}</button>
-                    <button type="button" className="btn-secondary" onClick={() => setShowForgot(false)}>Batal</button>
+                    <button type="button" className="btn-secondary flex justify-center items-center" onClick={() => setShowForgot(false)}>Batal</button>
                   </div>
                 </form>
               </div>
@@ -409,11 +407,11 @@ const LoginScreen = () => {
                 </button>
               </div>
             </div>
-            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
+            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
           </form>
         )}
         <div className="login-footer">
-          <button id="show-manual" className="btn-secondary" type="button" onClick={handleShowManual}>Lihat Manual</button>
+          <button id="show-manual" className="btn-secondary flex justify-center items-center" type="button" onClick={handleShowManual}>Lihat Manual</button>
         </div>
       </div>
     </div>
