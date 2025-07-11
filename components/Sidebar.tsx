@@ -90,36 +90,22 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
   return (
     <aside
       ref={sidebarRef}
-      className={sidebarClass + ' overflow-auto'}
-      style={{ transitionProperty: 'width, box-shadow, background, transform', boxShadow: '0 8px 32px 0 rgba(31,38,135,0.15)' }}
+      className={sidebarClass + ' overflow-auto z-[300]'}
+      style={{ transitionProperty: 'width, box-shadow, background, transform', boxShadow: '0 8px 32px 0 rgba(31,38,135,0.15)', zIndex: 300 }}
     >
       {/* Header modern */}
-      <div className="sidebar-header flex flex-col items-center pt-8 pb-6 relative"> {/* Reduced top padding */}
-        {/* Container for top-right buttons */}
-        <div className="absolute top-4 right-4 flex items-center space-x-2">
-          {/* Tombol Dark Mode */}
-          <button
-            type="button"
-            onClick={toggleDarkMode}
-            aria-label={isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'}
-            title={isDark ? 'Mode Terang' : 'Mode Gelap'}
-            className="sidebar-darkmode-btn" // Existing class for styling
-          >
-            {isDark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          {/* Tombol Close Sidebar */}
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            aria-label="Tutup Sidebar"
-            className="sidebar-close-btn" // Existing class for styling
-            tabIndex={0}
-          >
-            <FiX size={18} />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-3 mt-12"> {/* Added margin-top to push content below buttons */}
+      <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative">
+        {/* Tombol close di kanan atas (z-50, paling atas) */}
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label="Tutup Sidebar"
+          className="btn-close-modern"
+          tabIndex={0}
+        >
+          <FiX size={18} />
+        </button>
+        <div className="flex items-center gap-3">
           <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900">
             <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={24} />
           </span>
@@ -161,11 +147,10 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
         <button
           type="button"
           onClick={handleLogout}
-          className="group w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900 dark:to-red-800 text-red-600 dark:text-red-300 font-bold text-base shadow-sm transition-all duration-200 hover:from-red-100 hover:to-red-200 dark:hover:from-red-800 dark:hover:to-red-700 hover:text-red-700 dark:hover:text-red-200 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 no-underline border-0"
-          style={{ border: 'none', textDecoration: 'none' }}
+          className="btn-logout-modern"
         >
-          <FiLogOut size={22} className="transition-transform duration-200 group-hover:-rotate-12 text-red-600 dark:text-red-300" color="#ef4444" />
-          <span className="ml-1 no-underline !text-red-600 !dark:!text-red-300" style={{ textDecoration: 'none', color: '#dc2626' }}>Keluar</span>
+          <FiLogOut size={22} />
+          <span>Keluar</span>
         </button>
       </div>
     </aside>
