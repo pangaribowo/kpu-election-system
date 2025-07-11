@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FiHome, FiCheckSquare, FiBarChart, FiUsers, FiInfo, FiBookOpen, FiLogOut, FiX } from "react-icons/fi";
+import { FiHome, FiCheckSquare, FiBarChart, FiUsers, FiInfo, FiBookOpen, FiLogOut, FiX, FiUser } from "react-icons/fi";
 import { supabase } from '../lib/supabaseClient';
 import { useVoting } from './VotingContext';
 import { Moon, Sun } from 'lucide-react';
@@ -110,12 +110,12 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
             <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={20} />
           </span>
           <span className="font-bold text-base text-blue-700 dark:text-blue-300 transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto max-w-[120px] truncate">
-            Sistem Voting KPU
+            Navigasi KPU
           </span>
         </div>
       </div>
       {/* Menu modern */}
-      <nav className="sidebar-nav flex-1">
+      <nav className="sidebar-nav flex-1 flex flex-col gap-2 mt-8">
         <ul className="sidebar-menu flex flex-col gap-2 px-2">
           {menuItems.map((item) => (
             <li className="sidebar-item" key={item.href}>
@@ -141,6 +141,10 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
             </li>
           ))}
         </ul>
+        <Link href="/profile" className="sidebar-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors">
+          <FiUser className="text-blue-500 dark:text-blue-400" size={20} />
+          <span className="font-medium">Profil Saya</span>
+        </Link>
       </nav>
       {/* Footer modern */}
       <div className="sidebar-footer mt-auto mb-6 flex flex-col items-center gap-3 px-2 bg-white dark:bg-gray-900">
