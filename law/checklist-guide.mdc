@@ -75,7 +75,14 @@ Tahap 7: Testing & Dokumentasi
 [x] Integrasi Supabase Auth signInWithOtp & verifyOtp
 [x] Proteksi: hanya user yang sudah verifikasi OTP yang bisa login/voting
 [x] Notifikasi: instruksi cek SMS untuk OTP
-[ ] Uji register, verifikasi email, login, voting (E2E)
+[x] Uji register, verifikasi email, login, voting (E2E)
 [ ] Uji login dengan email/phone yang belum diverifikasi (harus gagal)
 [ ] Uji login dengan email/phone yang sudah diverifikasi (harus sukses)
 [x] Update dokumentasi dan checklist di @/law
+[x] Terapkan font global profesional (Inter) untuk seluruh aplikasi
+[x] Notification di-render di layout global (_app.tsx)
+[x] Notifikasi login/register/OTP muncul di semua halaman (E2E)
+[x] Refactor Sidebar agar lebih modern, rapi, dan sesuai best practice UI/UX 2025
+[x] Perbesar gap antar menu, tambah padding vertikal nav, divider sebelum logout, dan margin bawah menu utama
+[x] Testing visual sidebar: pastikan menu tidak menempel, ada spasi antar menu, dan divider jelas
+[x] Update dokumentasi dan checklist setelah perubahan sidebar
