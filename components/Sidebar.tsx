@@ -94,31 +94,32 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
       style={{ transitionProperty: 'width, box-shadow, background, transform', boxShadow: '0 8px 32px 0 rgba(31,38,135,0.15)' }}
     >
       {/* Header modern */}
-      <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative">
-        {/* Tombol close di kanan atas (z-50, paling atas) */}
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          aria-label="Tutup Sidebar"
-          className="sidebar-close-btn"
-          tabIndex={0}
-        >
-          <FiX size={18} />
-        </button>
-        {/* Tombol dark mode di kiri atas (z-40, di bawah close) */}
-        <button
-          type="button"
-          onClick={toggleDarkMode}
-          aria-label={isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'}
-          title={isDark ? 'Mode Terang' : 'Mode Gelap'}
-          className="sidebar-darkmode-btn"
-        >
-          {isDark
-            ? <Sun size={18} />
-            : <Moon size={18} />
-          }
-        </button>
-        <div className="flex items-center gap-3">
+      <div className="sidebar-header flex flex-col items-center pt-8 pb-6 relative"> {/* Reduced top padding */}
+        {/* Container for top-right buttons */}
+        <div className="absolute top-4 right-4 flex items-center space-x-2">
+          {/* Tombol Dark Mode */}
+          <button
+            type="button"
+            onClick={toggleDarkMode}
+            aria-label={isDark ? 'Aktifkan mode terang' : 'Aktifkan mode gelap'}
+            title={isDark ? 'Mode Terang' : 'Mode Gelap'}
+            className="sidebar-darkmode-btn" // Existing class for styling
+          >
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          {/* Tombol Close Sidebar */}
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label="Tutup Sidebar"
+            className="sidebar-close-btn" // Existing class for styling
+            tabIndex={0}
+          >
+            <FiX size={18} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3 mt-12"> {/* Added margin-top to push content below buttons */}
           <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900">
             <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={24} />
           </span>

@@ -213,18 +213,38 @@ const tabs = [
 ]
 
 const ManualSection = () => {
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState("overview");
+
+  // It's better to move manualContent and tabs outside if they don't depend on component's state/props
+  // For brevity, keeping them here but applying dark mode classes directly.
+
+  // Helper function to add dark mode classes to children of manualContent
+  // This is a simplified example. A more robust solution might involve traversing the React elements
+  // or ensuring all styled components within manualContent use Tailwind classes.
+  const applyDarkModeToContent = (content: JSX.Element): JSX.Element => {
+    // This is a placeholder for a more complex transformation if needed.
+    // For now, we assume the content itself will use Tailwind dark: classes.
+    // The main containers are handled below.
+    return content;
+  };
 
   return (
-    <section id="manual" className="section active">
-      <div className="manual-container">
-        <h2 className="section-title">MANUAL PENGGUNAAN</h2>
-        <div className="manual-content">
-          <div className="manual-nav">
+    <section id="manual" className="section active py-8 px-4">
+      <div className="manual-container container mx-auto">
+        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
+          MANUAL PENGGUNAAN
+        </h2>
+        <div className="manual-content bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
+          <div className="manual-nav flex flex-wrap sm:flex-nowrap overflow-x-auto bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
-                className={`manual-nav-btn${activeTab === tab.key ? ' active' : ''}`}
+                className={`manual-nav-btn px-4 py-3 sm:px-6 sm:py-4 text-sm sm:text-base font-medium whitespace-nowrap transition-colors duration-150 focus:outline-none
+                  ${
+                    activeTab === tab.key
+                      ? "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
+                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-blue-500 dark:hover:text-blue-300"
+                  }`}
                 data-manual={tab.key}
                 onClick={() => setActiveTab(tab.key)}
               >
@@ -232,13 +252,17 @@ const ManualSection = () => {
               </button>
             ))}
           </div>
-          <div className="manual-sections">
-            {manualContent[activeTab]}
+          <div className="manual-sections p-6 sm:p-8 text-gray-700 dark:text-gray-300">
+            {/* Apply dark mode to typography within each section */}
+            {/* This requires manualContent's JSX to use dark:text-gray-300 etc. or global styles for h3,p,li */}
+            <div className="prose dark:prose-invert max-w-none">
+                 {manualContent[activeTab as keyof typeof manualContent]}
+            </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default ManualSection 
