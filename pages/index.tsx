@@ -35,29 +35,17 @@ const Dashboard = () => {
   return (
     <>
       <Header />
-      <div className="dashboard-container mx-auto my-10 p-8 max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-lg text-center">
-        <h1 className="dashboard-title text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-          Selamat datang, {currentUser.name}!
-        </h1>
-        <div className="dashboard-role text-gray-600 dark:text-gray-300 mb-6">
-          Peran: {currentUser.role}
-        </div>
-        <div className="dashboard-stats grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <div className="dashboard-container max-w-[700px] mx-auto my-10 p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg text-center transition-colors duration-300">
+        <h1 className="dashboard-title text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">Selamat datang, {currentUser.name}!</h1>
+        <div className="dashboard-role text-slate-500 dark:text-slate-300 mb-6">Peran: {currentUser.role}</div>
+        <div className="dashboard-stats flex flex-wrap gap-5 justify-center mb-8">
           {stats.map((s) => (
-            <div
-              className="dashboard-stat bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md transition-shadow"
-              key={s.label}
-            >
-              <div className="stat-label text-sm text-gray-500 dark:text-gray-400 mb-1">
-                {s.label}
-              </div>
-              <div className="stat-value text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {s.value}
-              </div>
+            <div className="dashboard-stat bg-slate-100 dark:bg-gray-800 rounded-xl px-7 py-5 min-w-[120px] shadow transition-colors duration-300" key={s.label}>
+              <div className="stat-label text-slate-500 dark:text-slate-300 text-base mb-1">{s.label}</div>
+              <div className="stat-value text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400">{s.value}</div>
             </div>
           ))}
         </div>
-        {/* Quick links can be re-added here if needed, styled with Tailwind */}
       </div>
     </>
   );
