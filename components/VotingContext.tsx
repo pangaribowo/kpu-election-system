@@ -42,7 +42,7 @@ type VotingContextType = {
 }
 
 const defaultUsers: Record<string, User> = {
-  admin: { password: 'admin123', role: 'admin', name: 'Administrator', username: 'admin' },
+  admin: { password: 'admin123', role: 'admin', name: 'Petugas', username: 'admin' },
   user: { password: 'user123', role: 'user', name: 'Pemilih', username: 'user' },
 }
 
