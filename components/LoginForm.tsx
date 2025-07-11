@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
@@ -41,6 +41,68 @@ const LoginScreen = () => {
   const [showForgot, setShowForgot] = useState(false)
   const [forgotEmail, setForgotEmail] = useState('')
   const [forgotLoading, setForgotLoading] = useState(false)
+
+  // Show phone modal state
+  const [showPhoneModal, setShowPhoneModal] = useState(false)
+  const [phoneInput, setPhoneInput] = useState('')
+  const [phoneLoading, setPhoneLoading] = useState(false)
+  const [phoneError, setPhoneError] = useState('')
+
+  // Cek setelah login Google, apakah user sudah punya phone di tabel users
+  useEffect(() => {
+    const checkPhone = async () => {
+      if (currentUser && currentUser.username && currentUser.email && !currentUser.phone) {
+        // Cek ke API users apakah phone sudah ada
+        const res = await fetch(`/api/users?email=${encodeURIComponent(currentUser.email)}`)
+        const data = await res.json()
+        if (data && (!data.phone || data.phone === '-')) {
+          setShowPhoneModal(true)
+        }
+      }
+    }
+    checkPhone()
+  }, [currentUser])
+
+  // Handler submit phone
+  const handleSubmitPhone = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setPhoneError('')
+    const phone = phoneInput.trim()
+    const phoneRegex = /^\+\d{10,}$/
+    if (!phoneRegex.test(phone)) {
+      setPhoneError('Nomor HP tidak valid! Gunakan format internasional, contoh: +6281234567890')
+      return
+    }
+    setPhoneLoading(true)
+    try {
+      // Cek duplikasi
+      const checkRes = await fetch(`/api/users?phone=${encodeURIComponent(phone)}`)
+      const checkData = await checkRes.json()
+      if (checkData && checkData.exists) {
+        setPhoneError('Nomor HP sudah digunakan user lain!')
+        setPhoneLoading(false)
+        return
+      }
+      // Update ke tabel users
+      const syncRes = await fetch('/api/users/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentUser.email, phone, name: currentUser.name, username: currentUser.username, role: currentUser.role })
+      })
+      if (!syncRes.ok) {
+        const err = await syncRes.json().catch(() => null)
+        setPhoneError(err?.error || 'Gagal update nomor HP')
+      } else {
+        setShowPhoneModal(false)
+        setPhoneInput('')
+        setNotification({ message: 'Nomor HP berhasil disimpan!', type: 'success' })
+        // Reload user state (bisa fetch ulang atau reload page)
+        window.location.reload()
+      }
+    } finally {
+      setPhoneLoading(false)
+    }
+  }
 
   // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
@@ -414,6 +476,24 @@ const LoginScreen = () => {
           <button id="show-manual" className="btn-secondary flex justify-center items-center" type="button" onClick={handleShowManual}>Lihat Manual</button>
         </div>
       </div>
+      {/* Modal input nomor telepon untuk user Google */}
+      {showPhoneModal && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h4>Lengkapi Nomor Telepon</h4>
+            <form onSubmit={handleSubmitPhone}>
+              <div className="form-group">
+                <label htmlFor="google-phone">Nomor HP:</label>
+                <input type="tel" id="google-phone" value={phoneInput} onChange={e => setPhoneInput(e.target.value)} required placeholder="Contoh: +6281234567890" />
+                {phoneError && <div className="text-red-500 text-sm mt-1">{phoneError}</div>}
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button type="submit" className="btn-primary" disabled={phoneLoading}>{phoneLoading ? 'Menyimpan...' : 'Simpan'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
