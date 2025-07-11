@@ -16,13 +16,12 @@ const Notification = () => {
     }
   }, [notification, setNotification])
   if (!notification) return null
-  let bg = 'linear-gradient(45deg, var(--accent), #2563eb)'
-  if (notification.type === 'success') bg = 'linear-gradient(45deg, var(--accent-success), #047857)'
-  if (notification.type === 'error') bg = 'linear-gradient(45deg, var(--accent-danger), #b91c1c)'
-  if (notification.type === 'warning') bg = 'linear-gradient(45deg, #fbbf24, #b45309)'
-  // Animasi fade/slide
+  let bgClass = 'bg-blue-600/90 dark:bg-blue-700/90';
+  if (notification.type === 'success') bgClass = 'bg-green-600/90 dark:bg-green-700/90';
+  if (notification.type === 'error') bgClass = 'bg-red-600/90 dark:bg-red-700/90';
+  if (notification.type === 'warning') bgClass = 'bg-yellow-400/90 dark:bg-yellow-600/90 text-gray-900 dark:text-yellow-100';
   return (
-    <div className="notification-fade-in" style={{ background: bg, color: '#fff', position: 'fixed', top: 24, right: 24, zIndex: 9999, minWidth: 260, borderRadius: 8, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', padding: '12px 20px', fontSize: 16, gap: 12, animation: 'notif-fade-in 0.3s' }}>
+    <div className={`notification-fade-in ${bgClass} text-white fixed top-6 right-6 z-[9999] min-w-[260px] rounded-lg shadow-lg flex items-center px-5 py-3 text-base gap-3`} style={{animation: 'notif-fade-in 0.3s'}}>
       <span style={{ fontSize: 22 }}>{iconMap[notification.type] || 'ℹ️'}</span>
       <span>{notification.message}</span>
     </div>
