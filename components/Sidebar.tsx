@@ -105,11 +105,11 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
         >
           <FiX size={18} />
         </button>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900">
-            <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={24} />
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900">
+            <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={20} />
           </span>
-          <span className="font-bold text-xl text-blue-700 dark:text-blue-300 transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto">
+          <span className="font-bold text-base text-blue-700 dark:text-blue-300 transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto max-w-[120px] truncate">
             Sistem Voting KPU
           </span>
         </div>
