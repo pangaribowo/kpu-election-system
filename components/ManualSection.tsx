@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import * as React from 'react'
 
 const manualContent = {
   overview: (
@@ -213,7 +213,7 @@ const tabs = [
 ]
 
 const ManualSection = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = React.useState("overview");
 
   // It's better to move manualContent and tabs outside if they don't depend on component's state/props
   // For brevity, keeping them here but applying dark mode classes directly.
@@ -221,7 +221,7 @@ const ManualSection = () => {
   // Helper function to add dark mode classes to children of manualContent
   // This is a simplified example. A more robust solution might involve traversing the React elements
   // or ensuring all styled components within manualContent use Tailwind classes.
-  const applyDarkModeToContent = (content: JSX.Element): JSX.Element => {
+  const applyDarkModeToContent = (content: React.ReactElement): React.ReactElement => {
     // This is a placeholder for a more complex transformation if needed.
     // For now, we assume the content itself will use Tailwind dark: classes.
     // The main containers are handled below.
