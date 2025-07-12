@@ -24,7 +24,7 @@ const VerifyOtpPage = () => {
       } else {
         // Ambil data user dari user_metadata
         const userMeta = data.user?.user_metadata || {}
-        setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name })
+        setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user?.email, phone: data.user?.phone || phone, phone_verified: true })
         setActiveTab('voting')
         setNotification({ message: 'Login via OTP berhasil!', type: 'success' })
         router.replace('/')
@@ -39,12 +39,15 @@ const VerifyOtpPage = () => {
   return (
     <div className="verify-otp-container">
       <h2>Verifikasi OTP</h2>
-      <form onSubmit={handleVerify} className="login-form">
+      <div className="coming-soon-box" style={{padding:24,background:'#fffbe6',border:'2px solid #ffe066',borderRadius:8,marginBottom:24,textAlign:'center'}}>
+        <span style={{fontSize:20,fontWeight:600,color:'#b59f00'}}>Fitur verifikasi nomor HP/OTP akan segera hadir (Coming Soon)</span>
+      </div>
+      <form className="login-form" onSubmit={e => e.preventDefault()}>
         <div className="form-group">
           <label htmlFor="otp">Masukkan Kode OTP:</label>
-          <input type="text" id="otp" value={otp} onChange={e => setOtp(e.target.value)} required placeholder="Kode OTP dari SMS" />
+          <input type="text" id="otp" value={otp} disabled placeholder="Kode OTP dari SMS" />
         </div>
-        <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memverifikasi...' : 'Verifikasi OTP'}</button>
+        <button type="button" className="btn-primary" disabled>Coming Soon</button>
       </form>
       <div style={{ marginTop: 16, color: '#666' }}>
         Kode OTP telah dikirim ke nomor HP: <b>{phone}</b>
