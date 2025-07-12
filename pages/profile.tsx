@@ -33,8 +33,20 @@ const ProfilePage = () => {
     setError('')
     setSuccess('')
     try {
-      const userId = (currentUser as any).id || (currentUser as any).username
-      if (!userId) throw new Error('ID user tidak ditemukan')
+      let userId = (currentUser as any).id
+      if (!userId) {
+        // Fetch UUID dari backend
+        let resUser
+        if (currentUser?.email) {
+          resUser = await fetch(`/api/users/sync?email=${encodeURIComponent(currentUser.email)}`)
+        } else {
+          resUser = await fetch(`/api/users/sync?username=${encodeURIComponent(currentUser.username)}`)
+        }
+        const dataUser = await resUser.json()
+        if (!resUser.ok || !dataUser.id) throw new Error('Gagal ambil UUID user')
+        userId = dataUser.id
+        setCurrentUser && setCurrentUser({ ...currentUser, id: userId })
+      }
       const res = await fetch('/api/users/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
