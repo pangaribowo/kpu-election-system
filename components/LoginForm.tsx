@@ -63,6 +63,46 @@ const LoginScreen = () => {
     checkPhone()
   }, [currentUser])
 
+  useEffect(() => {
+    const handleGoogleSync = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user && user.app_metadata?.provider === 'google' && !currentUser) {
+        // Sinkronisasi ke tabel users custom
+        const userMeta = user.user_metadata || {}
+        await fetch('/api/users/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            name: userMeta.full_name || userMeta.name || '-',
+            username: userMeta.preferred_username || userMeta.name || user.email,
+            phone: user.phone || '-',
+            role: 'user',
+          })
+        })
+        // Ambil UUID dari tabel users custom
+        const getRes = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
+        const userDb = await getRes.json()
+        if (userDb && userDb.id) {
+          setCurrentUser({
+            id: userDb.id,
+            username: userDb.username,
+            role: userDb.role,
+            name: userDb.name,
+            email: userDb.email,
+            phone: userDb.phone,
+          })
+          setNotification && setNotification({ message: `Selamat datang, ${userDb.name}!`, type: 'success' })
+          router.replace('/')
+        } else {
+          setNotification && setNotification({ message: 'Gagal sinkronisasi user Google.', type: 'error' })
+        }
+      }
+    }
+    handleGoogleSync()
+    // eslint-disable-next-line
+  }, [])
+
   // Handler submit phone
   const handleSubmitPhone = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -137,7 +177,7 @@ const LoginScreen = () => {
         if (userMeta.role !== role) {
           setNotification({ message: 'Role tidak sesuai!', type: 'error' })
         } else {
-          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name })
+          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user.email, phone: userMeta.phone })
           setActiveTab('voting')
           setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
           // Sinkronisasi ke tabel users
