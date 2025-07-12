@@ -7,21 +7,55 @@ const supabase = createClient(
 )
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'GET') {
+    const { email, phone, username } = req.query
+    if (email) {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, email, username, name, phone, role')
+        .eq('email', email as string)
+        .maybeSingle()
+      if (error) return res.status(500).json({ error: 'Gagal cek user' })
+      return res.status(200).json(data || {})
+    }
+    if (username) {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, email, username, name, phone, role')
+        .eq('username', username as string)
+        .maybeSingle()
+      if (error) return res.status(500).json({ error: 'Gagal cek user' })
+      return res.status(200).json(data || {})
+    }
+    if (phone) {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id')
+        .eq('phone', phone as string)
+        .maybeSingle()
+      if (error) return res.status(500).json({ error: 'Gagal cek phone' })
+      return res.status(200).json({ exists: !!data })
+    }
+    return res.status(400).json({ error: 'Parameter email, username, atau phone wajib diisi' })
+  }
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
   const { email, phone, name, username, role } = req.body
-  if (!email || !phone || !name || !username || !role) {
+  if (!email || !name || !username || !role) {
     return res.status(400).json({ error: 'Data tidak lengkap' })
   }
-  // Validasi format email dan phone
+  // Validasi format email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  const phoneRegex = /^\+\d{10,}$/
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Format email tidak valid' })
   }
-  if (!phoneRegex.test(phone)) {
-    return res.status(400).json({ error: 'Format nomor HP harus internasional (misal: +6281234567890)' })
+  // Validasi format phone HANYA jika phone diisi dan bukan '-' atau kosong/null
+  if (phone && phone !== '-' && phone.trim() !== '') {
+    const phoneRegex = /^\+\d{10,}$/
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ error: 'Format nomor HP harus internasional (misal: +6281234567890)' })
+    }
   }
   // Cek apakah user sudah ada (berdasarkan email/phone)
   const { data: existing, error: findError } = await supabase
@@ -46,7 +80,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Insert user
     const { error: insertError } = await supabase
       .from('users')
-      .insert([{ name, username, role, email, phone, password: '-' }]) // password dummy, tidak dipakai
+      .insert([{ name, username, role, email, phone }]) // password dihapus
     if (insertError) {
       return res.status(500).json({ error: 'Gagal insert user' })
     }
