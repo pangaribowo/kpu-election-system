@@ -10,12 +10,12 @@ const ProfilePage = () => {
     name: currentUser?.name || '',
     email: currentUser?.email || '',
     phone: currentUser?.phone || '',
-    password: '',
-    newPassword: '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetMsg, setResetMsg] = useState('')
 
   React.useEffect(() => {
     if (!currentUser) router.replace('/login')
@@ -56,8 +56,6 @@ const ProfilePage = () => {
           id: userId,
           name: form.name,
           phone: form.phone,
-          password: form.password,
-          newPassword: form.newPassword,
         })
       })
       const data = await res.json()
@@ -76,6 +74,24 @@ const ProfilePage = () => {
       setNotification && setNotification({ message: err.message || 'Gagal update profil', type: 'error' })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    setResetLoading(true)
+    setResetMsg('')
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentUser.email })
+      })
+      if (!res.ok) throw new Error('Gagal mengirim email reset password')
+      setResetMsg('Email reset password telah dikirim! Silakan cek inbox/spam email Anda.')
+    } catch (err: any) {
+      setResetMsg(err.message || 'Gagal mengirim email reset password')
+    } finally {
+      setResetLoading(false)
     }
   }
 
@@ -98,6 +114,12 @@ const ProfilePage = () => {
           <div className="mb-2"><b>Nomor HP:</b> {currentUser.phone || <span className="text-red-500">Belum diisi</span>}</div>
           <div className="mb-2"><b>Role:</b> {currentUser.role}</div>
           <button className="btn-primary mt-4" onClick={() => setEditMode(true)}>Edit Profil</button>
+          <div className="mt-8 border-t pt-6">
+            <div className="mb-2 text-sm text-gray-600 dark:text-gray-300">Ingin ganti password?</div>
+            <button className="btn-secondary" onClick={handleResetPassword} disabled={resetLoading}>{resetLoading ? 'Mengirim...' : 'Reset Password via Email'}</button>
+            {resetMsg && <div className="mt-2 text-sm text-green-500 dark:text-green-400">{resetMsg}</div>}
+            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">Password hanya bisa diganti melalui email reset. Klik tombol di atas, lalu cek inbox/spam email Anda.</div>
+          </div>
         </>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
@@ -112,14 +134,6 @@ const ProfilePage = () => {
           <div>
             <label className="block mb-1 font-medium">Nomor HP</label>
             <input type="text" name="phone" value={form.phone} onChange={handleChange} className="input-modern w-full dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600" required placeholder="Format: +6281234567890" />
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Password Lama</label>
-            <input type="password" name="password" value={form.password} onChange={handleChange} className="input-modern w-full dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600" placeholder="Isi jika ingin ganti password" />
-          </div>
-          <div>
-            <label className="block mb-1 font-medium">Password Baru</label>
-            <input type="password" name="newPassword" value={form.newPassword} onChange={handleChange} className="input-modern w-full dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600" placeholder="Isi jika ingin ganti password" />
           </div>
           {error && <div className="text-red-500 text-sm">{error}</div>}
           {success && <div className="text-green-500 text-sm">{success}</div>}
