@@ -28,7 +28,6 @@ const VotingPanel = () => {
       setNotification({ message: 'Akun Anda belum diverifikasi. Silakan cek email Anda.', type: 'error' })
       return
     }
-    // Hapus pengecekan phone_verified
     if (hasVoted) {
       setNotification({ message: 'Anda sudah melakukan voting!', type: 'error' })
       return
@@ -86,6 +85,15 @@ const VotingPanel = () => {
           ℹ️ INFORMASI
         </h3>
         <p className="text-gray-700 dark:text-gray-300">Login sebagai Pemilih untuk dapat melakukan voting</p>
+      </div>
+    );
+  } else if (!currentUser?.phone_verified) {
+    statusContent = (
+      <div className="status-warning text-center p-5 bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-500 dark:border-yellow-700 rounded-lg mt-5">
+        <h3 className="text-yellow-600 dark:text-yellow-400 mb-2 text-lg font-semibold">
+          ⚠ NOMOR HP BELUM DIVERIFIKASI
+        </h3>
+        <p className="text-gray-700 dark:text-gray-300">Silakan verifikasi nomor HP Anda dengan OTP sebelum melakukan voting.</p>
       </div>
     );
   } else if (hasVoted) {
