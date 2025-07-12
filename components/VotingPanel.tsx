@@ -1,6 +1,7 @@
 import React from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
+import { useState } from 'react'
 
 const VotingPanel = () => {
   const {
@@ -14,6 +15,8 @@ const VotingPanel = () => {
     setNotification,
   } = useVoting()
 
+  const [votingLoading, setVotingLoading] = useState<number | null>(null)
+
   const handleVote = async (candidateId: number) => {
     if (currentUser?.role !== 'user') {
       setNotification({ message: 'Hanya pemilih yang dapat melakukan voting!', type: 'error' })
@@ -25,11 +28,13 @@ const VotingPanel = () => {
       setNotification({ message: 'Akun Anda belum diverifikasi. Silakan cek email Anda.', type: 'error' })
       return
     }
+    // Hapus pengecekan phone_verified
     if (hasVoted) {
       setNotification({ message: 'Anda sudah melakukan voting!', type: 'error' })
       return
     }
     try {
+      setVotingLoading(candidateId)
       const res = await fetch('/api/voting', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,6 +43,7 @@ const VotingPanel = () => {
       const result = await res.json()
       if (!res.ok) {
         setNotification({ message: result.error || 'Voting gagal', type: 'error' })
+        setVotingLoading(null)
         return
       }
       // Ambil quick count terbaru setelah voting
@@ -64,7 +70,9 @@ const VotingPanel = () => {
       const statusData = await statusRes.json()
       setHasVoted(!!statusData.hasVoted)
       setNotification({ message: `Terima kasih! Anda telah memilih ${candidates.find((c) => c.id === candidateId)?.name}`, type: 'success' })
+      setVotingLoading(null)
     } catch (err) {
+      setVotingLoading(null)
       setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
     }
   }
@@ -107,36 +115,64 @@ const VotingPanel = () => {
           PILIH KANDIDAT ANDA
         </h2>
         <div id="candidates-list" className="candidates-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {candidates.map((candidate) => {
-            const isDisabled = hasVoted || currentUser?.role !== "user";
+          {candidates.map((candidate, idx) => {
+            const isDisabled = hasVoted || currentUser?.role !== "user" || votingLoading !== null;
+            const isVoted = hasVoted && votes && votes[candidate.id] > 0;
             const buttonText = hasVoted
-              ? "SUDAH MEMILIH"
+              ? isVoted ? "✓ SUDAH MEMILIH" : "SUDAH MEMILIH"
               : currentUser?.role !== "user"
               ? "LOGIN SEBAGAI PEMILIH"
+              : votingLoading === candidate.id
+              ? "Memilih..."
               : "PILIH";
             return (
               <div
                 key={candidate.id}
-                className={`candidate-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center transition-all hover:shadow-xl theme-${candidate.color}`}
+                className={`candidate-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-blue-500 dark:hover:border-blue-400 relative group`}
+                style={{ position: 'relative', overflow: 'hidden' }}
               >
                 <div
-                  className={`candidate-number w-12 h-12 mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white rounded-full theme-${candidate.color}`}
+                  className={`candidate-number w-12 h-12 mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white rounded-full theme-${candidate.color} bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg`}
                 >
-                  {candidate.id}
+                  {idx + 1}
                 </div>
-                <div className="candidate-name text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                <div className="candidate-name text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center justify-center gap-2">
                   {candidate.name}
+                  {isVoted && (
+                    <span className="inline-block align-middle text-green-500 animate-bounce" title="Kandidat yang dipilih">
+                      <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    </span>
+                  )}
                 </div>
                 <div className="candidate-vision text-sm text-gray-600 dark:text-gray-300 mb-4 h-20 overflow-y-auto">
                   {candidate.vision}
                 </div>
                 <button
-                  className="vote-btn w-full py-2 px-4 rounded-lg font-semibold text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                  className={`vote-btn w-full py-2 px-4 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                    dark:focus:ring-offset-gray-800
+                    ${isDisabled ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white active:scale-95'}`}
                   onClick={() => handleVote(candidate.id)}
-                  disabled={isDisabled}
+                  disabled={isDisabled || votingLoading !== null}
+                  style={{ position: 'relative', overflow: 'hidden' }}
                 >
-                  {buttonText}
+                  {votingLoading === candidate.id ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="loader border-2 border-t-2 border-t-white border-white/30 rounded-full w-5 h-5 animate-spin"></span>
+                      <span className="text-blue-700 dark:text-blue-200">Memilih...</span>
+                    </span>
+                  ) : (
+                    <span className="text-blue-50 dark:text-white font-bold">{buttonText}</span>
+                  )}
                 </button>
+                {/* Animasi ripple pada klik (opsional, bisa pakai JS/React state jika ingin lebih advance) */}
+                <style jsx>{`
+                  .loader {
+                    border-top-color: #fff;
+                    border-right-color: #fff;
+                    border-bottom-color: #fff;
+                    border-left-color: #3b82f6;
+                  }
+                `}</style>
               </div>
             );
           })}
