@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FiHome, FiCheckSquare, FiBarChart, FiUsers, FiInfo, FiBookOpen, FiLogOut, FiX } from "react-icons/fi";
+import { FiHome, FiCheckSquare, FiBarChart, FiUsers, FiInfo, FiBookOpen, FiLogOut, FiX, FiUser } from "react-icons/fi";
 import { supabase } from '../lib/supabaseClient';
 import { useVoting } from './VotingContext';
 import { Moon, Sun } from 'lucide-react';
@@ -90,11 +90,11 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
   return (
     <aside
       ref={sidebarRef}
-      className={sidebarClass + ' overflow-auto z-[300]'}
+      className={sidebarClass + ' overflow-auto z-[300] bg-white dark:bg-gray-900'}
       style={{ transitionProperty: 'width, box-shadow, background, transform', boxShadow: '0 8px 32px 0 rgba(31,38,135,0.15)', zIndex: 300 }}
     >
       {/* Header modern */}
-      <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative">
+      <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative bg-white dark:bg-gray-900">
         {/* Tombol close di kanan atas (z-50, paling atas) */}
         <button
           type="button"
@@ -105,17 +105,17 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
         >
           <FiX size={18} />
         </button>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900">
-            <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={24} />
+        <div className="flex items-center gap-2">
+          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900">
+            <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={20} />
           </span>
-          <span className="font-bold text-xl text-blue-700 dark:text-blue-300 transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto">
-            Sistem Voting KPU
+          <span className="font-bold text-base text-blue-700 dark:text-blue-300 transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto max-w-[120px] truncate">
+            Navigasi KPU
           </span>
         </div>
       </div>
       {/* Menu modern */}
-      <nav className="sidebar-nav flex-1">
+      <nav className="sidebar-nav flex-1 flex flex-col gap-2 mt-2">
         <ul className="sidebar-menu flex flex-col gap-2 px-2">
           {menuItems.map((item) => (
             <li className="sidebar-item" key={item.href}>
@@ -140,10 +140,26 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
               </Link>
             </li>
           ))}
+          <li className="sidebar-item">
+            <Link
+              href="/profile"
+              className={`sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
+                ${router.pathname === '/profile' ? "bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold" : "hover:bg-blue-100/70 dark:hover:bg-blue-800/70 text-gray-700 dark:text-gray-200"}
+              `}
+              onClick={() => isMobile && setOpen(false)}
+            >
+              <span className="inline-flex items-center justify-center w-8 h-8">
+                <FiUser size={22} />
+              </span>
+              <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">
+                Profil Saya
+              </span>
+            </Link>
+          </li>
         </ul>
       </nav>
       {/* Footer modern */}
-      <div className="sidebar-footer mt-auto mb-6 flex flex-col items-center gap-3 px-2">
+      <div className="sidebar-footer mt-auto mb-6 flex flex-col items-center gap-3 px-2 bg-white dark:bg-gray-900">
         <button
           type="button"
           onClick={handleLogout}
