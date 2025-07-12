@@ -115,7 +115,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
         </div>
       </div>
       {/* Menu modern */}
-      <nav className="sidebar-nav flex-1 flex flex-col gap-2 mt-8">
+      <nav className="sidebar-nav flex-1 flex flex-col gap-2 mt-2">
         <ul className="sidebar-menu flex flex-col gap-2 px-2">
           {menuItems.map((item) => (
             <li className="sidebar-item" key={item.href}>
