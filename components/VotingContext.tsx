@@ -24,6 +24,7 @@ export type CurrentUser = {
   name: string
   email?: string
   phone?: string
+  phone_verified?: boolean // status verifikasi nomor HP
 } | null
 
 type VotingContextType = {
