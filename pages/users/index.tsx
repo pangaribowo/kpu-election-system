@@ -50,7 +50,7 @@ const UsersPage = () => {
   return (
     <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <section className="section active rounded-2xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300">
-        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">Daftar User</h1>
+        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">DAFTAR USER</h1>
         {loading && <div className="text-gray-600 dark:text-gray-300">Loading...</div>}
         {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
         {!loading && !error && (

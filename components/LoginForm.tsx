@@ -328,95 +328,170 @@ const LoginScreen = () => {
   const showPasswordButtonClass = "absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none";
 
   return (
-    <div id="login-screen" className="login-screen">
-      <div className="login-container">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 dark:from-gray-900 dark:to-gray-800">
+      <div className="login-container bg-white dark:bg-gray-900 p-6 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md flex flex-col gap-4 text-center">
         {/* Judul besar modern di atas tab */}
-        <div className="login-title mb-8">
+        <div className="login-title mb-2">
           <h1 className="text-3xl sm:text-4xl font-extrabold uppercase mb-2 text-blue-600 dark:text-blue-400 text-center font-sans">Sistem Voting KPU</h1>
           <div className="w-20 h-1 rounded bg-blue-600 dark:bg-blue-400 mx-auto mb-2" />
         </div>
-        <div className="flex justify-center mb-6 transition-all duration-300">
+        <div className="flex justify-center gap-2 mb-2">
           <button
-            className={`login-tab-btn ${tab === 'login' ? 'active' : ''} px-6 py-2 rounded-t-lg font-semibold text-base focus:outline-none transition-colors duration-200 ${tab === 'login' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white' : 'bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}
+            className={`login-tab-btn px-6 py-2 sm:px-8 sm:py-3 rounded-t-xl font-semibold text-base sm:text-lg focus:outline-none transition-all duration-300
+              ${tab === 'login'
+                ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-lg border-b-4 border-blue-600 dark:border-blue-400 z-10'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border-b-4 border-transparent'}
+            `}
+            style={{ minWidth: 120 }}
             onClick={() => setTab('login')}
             type="button"
+            aria-current={tab === 'login' ? 'page' : undefined}
           >
             Login
           </button>
           <button
-            className={`login-tab-btn ${tab === 'register' ? 'active' : ''} px-6 py-2 rounded-t-lg font-semibold text-base focus:outline-none transition-colors duration-200 ${tab === 'register' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white' : 'bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}
+            className={`login-tab-btn px-6 py-2 sm:px-8 sm:py-3 rounded-t-xl font-semibold text-base sm:text-lg focus:outline-none transition-all duration-300
+              ${tab === 'register'
+                ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-lg border-b-4 border-blue-600 dark:border-blue-400 z-10'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 border-b-4 border-transparent'}
+            `}
+            style={{ minWidth: 120 }}
             onClick={() => setTab('register')}
             type="button"
+            aria-current={tab === 'register' ? 'page' : undefined}
           >
             Register
           </button>
         </div>
-        {tab === 'login' ? (
-          <>
-          <form id="login-form" className="login-form fade-in" onSubmit={handleLogin}>
-            <div className="form-group">
-              <label htmlFor="login-email">Email:</label>
-              <div className="input-icon-group">
-                <Mail size={18} className="input-icon" />
-                <input type="email" id="login-email" ref={emailRef} required placeholder="Masukkan email Anda" />
+        <div className="w-full flex flex-col gap-6">
+          {tab === 'login' && (
+            <>
+              <form id="login-form" className="login-form fade-in" onSubmit={handleLogin}>
+                <div className="form-group">
+                  <label htmlFor="login-email">Email:</label>
+                  <div className="input-icon-group">
+                    <Mail size={18} className="input-icon" />
+                    <input type="email" id="login-email" ref={emailRef} required placeholder="Masukkan email Anda" />
+                  </div>
+                  <small className="input-helper">Contoh: user@email.com</small>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="login-password">Password:</label>
+                  <div className="input-icon-group">
+                    <Lock size={18} className="input-icon" />
+                    <input type={showLoginPassword ? 'text' : 'password'} id="login-password" ref={passwordRef} required placeholder="Masukkan password Anda" />
+                    <button type="button" className="show-password-btn" onClick={() => setShowLoginPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
+                      {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  <small className="input-helper">Password minimal 8 karakter</small>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="login-role">Role:</label>
+                  <select id="login-role" ref={roleRef} required>
+                    <option value="">Pilih Role</option>
+                    <option value="admin">Petugas KPU</option>
+                    <option value="user">Pemilih</option>
+                  </select>
+                </div>
+                <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
+                <div className="flex justify-end mt-2">
+                  <button type="button" className="forgot-link" onClick={() => setShowForgot(true)}>Lupa password?</button>
+                </div>
+              </form>
+              <div className="login-or-separator">
+                <span className="login-or-text">atau</span>
               </div>
-              <small className="input-helper">Contoh: user@email.com</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor="login-password">Password:</label>
-              <div className="input-icon-group">
-                <Lock size={18} className="input-icon" />
-                <input type={showLoginPassword ? 'text' : 'password'} id="login-password" ref={passwordRef} required placeholder="Masukkan password Anda" />
-                <button type="button" className="show-password-btn" onClick={() => setShowLoginPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                  {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
+              <button type="button" className="btn-google w-full mt-2 flex items-center justify-center gap-2" onClick={handleGoogleLogin} disabled={loading} style={{fontWeight:600}}>
+                <span className="google-logo" style={{display:'flex',alignItems:'center',marginRight:12}}>
+                  {/* SVG Google G resmi */}
+                  <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <g>
+                      <path d="M19.6 10.23c0-.68-.06-1.36-.18-2.02H10v3.82h5.42c-.23 1.23-.93 2.27-1.98 2.97v2.47h3.2c1.87-1.72 2.96-4.25 2.96-7.24z" fill="#4285F4"/>
+                      <path d="M10 20c2.7 0 4.97-.9 6.63-2.44l-3.2-2.47c-.89.6-2.02.96-3.43.96-2.64 0-4.87-1.78-5.67-4.18H1.05v2.62C2.79 17.98 6.13 20 10 20z" fill="#34A853"/>
+                      <path d="M4.33 12.87A5.99 5.99 0 0 1 4 10c0-.99.18-1.95.33-2.87V4.51H1.05A9.98 9.98 0 0 0 0 10c0 1.64.39 3.19 1.05 4.49l3.28-2.62z" fill="#FBBC05"/>
+                      <path d="M10 3.96c1.47 0 2.78.51 3.81 1.51l2.85-2.85C14.97.9 12.7 0 10 0 6.13 0 2.79 2.02 1.05 5.51l3.28 2.62C5.13 5.74 7.36 3.96 10 3.96z" fill="#EA4335"/>
+                    </g>
+                  </svg>
+                </span>
+                <span>Login dengan Google</span>
+              </button>
+              <div className="login-or-separator">
+                <span className="login-or-text">atau login dengan nomor HP</span>
               </div>
-              <small className="input-helper">Password minimal 8 karakter</small>
-            </div>
-            <div className="form-group">
-              <label htmlFor="login-role">Role:</label>
-              <select id="login-role" ref={roleRef} required>
-                <option value="">Pilih Role</option>
-                <option value="admin">Petugas</option>
-                <option value="user">Pemilih</option>
-              </select>
-            </div>
-            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
-            <div className="flex justify-end mt-2">
-              <button type="button" className="forgot-link" onClick={() => setShowForgot(true)}>Lupa password?</button>
-            </div>
-          </form>
-          <div className="login-or-separator">
-            <span className="login-or-text">atau</span>
-          </div>
-          <button type="button" className="btn-google w-full mt-2 flex items-center justify-center gap-2" onClick={handleGoogleLogin} disabled={loading} style={{fontWeight:600}}>
-            <span className="google-logo" style={{display:'flex',alignItems:'center',marginRight:12}}>
-              {/* SVG Google G resmi */}
-              <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <g>
-                  <path d="M19.6 10.23c0-.68-.06-1.36-.18-2.02H10v3.82h5.42c-.23 1.23-.93 2.27-1.98 2.97v2.47h3.2c1.87-1.72 2.96-4.25 2.96-7.24z" fill="#4285F4"/>
-                  <path d="M10 20c2.7 0 4.97-.9 6.63-2.44l-3.2-2.47c-.89.6-2.02.96-3.43.96-2.64 0-4.87-1.78-5.67-4.18H1.05v2.62C2.79 17.98 6.13 20 10 20z" fill="#34A853"/>
-                  <path d="M4.33 12.87A5.99 5.99 0 0 1 4 10c0-.99.18-1.95.33-2.87V4.51H1.05A9.98 9.98 0 0 0 0 10c0 1.64.39 3.19 1.05 4.49l3.28-2.62z" fill="#FBBC05"/>
-                  <path d="M10 3.96c1.47 0 2.78.51 3.81 1.51l2.85-2.85C14.97.9 12.7 0 10 0 6.13 0 2.79 2.02 1.05 5.51l3.28 2.62C5.13 5.74 7.36 3.96 10 3.96z" fill="#EA4335"/>
-                </g>
-              </svg>
-            </span>
-            <span>Login dengan Google</span>
-          </button>
-          <div className="login-or-separator">
-            <span className="login-or-text">atau login dengan nomor HP</span>
-          </div>
-          <form id="otp-login-form" className="login-form fade-in">
-            <div className="form-group">
-              <label htmlFor="otp-phone">Nomor HP:</label>
-              <div className="input-icon-group">
-                <Phone size={18} className="input-icon" />
-                <input type="tel" id="otp-phone" value={otpPhone} disabled placeholder="Contoh: +6281234567890" className="rounded-full" />
+              <form id="otp-login-form" className="login-form fade-in">
+                <div className="form-group">
+                  <label htmlFor="otp-phone">Nomor HP:</label>
+                  <div className="input-icon-group">
+                    <Phone size={18} className="input-icon" />
+                    <input type="tel" id="otp-phone" value={otpPhone} disabled placeholder="Contoh: +6281234567890" className="rounded-full" />
+                  </div>
+                  <div className="text-yellow-600 text-sm mt-1">Verifikasi dengan nomor HP akan segera hadir (Coming Soon)</div>
+                </div>
+                <button type="button" className="btn-primary w-full flex justify-center items-center rounded-full" disabled>Coming Soon</button>
+              </form>
+            </>
+          )}
+          {tab === 'register' && (
+            <>
+              <form id="register-form" className="login-form fade-in" onSubmit={handleRegister}>
+                <div className="form-group">
+                  <label htmlFor="reg-username">Username:</label>
+                  <div className="input-icon-group">
+                    <User size={18} className="input-icon" />
+                    <input type="text" id="reg-username" ref={regUsernameRef} required placeholder="Username unik" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="reg-name">Nama Lengkap:</label>
+                  <div className="input-icon-group">
+                    <User size={18} className="input-icon" />
+                    <input type="text" id="reg-name" ref={regNameRef} required placeholder="Nama lengkap Anda" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="reg-email">Email:</label>
+                  <div className="input-icon-group">
+                    <Mail size={18} className="input-icon" />
+                    <input type="email" id="reg-email" ref={regEmailRef} required placeholder="Email aktif" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="reg-phone">Nomor HP:</label>
+                  <div className="input-icon-group">
+                    <Phone size={18} className="input-icon" />
+                    <input type="tel" id="reg-phone" ref={regPhoneRef} required placeholder="Contoh: +6281234567890" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="reg-password">Password:</label>
+                  <div className="input-icon-group">
+                    <Lock size={18} className="input-icon" />
+                    <input type={showRegPassword ? 'text' : 'password'} id="reg-password" ref={regPasswordRef} required placeholder="Password minimal 8 karakter" />
+                    <button type="button" className="show-password-btn" onClick={() => setShowRegPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
+                      {showRegPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="reg-confirm-password">Konfirmasi Password:</label>
+                  <div className="input-icon-group">
+                    <Lock size={18} className="input-icon" />
+                    <input type={showRegConfirmPassword ? 'text' : 'password'} id="reg-confirm-password" ref={regConfirmPasswordRef} required placeholder="Ulangi password" />
+                    <button type="button" className="show-password-btn" onClick={() => setShowRegConfirmPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
+                      {showRegConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
+                <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
+              </form>
+              <div className="text-center mt-4">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Sudah punya akun? </span>
+                <button type="button" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline text-sm" onClick={() => setTab('login')}>Login di sini</button>
               </div>
-              <div className="text-yellow-600 text-sm mt-1">Verifikasi dengan nomor HP akan segera hadir (Coming Soon)</div>
-            </div>
-            <button type="button" className="btn-primary w-full flex justify-center items-center rounded-full" disabled>Coming Soon</button>
-          </form>
+            </>
+          )}
+        </div>
           {/* Modal forgot password */}
           {showForgot && (
             <div className="modal-overlay">
@@ -435,84 +510,27 @@ const LoginScreen = () => {
               </div>
             </div>
           )}
-          </>
-        ) : (
-          <form id="register-form" className="login-form fade-in" onSubmit={handleRegister}>
-            <div className="form-group">
-              <label htmlFor="reg-username">Username:</label>
-              <div className="input-icon-group">
-                <User size={18} className="input-icon" />
-                <input type="text" id="reg-username" ref={regUsernameRef} required placeholder="Username unik" />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-name">Nama Lengkap:</label>
-              <div className="input-icon-group">
-                <User size={18} className="input-icon" />
-                <input type="text" id="reg-name" ref={regNameRef} required placeholder="Nama lengkap Anda" />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-email">Email:</label>
-              <div className="input-icon-group">
-                <Mail size={18} className="input-icon" />
-                <input type="email" id="reg-email" ref={regEmailRef} required placeholder="Email aktif" />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-phone">Nomor HP:</label>
-              <div className="input-icon-group">
-                <Phone size={18} className="input-icon" />
-                <input type="tel" id="reg-phone" ref={regPhoneRef} required placeholder="Contoh: +6281234567890" />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-password">Password:</label>
-              <div className="input-icon-group">
-                <Lock size={18} className="input-icon" />
-                <input type={showRegPassword ? 'text' : 'password'} id="reg-password" ref={regPasswordRef} required placeholder="Password minimal 8 karakter" />
-                <button type="button" className="show-password-btn" onClick={() => setShowRegPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                  {showRegPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="reg-confirm-password">Konfirmasi Password:</label>
-              <div className="input-icon-group">
-                <Lock size={18} className="input-icon" />
-                <input type={showRegConfirmPassword ? 'text' : 'password'} id="reg-confirm-password" ref={regConfirmPasswordRef} required placeholder="Ulangi password" />
-                <button type="button" className="show-password-btn" onClick={() => setShowRegConfirmPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                  {showRegConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
-            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
-          </form>
-        )}
-        <div className="login-footer">
-          <button id="show-manual" className="btn-secondary flex justify-center items-center" type="button" onClick={handleShowManual}>Lihat Manual</button>
         </div>
-      </div>
-      {/* Modal input nomor telepon untuk user Google */}
-      {showPhoneModal && (
-        <div className="modal-overlay">
-          <div className="modal-box">
-            <h4>Lengkapi Nomor Telepon</h4>
-            <form onSubmit={handleSubmitPhone}>
-              <div className="form-group">
-                <label htmlFor="google-phone">Nomor HP:</label>
-                <input type="tel" id="google-phone" value={phoneInput} onChange={e => setPhoneInput(e.target.value)} required placeholder="Contoh: +6281234567890" />
-                {phoneError && <div className="text-red-500 text-sm mt-1">{phoneError}</div>}
-              </div>
-              <div className="flex gap-2 mt-2">
-                <button type="submit" className="btn-primary" disabled={phoneLoading}>{phoneLoading ? 'Menyimpan...' : 'Simpan'}</button>
-              </div>
-            </form>
+        {/* Modal input nomor telepon untuk user Google */}
+        {showPhoneModal && (
+          <div className="modal-overlay">
+            <div className="modal-box">
+              <h4>Lengkapi Nomor Telepon</h4>
+              <form onSubmit={handleSubmitPhone}>
+                <div className="form-group">
+                  <label htmlFor="google-phone">Nomor HP:</label>
+                  <input type="tel" id="google-phone" value={phoneInput} onChange={e => setPhoneInput(e.target.value)} required placeholder="Contoh: +6281234567890" />
+                  {phoneError && <div className="text-red-500 text-sm mt-1">{phoneError}</div>}
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <button type="submit" className="btn-primary" disabled={phoneLoading}>{phoneLoading ? 'Menyimpan...' : 'Simpan'}</button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
 }
 
 export default LoginScreen 
