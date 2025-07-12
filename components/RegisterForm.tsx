@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { useVoting } from './VotingContext'
+import { supabase } from '../lib/supabaseClient'
 
 const RegisterForm = () => {
   const { setCurrentUser, setActiveTab, setNotification } = useVoting()
@@ -11,28 +12,35 @@ const RegisterForm = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    const username = usernameRef.current?.value.trim() || ''
+    const email = usernameRef.current?.value.trim() || ''
     const password = passwordRef.current?.value.trim() || ''
     const name = nameRef.current?.value.trim() || ''
     const role = roleRef.current?.value as 'admin' | 'user'
-    if (!username || !password || !name || !role) {
+    if (!email || !password || !name || !role) {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
       return
     }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, name, role })
+      // Register ke Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name, role, username: email }
+        }
       })
-      const result = await res.json()
-      if (!res.ok) {
-        setNotification({ message: result.error || 'Registrasi gagal', type: 'error' })
+      if (error) {
+        setNotification({ message: error.message || 'Registrasi gagal', type: 'error' })
       } else {
-        setCurrentUser({ username: result.user.username, role: result.user.role, name: result.user.name })
-        setActiveTab('voting')
-        setNotification({ message: `Registrasi & login sukses! Selamat datang, ${result.user.name}!`, type: 'success' })
+        // Sinkronisasi ke tabel users custom
+        await fetch('/api/users/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name, username: email, role })
+        })
+        setNotification({ message: 'Registrasi sukses! Silakan cek email untuk verifikasi.', type: 'success' })
+        setActiveTab && setActiveTab('login')
       }
     } catch (err) {
       setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
@@ -44,8 +52,8 @@ const RegisterForm = () => {
   return (
     <form id="register-form" className="login-form" onSubmit={handleRegister}>
       <div className="form-group">
-        <label htmlFor="reg-username">Username:</label>
-        <input type="text" id="reg-username" ref={usernameRef} required />
+        <label htmlFor="reg-email">Email:</label>
+        <input type="email" id="reg-email" ref={usernameRef} required />
       </div>
       <div className="form-group">
         <label htmlFor="reg-password">Password:</label>

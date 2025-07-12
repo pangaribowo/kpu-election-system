@@ -34,7 +34,9 @@ const ProfilePage = () => {
     setSuccess('')
     try {
       let userId = (currentUser as any).id
-      if (!userId) {
+      // Cek apakah id sudah UUID (string, panjang 36, ada '-')
+      const isUUID = typeof userId === 'string' && userId.length === 36 && userId.includes('-')
+      if (!isUUID) {
         // Fetch UUID dari backend
         let resUser
         if (currentUser?.email) {
@@ -43,9 +45,9 @@ const ProfilePage = () => {
           resUser = await fetch(`/api/users/sync?username=${encodeURIComponent(currentUser.username)}`)
         }
         const dataUser = await resUser.json()
-        if (!resUser.ok || !dataUser.id) throw new Error('Gagal ambil UUID user')
+        if (!resUser.ok || !dataUser.id) throw new Error('Gagal ambil UUID user, silakan login ulang')
         userId = dataUser.id
-        setCurrentUser && setCurrentUser({ ...currentUser, id: userId })
+        setCurrentUser && setCurrentUser({ ...currentUser, ...dataUser })
       }
       const res = await fetch('/api/users/profile', {
         method: 'PATCH',
@@ -62,7 +64,12 @@ const ProfilePage = () => {
       if (!res.ok) throw new Error(data.error || 'Gagal update profil')
       setSuccess('Profil berhasil diupdate!')
       setNotification && setNotification({ message: 'Profil berhasil diupdate!', type: 'success' })
-      setCurrentUser && setCurrentUser(data.user)
+      // Fetch ulang data user terbaru dari backend agar context dan UI sinkron
+      const resUserNew = await fetch(`/api/users/sync?email=${encodeURIComponent(form.email)}`)
+      const userDbNew = await resUserNew.json()
+      if (userDbNew && userDbNew.id) {
+        setCurrentUser && setCurrentUser(userDbNew)
+      }
       setEditMode(false)
     } catch (err: any) {
       setError(err.message || 'Gagal update profil')

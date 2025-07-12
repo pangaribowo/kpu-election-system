@@ -202,14 +202,12 @@ const LoginScreen = () => {
   // Handle Register
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    const username = regUsernameRef.current?.value.trim() || ''
+    const email = regEmailRef.current?.value.trim() || ''
     const password = regPasswordRef.current?.value.trim() || ''
     const confirmPassword = regConfirmPasswordRef.current?.value.trim() || ''
     const name = regNameRef.current?.value.trim() || ''
-    const email = regEmailRef.current?.value.trim() || ''
     const phone = regPhoneRef.current?.value.trim() || ''
-    // Validasi input
-    if (!username || !password || !confirmPassword || !name || !email || !phone) {
+    if (!email || !password || !confirmPassword || !name) {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
       return
     }
@@ -217,49 +215,26 @@ const LoginScreen = () => {
       setNotification({ message: 'Password dan konfirmasi password tidak sama!', type: 'error' })
       return
     }
-    // Validasi email
-    const emailRegex = /^[^\s@]+@[^-\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      setNotification({ message: 'Format email tidak valid!', type: 'error' })
-      return
-    }
-    // Validasi nomor HP (format internasional)
-    const phoneRegex = /^\+\d{10,}$/
-    if (!phoneRegex.test(phone)) {
-      setNotification({ message: 'Nomor HP tidak valid! Gunakan format internasional, contoh: +6281234567890', type: 'error' })
-      return
-    }
     setLoading(true)
     try {
-      // Supabase Auth signUp (email & phone)
+      // Register ke Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            username,
-            name,
-            phone,
-            role: 'user',
-          },
-          emailRedirectTo: window.location.origin + '/login',
-        },
+          data: { name, phone, username: email, role: 'user' }
+        }
       })
       if (error) {
         setNotification({ message: error.message || 'Registrasi gagal', type: 'error' })
       } else {
-        // Sinkronisasi ke tabel users
-        const syncRes = await fetch('/api/users/sync', {
+        // Sinkronisasi ke tabel users custom
+        await fetch('/api/users/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, phone, name, username, role: 'user' })
+          body: JSON.stringify({ email, name, username: email, phone, role: 'user' })
         })
-        if (!syncRes.ok) {
-          const err = await syncRes.json().catch(() => null)
-          setNotification({ message: err?.error || 'Registrasi berhasil, tapi gagal sinkronisasi user ke database.', type: 'warning' })
-        } else {
-          setNotification({ message: 'Registrasi berhasil! Silakan cek email untuk verifikasi.', type: 'success' })
-        }
+        setNotification({ message: 'Registrasi sukses! Silakan cek email untuk verifikasi.', type: 'success' })
         setTab('login')
       }
     } catch (err) {
