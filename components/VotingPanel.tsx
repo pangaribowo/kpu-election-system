@@ -25,6 +25,10 @@ const VotingPanel = () => {
       setNotification({ message: 'Akun Anda belum diverifikasi. Silakan cek email Anda.', type: 'error' })
       return
     }
+    if (!currentUser.phone_verified) {
+      setNotification({ message: 'Nomor HP Anda belum diverifikasi. Silakan verifikasi OTP terlebih dahulu.', type: 'error' })
+      return
+    }
     if (hasVoted) {
       setNotification({ message: 'Anda sudah melakukan voting!', type: 'error' })
       return
@@ -80,6 +84,15 @@ const VotingPanel = () => {
         <p className="text-gray-700 dark:text-gray-300">Login sebagai Pemilih untuk dapat melakukan voting</p>
       </div>
     );
+  } else if (!currentUser?.phone_verified) {
+    statusContent = (
+      <div className="status-warning text-center p-5 bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-500 dark:border-yellow-700 rounded-lg mt-5">
+        <h3 className="text-yellow-600 dark:text-yellow-400 mb-2 text-lg font-semibold">
+          ⚠ NOMOR HP BELUM DIVERIFIKASI
+        </h3>
+        <p className="text-gray-700 dark:text-gray-300">Silakan verifikasi nomor HP Anda dengan OTP sebelum melakukan voting.</p>
+      </div>
+    );
   } else if (hasVoted) {
     statusContent = (
       <div className="status-success text-center p-5 bg-green-50 dark:bg-green-900/30 border-2 border-green-500 dark:border-green-700 rounded-lg mt-5">
@@ -108,7 +121,7 @@ const VotingPanel = () => {
         </h2>
         <div id="candidates-list" className="candidates-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {candidates.map((candidate) => {
-            const isDisabled = hasVoted || currentUser?.role !== "user";
+            const isDisabled = hasVoted || currentUser?.role !== "user" || !currentUser?.phone_verified;
             const buttonText = hasVoted
               ? "SUDAH MEMILIH"
               : currentUser?.role !== "user"
