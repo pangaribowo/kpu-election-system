@@ -12,6 +12,10 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html.dark, html.dark body {
+  @apply text-gray-200 bg-gray-900; /* Default dark mode */
+}
+
 /* Terapkan juga ke elemen utama agar konsisten */
 input, button, select, textarea {
   font-family: inherit;
@@ -21,100 +25,117 @@ input, button, select, textarea {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* Global transition for dark mode */
+  @apply transition-colors duration-300;
 }
 
-:root {
-  --primary-bg: #f8fafc;
-  --secondary-bg: #ffffff;
-  --accent-primary: #2563eb;
-  --accent-secondary: #1e40af;
-  --accent-success: #059669;
-  --accent-warning: #d97706;
-  --accent-danger: #dc2626;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --border-color: #e2e8f0;
-  --border-hover: #cbd5e1;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
 
-/* Login Styles */
+/* Styles for components like Sidebar, Header, etc., are now primarily using Tailwind classes. */
+/* Specific global overrides or complex component styles can remain here. */
+
+/* Example: Ensure .prose styles for ManualSection are correctly applied for dark mode */
+.dark .prose {
+  /* This uses @tailwindcss/typography dark mode variants */
+  /* You might need to customize further if default is not sufficient */
+}
+.prose h3 {
+    @apply text-blue-600 dark:text-blue-400; /* Example for ManualSection headings */
+}
+.prose h4 {
+    @apply text-gray-700 dark:text-gray-300;
+}
+.prose h5 {
+    @apply text-gray-600 dark:text-gray-400;
+}
+.prose p, .prose ul, .prose ol, .prose li {
+    @apply text-gray-700 dark:text-gray-300;
+}
+.prose a {
+    @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300;
+}
+.prose .feature-card {
+    @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow;
+}
+.prose .account-card {
+    @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow;
+}
+.prose .warning-box, .prose .info-box, .prose .tip-box, .prose .contact-box {
+    @apply p-4 rounded-lg my-4;
+}
+.prose .warning-box { @apply bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700; }
+.prose .warning-box h5 { @apply text-yellow-700 dark:text-yellow-300; }
+.prose .info-box { @apply bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700; }
+.prose .info-box h5 { @apply text-blue-700 dark:text-blue-300; }
+.prose .tip-box { @apply bg-green-50 dark:bg-green-900/30 border border-green-300 dark:border-green-700; }
+.prose .tip-box h5 { @apply text-green-700 dark:text-green-300; }
+.prose .contact-box { @apply bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600; }
+.prose .contact-box h5 { @apply text-gray-700 dark:text-gray-300; }
+
+
+/* Login Styles (can be refactored to Tailwind or kept if complex) */
 .login-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  @apply flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-600 to-indigo-700 dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800;
 }
-
 .login-container {
-  background: var(--secondary-bg);
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
+  @apply bg-white dark:bg-gray-800 p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md text-center;
 }
-
 .login-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--accent-primary);
-  margin-bottom: 8px;
+  @apply text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2;
 }
-
 .login-header p {
-  color: var(--text-secondary);
-  margin-bottom: 32px;
+  @apply text-gray-600 dark:text-gray-300 mb-8;
 }
-
 .login-form {
-  text-align: left;
-  margin-bottom: 24px;
+  @apply text-left mb-6;
 }
-
 .login-info {
-  background: var(--primary-bg);
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  text-align: left;
+  @apply bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6 text-left;
 }
-
 .login-info h4 {
-  color: var(--accent-primary);
-  margin-bottom: 8px;
-  font-size: 0.875rem;
+  @apply text-blue-600 dark:text-blue-400 mb-1 text-sm font-semibold;
 }
-
 .login-info p {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
+  @apply text-xs text-gray-500 dark:text-gray-400 mb-1;
 }
-
 .login-footer {
-  text-align: center;
+  @apply text-center;
 }
 
-.btn-logout {
-  background: var(--accent-danger);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* FORM GROUP & INPUTS */
+.form-group label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  @apply w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  @apply outline-none border-blue-500 ring-2 ring-blue-500 dark:border-blue-400 dark:ring-blue-400;
 }
 
-.btn-logout:hover {
-  background: #b91c1c;
+/* BUTTONS */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-colors w-full;
 }
+.btn-secondary {
+  @apply bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-colors w-full;
+}
+.btn-google {
+  @apply flex items-center justify-center w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold text-base shadow-sm transition-colors py-3 gap-2 mb-2 min-h-[48px];
+}
+.btn-google:disabled {
+  @apply opacity-70 cursor-not-allowed;
+}
+
+/* LEGACY/UNIQUE STYLE YANG BELUM BISA DIGANTIKAN TAILWIND */
+/*
+.input-icon-group, .input-icon, .modal-overlay, .modal-box, .forgot-link, .fade-in, .login-title, .login-or-separator, .btn-logout-modern, dsb
+- Tetap dipertahankan karena ada kebutuhan khusus atau belum bisa digantikan Tailwind sepenuhnya.
+- Akan dioptimalkan bertahap jika memungkinkan.
+*/
 
 /* Header Updates */
 .header-content {
@@ -519,17 +540,35 @@ input, button, select, textarea {
   transition: all 0.2s ease;
   font-size: 14px;
 }
-
 .vote-btn:hover:not(:disabled) {
   background: var(--accent-secondary);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
-
 .vote-btn:disabled {
-  background: var(--text-muted);
+  background: #d1d5db; /* gray-300 */
+  color: #6b7280; /* gray-500 */
   cursor: not-allowed;
   transform: none;
+}
+.dark .vote-btn {
+  background: #2563eb; /* blue-600 */
+  color: #fff;
+}
+.dark .vote-btn:hover:not(:disabled) {
+  background: #3b82f6; /* blue-500 */
+}
+.dark .vote-btn:disabled {
+  background: #374151; /* gray-700 */
+  color: #d1d5db; /* gray-300 */
+}
+.candidate-card {
+  background: #fff;
+  color: #1e293b;
+}
+.dark .candidate-card {
+  background: #23272f;
+  color: #f3f4f6;
 }
 
 /* Quick Count Styles */
@@ -1144,305 +1183,83 @@ html.dark body {
 @tailwind components;
 @tailwind utilities;
 
-/* Import Inter dari Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* ==========================
+   LOGIN & REGISTER REFACTOR
+   ========================== */
+/*
+  Catatan:
+  - Style manual yang sudah tergantikan Tailwind/@apply dihapus.
+  - Style unik/legacy yang belum bisa digantikan dipindahkan ke bagian khusus di bawah ini.
+  - Dark mode dioptimalkan dengan Tailwind (dark:).
+*/
 
-html, body {
-  font-family: 'Inter', system-ui, sans-serif;
-  @apply text-base font-normal text-gray-800 bg-gray-50; /* Default light mode */
-  letter-spacing: 0.01em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/* LOGIN SCREEN & CONTAINER (PAKAI TAILWIND) */
+/* .login-screen, .login-container, .login-header h1, .login-header p, .login-form, .login-info, .login-footer
+digantikan dengan Tailwind class dan @apply di bawah ini */
 
-html.dark, html.dark body {
-  @apply text-gray-200 bg-gray-900; /* Default dark mode */
-}
-
-/* Terapkan juga ke elemen utama agar konsisten */
-input, button, select, textarea {
-  font-family: inherit;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  /* Global transition for dark mode */
-  @apply transition-colors duration-300;
-}
-
-
-/* Styles for components like Sidebar, Header, etc., are now primarily using Tailwind classes. */
-/* Specific global overrides or complex component styles can remain here. */
-
-/* Example: Ensure .prose styles for ManualSection are correctly applied for dark mode */
-.dark .prose {
-  /* This uses @tailwindcss/typography dark mode variants */
-  /* You might need to customize further if default is not sufficient */
-}
-.prose h3 {
-    @apply text-blue-600 dark:text-blue-400; /* Example for ManualSection headings */
-}
-.prose h4 {
-    @apply text-gray-700 dark:text-gray-300;
-}
-.prose h5 {
-    @apply text-gray-600 dark:text-gray-400;
-}
-.prose p, .prose ul, .prose ol, .prose li {
-    @apply text-gray-700 dark:text-gray-300;
-}
-.prose a {
-    @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300;
-}
-.prose .feature-card {
-    @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow;
-}
-.prose .account-card {
-    @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow;
-}
-.prose .warning-box, .prose .info-box, .prose .tip-box, .prose .contact-box {
-    @apply p-4 rounded-lg my-4;
-}
-.prose .warning-box { @apply bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700; }
-.prose .warning-box h5 { @apply text-yellow-700 dark:text-yellow-300; }
-.prose .info-box { @apply bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700; }
-.prose .info-box h5 { @apply text-blue-700 dark:text-blue-300; }
-.prose .tip-box { @apply bg-green-50 dark:bg-green-900/30 border border-green-300 dark:border-green-700; }
-.prose .tip-box h5 { @apply text-green-700 dark:text-green-300; }
-.prose .contact-box { @apply bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600; }
-.prose .contact-box h5 { @apply text-gray-700 dark:text-gray-300; }
-
-
-/* Login Styles (can be refactored to Tailwind or kept if complex) */
 .login-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  @apply bg-gradient-to-br from-blue-600 to-indigo-700; /* Tailwind gradient */
+  @apply flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-600 to-indigo-700;
 }
-
 .login-container {
   @apply bg-white dark:bg-gray-800 p-8 sm:p-10 rounded-2xl shadow-2xl w-full max-w-md text-center;
 }
-
 .login-header h1 {
   @apply text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2;
 }
-
 .login-header p {
   @apply text-gray-600 dark:text-gray-300 mb-8;
 }
-
 .login-form {
   @apply text-left mb-6;
 }
-
 .login-info {
   @apply bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6 text-left;
 }
-
 .login-info h4 {
   @apply text-blue-600 dark:text-blue-400 mb-1 text-sm font-semibold;
 }
-
 .login-info p {
   @apply text-xs text-gray-500 dark:text-gray-400 mb-1;
 }
-
 .login-footer {
   @apply text-center;
 }
 
-
-/* General button styling if not using Tailwind's @apply for all buttons */
-.btn-primary {
-  @apply bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-colors;
+/* FORM GROUP & INPUTS */
+.form-group label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
 }
-/* ... other global button styles if needed ... */
-
-
-/* Sidebar button styles (already defined with @apply) */
-.sidebar-close-btn {
-  @apply p-1.5 rounded-full bg-red-600/90 hover:bg-red-700/90 dark:bg-red-500/90 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 hover:scale-110 active:scale-95 min-w-[32px] min-h-[32px] text-white;
-}
-.sidebar-close-btn svg {
-  @apply text-red-200 dark:text-red-300;
-}
-.sidebar-darkmode-btn {
-  @apply p-1.5 rounded-full bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 shadow hover:scale-110 transition-all duration-200 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 min-w-[32px] min-h-[32px];
-  line-height: 0;
-}
-.sidebar-darkmode-btn svg {
-  @apply text-yellow-500 dark:text-yellow-400;
-}
-
-/* Specific candidate theme colors for numbers and fills */
-/* These are kept as they are specific color mappings */
-.theme-blue .candidate-number, .bg-blue-500 { background-color: #3b82f6 !important; } /* Tailwind blue-500 */
-.theme-green .candidate-number, .bg-green-500 { background-color: #22c55e !important; } /* Tailwind green-500 */
-.theme-orange .candidate-number, .bg-orange-500 { background-color: #f97316 !important; } /* Tailwind orange-500 */
-.theme-purple .candidate-number, .bg-purple-500 { background-color: #a855f7 !important; } /* Tailwind purple-500 */
-.theme-red .candidate-number, .bg-red-500 { background-color: #ef4444 !important; } /* Tailwind red-500 */
-.theme-indigo .candidate-number, .bg-indigo-500 { background-color: #6366f1 !important; } /* Tailwind indigo-500 */
-
-/* Ensure vote button disabled state is styled for dark mode */
-.vote-btn:disabled {
-  @apply bg-gray-400 dark:bg-gray-600 cursor-not-allowed;
-}
-
-/* Ensure form elements are styled for dark mode */
 .form-group input,
 .form-group textarea,
 .form-group select {
-  @apply bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400;
+  @apply w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  @apply outline-none border-blue-500 ring-2 ring-blue-500 dark:border-blue-400 dark:ring-blue-400;
 }
 
-/* Label form di dark mode agar kontras dan mudah dibaca */
-.dark .form-group label {
-  color: #f3f4f6;
+/* BUTTONS */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-colors w-full;
+}
+.btn-secondary {
+  @apply bg-gray-400 hover:bg-gray-500 dark:bg-gray-600 dark:hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-colors w-full;
+}
+.btn-google {
+  @apply flex items-center justify-center w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg font-semibold text-base shadow-sm transition-colors py-3 gap-2 mb-2 min-h-[48px];
+}
+.btn-google:disabled {
+  @apply opacity-70 cursor-not-allowed;
 }
 
-/* Remove old .dark utility classes if they are fully replaced by Tailwind's dark: prefix */
-/* Example: .dark .sidebar {} can be removed if sidebar uses dark:bg-gray-800 etc. */
-
-/* The long list of elements for transition can be simplified by applying transition on '*' or body/html */
-/* Already handled by applying transition-colors on '*' */
-
-/* Responsive Sidebar (already using Tailwind classes in _app.tsx and Sidebar.tsx) */
-/* .sidebar-overlay and media queries for sidebar transform are fine. */
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.2); /* Slightly darker overlay */
-  @apply backdrop-blur-sm z-[99];
-}
-@media (max-width: 900px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
-  .sidebar.open {
-    transform: translateX(0);
-  }
-}
-
-/* Dark mode khusus halaman login */
-.dark .login-screen {
-  background: linear-gradient(135deg, #18181b, #23272f);
-}
-.dark .login-container {
-  background: #23272f;
-  color: #f3f4f6;
-  box-shadow: 0 2px 16px rgba(31,38,135,0.18);
-  border: 1px solid #27272a;
-}
-.dark .login-header h1 {
-  color: #60a5fa;
-}
-.dark .login-header p {
-  color: #a1a1aa;
-}
-.dark .login-form {
-  color: #f3f4f6;
-}
-.dark .login-info {
-  background: #18181b;
-  color: #a1a1aa;
-  border: 1px solid #27272a;
-}
-.dark .login-info h4 {
-  color: #60a5fa;
-}
-.dark .login-info p {
-  color: #a1a1aa;
-}
-.dark .login-footer {
-  color: #a1a1aa;
-}
-
-/* Input box di dark mode (login & register) */
-.dark .login-container input,
-.dark .login-container textarea,
-.dark .login-container select {
-  background: #18181b;
-  color: #f3f4f6;
-  border: 1px solid #27272a;
-}
-
-.dark .login-container input:focus,
-.dark .login-container textarea:focus,
-.dark .login-container select:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px #2563eb33;
-  outline: none;
-}
-
-/* Tab login/register di dark mode */
-.dark .login-container .login-tab-btn {
-  background: #23272f;
-  color: #a1a1aa;
-}
-.dark .login-container .login-tab-btn.active {
-  background: var(--accent-primary);
-  color: #fff;
-}
-
-/* Tab login/register di mode terang */
-.login-container .login-tab-btn {
-  background: #fff;
-  color: var(--text-secondary);
-  transition: background 0.3s, color 0.3s;
-  border-radius: 8px 8px 0 0;
-  border: none;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
-}
-.login-container .login-tab-btn.active {
-  background: var(--accent-primary);
-  color: #fff;
-  z-index: 1;
-}
-
-/* Judul besar modern halaman login */
-.login-title h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--accent-primary);
-  text-align: center;
-  font-family: 'Inter', system-ui, sans-serif;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  line-height: 1.1;
-}
-.login-title .login-title-accent {
-  width: 80px;
-  height: 4px;
-  background: var(--accent-primary);
-  border-radius: 2px;
-  margin: 0 auto 0.5rem auto;
-}
-@media (max-width: 600px) {
-  .login-title h1 {
-    font-size: 1.5rem;
-  }
-  .login-title .login-title-accent {
-    width: 48px;
-    height: 3px;
-  }
-}
-.dark .login-title h1 {
-  color: #60a5fa;
-}
-.dark .login-title .login-title-accent {
-  background: #60a5fa;
-}
+/* LEGACY/UNIQUE STYLE YANG BELUM BISA DIGANTIKAN TAILWIND */
+/*
+.input-icon-group, .input-icon, .modal-overlay, .modal-box, .forgot-link, .fade-in, .login-title, .login-or-separator, .btn-logout-modern, dsb
+- Tetap dipertahankan karena ada kebutuhan khusus atau belum bisa digantikan Tailwind sepenuhnya.
+- Akan dioptimalkan bertahap jika memungkinkan.
+*/
 
 /* Input icon group */
 .input-icon-group {
