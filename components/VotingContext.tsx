@@ -18,9 +18,13 @@ export type User = {
 }
 
 export type CurrentUser = {
+  id?: string // UUID user
   username: string
   role: 'admin' | 'user'
   name: string
+  email?: string
+  phone?: string
+  phone_verified?: boolean // status verifikasi nomor HP
 } | null
 
 type VotingContextType = {
@@ -91,13 +95,35 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [candidates.length])
 
-  // Ambil currentUser dari localStorage saat mount
+  // Ambil currentUser dari localStorage dan Supabase session saat mount
   useEffect(() => {
+    async function initUser() {
+      let userSet = false;
+      // 1. Cek localStorage
     const storedUser = localStorage.getItem('currentUser')
     if (storedUser) {
       setCurrentUser(JSON.parse(storedUser))
+        userSet = true;
+      }
+      // 2. Cek Supabase session (misal login Google)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        // Ambil data user dari Supabase dan set ke context
+        const userMeta = user.user_metadata || {}
+        setCurrentUser({
+          id: user.id,
+          username: userMeta.preferred_username || userMeta.name || user.email,
+          role: userMeta.role || 'user',
+          name: userMeta.full_name || userMeta.name || '-',
+          email: user.email,
+          phone: user.phone || '-',
+          phone_verified: !!user.phone_confirmed_at,
+        })
+        userSet = true;
     }
     setIsAuthChecked(true)
+    }
+    initUser()
   }, [])
 
   // Simpan currentUser ke localStorage setiap kali berubah
