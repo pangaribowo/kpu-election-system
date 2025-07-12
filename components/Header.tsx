@@ -15,9 +15,9 @@ const Header = () => {
 
   return (
     <header className="header bg-white dark:bg-gray-800 shadow-md">
-      <div className="header-content container mx-auto px-4 py-3">
-        <div className="title text-center">
-          <span className="title-text text-blue-600 dark:text-blue-400">Sistem Voting KPU</span>
+      <div className="header-content container mx-auto px-4 py-3 flex items-center justify-center min-h-[96px] relative">
+        <div className="title text-center w-full">
+          <span className="title-text text-blue-600 dark:text-blue-400 block">Sistem Voting KPU</span>
           <span className="title-sub text-gray-600 dark:text-gray-300 text-base mt-1 block">Aman, Cepat, Transparan</span>
         </div>
         {/* Toggle dark mode mengambang di pojok kanan atas */}
