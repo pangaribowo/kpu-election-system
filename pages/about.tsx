@@ -1,26 +1,30 @@
 import Link from "next/link";
 import React from "react";
+import { FiHome } from "react-icons/fi";
 
 const AboutPage = () => {
   return (
-    <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-      <section className="section active">
+    <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl w-full
+      bg-white/90 dark:bg-gray-900/90
+      rounded-3xl shadow-2xl
+      ring-1 ring-slate-200/60 dark:ring-gray-700/60
+      transition-all duration-300">
+      <section className="section active rounded-2xl bg-transparent p-0 px-6 sm:px-10">
         <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">
-          Tentang Aplikasi
+          TENTANG SISTEM VOTING KPU
         </h1>
-        <p className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-          Aplikasi ini digunakan untuk pemilihan ketua organisasi secara online,
-          dilengkapi fitur voting, quick count, panel admin, dan manual
-          penggunaan.
+        <p className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed text-justify">
+          Website ini adalah platform <b>Sistem Voting Komisi Pemilihan Umum (KPU)</b> digital yang dirancang untuk mendukung proses pemilihan secara <b>aman, transparan, dan efisien</b>. Sistem ini dapat digunakan untuk berbagai jenis pemilihan, baik pemilihan umum, pemilihan ketua organisasi, maupun pemilihan internal lainnya. Dilengkapi fitur <b>voting online, quick count realtime, panel khusus admin, dan manual penggunaan</b> untuk memastikan pengalaman pemilihan yang modern dan terpercaya.
         </p>
-        <p>
+        <div className="flex justify-center mt-6">
           <Link
             href="/"
-            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-150 underline"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
           >
+            <FiHome size={20} className="-ml-1" />
             Kembali ke Dashboard
           </Link>
-        </p>
+        </div>
       </section>
     </div>
   );
