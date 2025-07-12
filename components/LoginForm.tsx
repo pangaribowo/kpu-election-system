@@ -91,6 +91,7 @@ const LoginScreen = () => {
             name: userDb.name,
             email: userDb.email,
             phone: userDb.phone,
+            phone_verified: false, // default, nanti update setelah login sukses
           })
           setNotification && setNotification({ message: `Selamat datang, ${userDb.name}!`, type: 'success' })
           router.replace('/')
@@ -177,7 +178,7 @@ const LoginScreen = () => {
         if (userMeta.role !== role) {
           setNotification({ message: 'Role tidak sesuai!', type: 'error' })
         } else {
-          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user.email, phone: userMeta.phone })
+          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user.email, phone: userMeta.phone, phone_verified: !!data.user.phone_confirmed_at })
           setActiveTab('voting')
           setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
           // Sinkronisasi ke tabel users
