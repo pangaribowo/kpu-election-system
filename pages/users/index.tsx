@@ -3,6 +3,16 @@ import Link from "next/link";
 import { useVoting } from "../../components/VotingContext";
 import { useRouter } from "next/router";
 
+// Fungsi masking nama: F********* A*** P**********
+function maskName(name: string) {
+  if (!name) return '';
+  return name.split(' ').map(kata => {
+    if (kata.length === 0) return '';
+    if (kata.length === 1) return kata;
+    return kata[0] + '*'.repeat(kata.length - 1);
+  }).join(' ');
+}
+
 const UsersPage = () => {
   const { currentUser, isAuthChecked } = useVoting();
   const router = useRouter();
@@ -47,22 +57,37 @@ const UsersPage = () => {
         {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
         {!loading && !error && (
           <ul className="user-list list-none p-0">
-            {users.map((user) => (
-              <li
-                key={user.username}
-                className="user-item py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
-              >
-                <Link
-                  href={`/users/${user.username}`}
-                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-150"
-                >
-                  {user.name}{" "}
-                  <span className="user-role text-sm text-gray-500 dark:text-gray-400">
-                    ({user.role})
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {users
+              .filter(user => currentUser.role === 'admin' || user.role === 'user')
+              .map((user) => {
+                // Untuk user biasa, masking nama, tidak ada link, tidak tampilkan role
+                // Untuk admin, tampilkan nama asli, ada link, tampilkan role
+                const isAdmin = currentUser.role === 'admin';
+                const displayName = isAdmin ? user.name : maskName(user.name);
+                // Dummy status voting, nanti bisa diisi dari backend
+                const statusVote = user.hasVoted ? '(sudah vote)' : '(belum vote)';
+                return (
+                  <li
+                    key={user.username}
+                    className="user-item py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+                  >
+                    {isAdmin ? (
+                      <Link
+                        href={`/users/${user.username}`}
+                        className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-150"
+                      >
+                        {user.name}{' '}
+                        <span className="user-role text-sm text-gray-500 dark:text-gray-400">
+                          ({user.role})
+                        </span>
+                      </Link>
+                    ) : (
+                      <span className="text-gray-800 dark:text-gray-100">{displayName}</span>
+                    )}
+                    <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">{statusVote}</span>
+                  </li>
+                );
+              })}
           </ul>
         )}
       </section>
