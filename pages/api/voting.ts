@@ -77,7 +77,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       foto_url: k.foto_url,
       suara: k.voting && k.voting[0] && typeof k.voting[0].count === 'number' ? k.voting[0].count : 0
     }))
-    return res.status(200).json({ hasil: result })
+    // Ambil total pemilih (role 'pemilih')
+    const { count: totalVoters } = await supabase
+      .from('users')
+      .select('id', { count: 'exact', head: true })
+      .eq('role', 'user')
+    // Ambil jumlah user unik yang sudah voting
+    const { count: totalVoted } = await supabase
+      .from('voting')
+      .select('user_id', { count: 'exact', head: true })
+    return res.status(200).json({ hasil: result, totalVoters, totalVoted })
   } else {
     return res.status(405).json({ error: 'Method not allowed' })
   }

@@ -4,7 +4,8 @@ import { supabase } from '../lib/supabaseClient'
 
 const QuickCount = () => {
   const { candidates, votes, setVotes, setCandidates } = useVoting()
-  const totalVoters = 1000
+  const [totalVoters, setTotalVoters] = useState<number>(0)
+  const [totalVoted, setTotalVoted] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -32,6 +33,8 @@ const QuickCount = () => {
           })
           setVotes(newVotes)
           setCandidates(newCandidates)
+          setTotalVoters(data.totalVoters || 0)
+          setTotalVoted(data.totalVoted || 0)
         } else if (!res.ok) {
           setError(data.error || 'Gagal mengambil data quick count')
         }
@@ -52,7 +55,7 @@ const QuickCount = () => {
   }, [])
 
   const totalVotes = Object.values(votes).reduce((sum, v) => sum + v, 0)
-  const participationRate = ((totalVotes / totalVoters) * 100).toFixed(1)
+  const participationRate = totalVoters > 0 ? ((totalVoted / totalVoters) * 100).toFixed(1) : '0.0'
   const sortedCandidates = [...candidates].sort((a, b) => (votes[b.id] || 0) - (votes[a.id] || 0))
 
   // Algoritma Largest Remainder Method untuk persentase
@@ -117,30 +120,50 @@ const QuickCount = () => {
             <div className="stat-label text-gray-600 dark:text-gray-300">Partisipasi</div>
           </div>
         </div>
-        <div id="results-chart" className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+        <div id="results-chart" className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 overflow-x-auto w-full max-w-screen-sm mx-auto">
           <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-6">Hasil Sementara</h3>
-          {sortedCandidates.map((candidate, idx) => {
-            const candidateVotes = votes[candidate.id] || 0;
-            const percentObj = percentages.find(p => p.id === candidate.id)
-            const percentage = percentObj ? percentObj.value.toFixed(1) : "0.0";
-            return (
-              <div key={candidate.id} className="result-item mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow">
-                <div className="result-info flex justify-between items-center mb-2">
-                  <div className="result-name text-lg font-medium text-gray-700 dark:text-gray-200">{candidate.name}</div>
-                  <div className="result-percentage text-lg font-semibold text-blue-600 dark:text-blue-400">{percentage}%</div>
-                </div>
-                <div className="result-bar w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3 overflow-hidden">
+          <div className="flex flex-col gap-3">
+            {candidates.map((candidate, idx) => {
+              const percentObj = percentages.find(p => p.id === candidate.id);
+              let percentage = percentObj ? percentObj.value : 0;
+              if (typeof percentage !== 'number' || isNaN(percentage)) percentage = 0;
+              const percentStr = percentage.toFixed(1);
+              return (
+                <div key={candidate.id} className="result-item mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow min-h-[72px] flex flex-col gap-2">
+                  <div className="result-info flex flex-col xs:flex-row xs:justify-between xs:items-center mb-2 gap-1 xs:gap-0">
+                    <div className="result-name text-lg font-medium text-gray-700 dark:text-gray-200 truncate">{candidate.name}</div>
+                  </div>
                   <div
-                    className={`result-fill h-full rounded-full bg-${candidate.color}-500`}
-                    style={{ width: `${percentage}%` }}
-                  ></div>
+                    className="result-bar w-full min-w-[80px] bg-slate-200/80 dark:bg-gray-700/80 rounded-full h-4 sm:h-5 shadow-inner overflow-hidden flex items-center"
+                    role="progressbar"
+                    aria-valuenow={percentage}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  >
+                    <div
+                      className="result-fill h-full rounded-full transition-all duration-700 ease-in-out flex items-center pl-2"
+                      style={{
+                        width: `${percentStr}%`,
+                        minWidth: percentage > 0 ? '8px' : '0px',
+                        background: candidate.color
+                          ? candidate.color
+                          : 'linear-gradient(90deg, #3b82f6 60%, #60a5fa 100%)',
+                        color: percentage > 20 ? '#fff' : '#2563eb',
+                        fontWeight: 600,
+                        fontSize: '0.95rem',
+                      }}
+                    >
+                      {percentage > 20 && <span>{percentStr}%</span>}
+                    </div>
+                    {percentage <= 20 && (
+                      <span className="ml-2 text-blue-700 dark:text-blue-300 font-semibold">{percentStr}%</span>
+                    )}
+                  </div>
+                  <div className="result-votes text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 text-right">{votes[candidate.id] || 0} suara</div>
                 </div>
-                <div className="result-votes text-sm text-gray-500 dark:text-gray-400 mt-1 text-right">
-                  {candidateVotes.toLocaleString()} suara
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

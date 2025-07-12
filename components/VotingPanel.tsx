@@ -91,9 +91,13 @@ const VotingPanel = () => {
     statusContent = (
       <div className="status-warning text-center p-5 bg-yellow-50 dark:bg-yellow-900/30 border-2 border-yellow-500 dark:border-yellow-700 rounded-lg mt-5">
         <h3 className="text-yellow-600 dark:text-yellow-400 mb-2 text-lg font-semibold">
-          ⚠ NOMOR HP BELUM DIVERIFIKASI
+          ⚠ FITUR VERIFIKASI NOMOR HP SEGERA HADIR
         </h3>
-        <p className="text-gray-700 dark:text-gray-300">Silakan verifikasi nomor HP Anda dengan OTP sebelum melakukan voting.</p>
+        <p className="text-gray-700 dark:text-gray-300">
+          Saat ini hanya <b>user yang sudah terverifikasi</b> yang dapat melakukan voting.<br />
+          Fitur verifikasi nomor HP & OTP akan segera hadir (Coming Soon).<br />
+          <span className="block mt-2">Setiap <b>Pemilih</b> hanya dapat memberikan <b>1 suara</b> untuk menjaga keadilan dan integritas sistem voting.</span>
+        </p>
       </div>
     );
   } else if (hasVoted) {

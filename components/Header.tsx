@@ -18,7 +18,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4 sm:py-6 flex flex-col items-center justify-center gap-2 relative min-h-[80px] bg-slate-100/90 dark:bg-gray-800/90 rounded-xl">
         {/* Judul dan subjudul */}
         <div className="flex flex-col items-center w-full">
-          <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight mb-1 drop-shadow-sm select-none">Sistem Voting KPU</span>
+          <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight mb-1 drop-shadow-sm select-none">SISTEM VOTING KPU</span>
           <span className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-medium mb-1 select-none">Aman, Cepat, Transparan</span>
         </div>
         {/* Toggle dark mode absolute kanan atas */}
