@@ -49,10 +49,8 @@ const UsersPage = () => {
 
   return (
     <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-      <section className="section active">
-        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">
-          Daftar User
-        </h1>
+      <section className="section active rounded-2xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300">
+        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">Daftar User</h1>
         {loading && <div className="text-gray-600 dark:text-gray-300">Loading...</div>}
         {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
         {!loading && !error && (
@@ -60,16 +58,13 @@ const UsersPage = () => {
             {users
               .filter(user => currentUser.role === 'admin' || user.role === 'user')
               .map((user) => {
-                // Untuk user biasa, masking nama, tidak ada link, tidak tampilkan role
-                // Untuk admin, tampilkan nama asli, ada link, tampilkan role
                 const isAdmin = currentUser.role === 'admin';
                 const displayName = isAdmin ? user.name : maskName(user.name);
-                // Dummy status voting, nanti bisa diisi dari backend
                 const statusVote = user.hasVoted ? '(sudah vote)' : '(belum vote)';
                 return (
                   <li
                     key={user.username}
-                    className="user-item py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+                    className="user-item py-3 px-4 mb-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 last:border-b-0 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200"
                   >
                     {isAdmin ? (
                       <Link
