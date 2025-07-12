@@ -406,15 +406,16 @@ const LoginScreen = () => {
           <div className="login-or-separator">
             <span className="login-or-text">atau login dengan nomor HP</span>
           </div>
-          <form id="otp-login-form" className="login-form fade-in" onSubmit={handleSendOtp}>
+          <form id="otp-login-form" className="login-form fade-in">
             <div className="form-group">
               <label htmlFor="otp-phone">Nomor HP:</label>
               <div className="input-icon-group">
                 <Phone size={18} className="input-icon" />
-                <input type="tel" id="otp-phone" value={otpPhone} onChange={e => setOtpPhone(e.target.value)} required placeholder="Contoh: +6281234567890" />
+                <input type="tel" id="otp-phone" value={otpPhone} disabled placeholder="Contoh: +6281234567890" className="rounded-full" />
               </div>
+              <div className="text-yellow-600 text-sm mt-1">Verifikasi dengan nomor HP akan segera hadir (Coming Soon)</div>
             </div>
-            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
+            <button type="button" className="btn-primary w-full flex justify-center items-center rounded-full" disabled>Coming Soon</button>
           </form>
           {/* Modal forgot password */}
           {showForgot && (
@@ -424,7 +425,7 @@ const LoginScreen = () => {
                 <form onSubmit={handleForgotPassword}>
                   <div className="form-group">
                     <label htmlFor="forgot-email">Email:</label>
-                    <input type="email" id="forgot-email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required />
+                    <input type="email" id="forgot-email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required placeholder="Masukkan email Anda" />
                   </div>
                   <div className="flex gap-2 mt-2">
                     <button type="submit" className="btn-primary" disabled={forgotLoading}>{forgotLoading ? 'Mengirim...' : 'Kirim Link Reset'}</button>

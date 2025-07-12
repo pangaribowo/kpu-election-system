@@ -108,12 +108,19 @@ input, button, select, textarea {
 .form-group input,
 .form-group textarea,
 .form-group select {
-  @apply w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm;
+  @apply w-full p-2.5 border-2 border-gray-300 dark:border-gray-600 rounded-lg shadow focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base transition-all duration-200;
+  background: #f9fafb;
 }
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  @apply outline-none border-blue-500 ring-2 ring-blue-500 dark:border-blue-400 dark:ring-blue-400;
+  @apply outline-none border-blue-600 ring-2 ring-blue-200 dark:border-blue-400 dark:ring-blue-400 shadow-lg;
+  background: #fff;
+}
+.dark .form-group input:focus,
+.dark .form-group textarea:focus,
+.dark .form-group select:focus {
+  background: #23272f;
 }
 
 /* BUTTONS */
@@ -1274,7 +1281,19 @@ digantikan dengan Tailwind class dan @apply di bawah ini */
   pointer-events: none;
 }
 .input-icon-group input {
-  padding-left: 36px;
+  padding-left: 40px;
+  border-radius: 9999px;
+  border-width: 2px;
+  background: #f9fafb;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.input-icon-group input:focus {
+  background: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+.dark .input-icon-group input:focus {
+  background: #23272f;
 }
 
 /* Modal overlay for forgot password */
@@ -1299,6 +1318,22 @@ digantikan dengan Tailwind class dan @apply di bawah ini */
 .dark .modal-box {
   background: #23272f;
   color: #f3f4f6;
+}
+.modal-box h4 {
+  @apply text-2xl font-bold text-blue-600 dark:text-blue-400 text-center mb-6 tracking-wide;
+}
+.modal-box .form-group label {
+  @apply text-base font-semibold text-gray-700 dark:text-gray-200 mb-2;
+}
+.modal-box .form-group {
+  @apply mb-5;
+}
+.modal-box input[type="email"],
+.modal-box input[type="text"],
+.modal-box input[type="password"],
+.modal-box input[type="tel"] {
+  @apply border-2 border-gray-300 dark:border-gray-600 rounded-lg shadow focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base transition-all duration-200;
+  background: #f9fafb;
 }
 .forgot-link {
   color: var(--accent-primary);
