@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
@@ -42,6 +42,109 @@ const LoginScreen = () => {
   const [forgotEmail, setForgotEmail] = useState('')
   const [forgotLoading, setForgotLoading] = useState(false)
 
+  // Show phone modal state
+  const [showPhoneModal, setShowPhoneModal] = useState(false)
+  const [phoneInput, setPhoneInput] = useState('')
+  const [phoneLoading, setPhoneLoading] = useState(false)
+  const [phoneError, setPhoneError] = useState('')
+
+  // Cek setelah login Google, apakah user sudah punya phone di tabel users
+  useEffect(() => {
+    const checkPhone = async () => {
+      if (currentUser && currentUser.username && currentUser.email && !currentUser.phone) {
+        // Cek ke API users apakah phone sudah ada
+        const res = await fetch(`/api/users?email=${encodeURIComponent(currentUser.email)}`)
+        const data = await res.json()
+        if (data && (!data.phone || data.phone === '-')) {
+          setShowPhoneModal(true)
+        }
+      }
+    }
+    checkPhone()
+  }, [currentUser])
+
+  useEffect(() => {
+    const handleGoogleSync = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user && user.app_metadata?.provider === 'google' && !currentUser) {
+        // Sinkronisasi ke tabel users custom
+        const userMeta = user.user_metadata || {}
+        await fetch('/api/users/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            name: userMeta.full_name || userMeta.name || '-',
+            username: userMeta.preferred_username || userMeta.name || user.email,
+            phone: user.phone || '-',
+            role: 'user',
+          })
+        })
+        // Ambil UUID dari tabel users custom
+        const getRes = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
+        const userDb = await getRes.json()
+        if (userDb && userDb.id) {
+          setCurrentUser({
+            id: userDb.id,
+            username: userDb.username,
+            role: userDb.role,
+            name: userDb.name,
+            email: userDb.email,
+            phone: userDb.phone,
+            phone_verified: false, // default, nanti update setelah login sukses
+          })
+          setNotification && setNotification({ message: `Selamat datang, ${userDb.name}!`, type: 'success' })
+          router.replace('/')
+        } else {
+          setNotification && setNotification({ message: 'Gagal sinkronisasi user Google.', type: 'error' })
+        }
+      }
+    }
+    handleGoogleSync()
+    // eslint-disable-next-line
+  }, [])
+
+  // Handler submit phone
+  const handleSubmitPhone = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setPhoneError('')
+    const phone = phoneInput.trim()
+    const phoneRegex = /^\+\d{10,}$/
+    if (!phoneRegex.test(phone)) {
+      setPhoneError('Nomor HP tidak valid! Gunakan format internasional, contoh: +6281234567890')
+      return
+    }
+    setPhoneLoading(true)
+    try {
+      // Cek duplikasi
+      const checkRes = await fetch(`/api/users?phone=${encodeURIComponent(phone)}`)
+      const checkData = await checkRes.json()
+      if (checkData && checkData.exists) {
+        setPhoneError('Nomor HP sudah digunakan user lain!')
+        setPhoneLoading(false)
+        return
+      }
+      // Update ke tabel users
+      const syncRes = await fetch('/api/users/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: currentUser.email, phone, name: currentUser.name, username: currentUser.username, role: currentUser.role })
+      })
+      if (!syncRes.ok) {
+        const err = await syncRes.json().catch(() => null)
+        setPhoneError(err?.error || 'Gagal update nomor HP')
+      } else {
+        setShowPhoneModal(false)
+        setPhoneInput('')
+        setNotification({ message: 'Nomor HP berhasil disimpan!', type: 'success' })
+        // Reload user state (bisa fetch ulang atau reload page)
+        window.location.reload()
+      }
+    } finally {
+      setPhoneLoading(false)
+    }
+  }
+
   // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,7 +178,7 @@ const LoginScreen = () => {
         if (userMeta.role !== role) {
           setNotification({ message: 'Role tidak sesuai!', type: 'error' })
         } else {
-          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name })
+          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user.email, phone: userMeta.phone, phone_verified: !!data.user.phone_confirmed_at })
           setActiveTab('voting')
           setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
           // Sinkronisasi ke tabel users
@@ -100,14 +203,12 @@ const LoginScreen = () => {
   // Handle Register
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    const username = regUsernameRef.current?.value.trim() || ''
+    const email = regEmailRef.current?.value.trim() || ''
     const password = regPasswordRef.current?.value.trim() || ''
     const confirmPassword = regConfirmPasswordRef.current?.value.trim() || ''
     const name = regNameRef.current?.value.trim() || ''
-    const email = regEmailRef.current?.value.trim() || ''
     const phone = regPhoneRef.current?.value.trim() || ''
-    // Validasi input
-    if (!username || !password || !confirmPassword || !name || !email || !phone) {
+    if (!email || !password || !confirmPassword || !name) {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
       return
     }
@@ -115,49 +216,26 @@ const LoginScreen = () => {
       setNotification({ message: 'Password dan konfirmasi password tidak sama!', type: 'error' })
       return
     }
-    // Validasi email
-    const emailRegex = /^[^\s@]+@[^-\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      setNotification({ message: 'Format email tidak valid!', type: 'error' })
-      return
-    }
-    // Validasi nomor HP (format internasional)
-    const phoneRegex = /^\+\d{10,}$/
-    if (!phoneRegex.test(phone)) {
-      setNotification({ message: 'Nomor HP tidak valid! Gunakan format internasional, contoh: +6281234567890', type: 'error' })
-      return
-    }
     setLoading(true)
     try {
-      // Supabase Auth signUp (email & phone)
+      // Register ke Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            username,
-            name,
-            phone,
-            role: 'user',
-          },
-          emailRedirectTo: window.location.origin + '/login',
-        },
+          data: { name, phone, username: email, role: 'user' }
+        }
       })
       if (error) {
         setNotification({ message: error.message || 'Registrasi gagal', type: 'error' })
       } else {
-        // Sinkronisasi ke tabel users
-        const syncRes = await fetch('/api/users/sync', {
+        // Sinkronisasi ke tabel users custom
+        await fetch('/api/users/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, phone, name, username, role: 'user' })
+          body: JSON.stringify({ email, name, username: email, phone, role: 'user' })
         })
-        if (!syncRes.ok) {
-          const err = await syncRes.json().catch(() => null)
-          setNotification({ message: err?.error || 'Registrasi berhasil, tapi gagal sinkronisasi user ke database.', type: 'warning' })
-        } else {
-          setNotification({ message: 'Registrasi berhasil! Silakan cek email untuk verifikasi.', type: 'success' })
-        }
+        setNotification({ message: 'Registrasi sukses! Silakan cek email untuk verifikasi.', type: 'success' })
         setTab('login')
       }
     } catch (err) {
@@ -253,24 +331,22 @@ const LoginScreen = () => {
     <div id="login-screen" className="login-screen">
       <div className="login-container">
         {/* Judul besar modern di atas tab */}
-        <div className="login-title" style={{ marginBottom: 32 }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--accent-primary)', textAlign: 'center', fontFamily: 'Inter, system-ui, sans-serif', marginBottom: 8, textTransform: 'uppercase' }}>
-            Sistem Voting KPU
-          </h1>
-          <div style={{ width: 80, height: 4, background: 'var(--accent-primary)', borderRadius: 2, margin: '0 auto 0.5rem auto' }} />
+        <div className="login-title mb-8">
+          <h1 className="text-3xl sm:text-4xl font-extrabold uppercase mb-2 text-blue-600 dark:text-blue-400 text-center font-sans">Sistem Voting KPU</h1>
+          <div className="w-20 h-1 rounded bg-blue-600 dark:bg-blue-400 mx-auto mb-2" />
         </div>
         <div className="flex justify-center mb-6 transition-all duration-300">
           <button
-            className={`login-tab-btn ${tab === 'login' ? 'active' : ''}`}
-            style={{marginRight: 8, padding: '8px 24px', borderRadius: '8px 8px 0 0', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}
+            className={`login-tab-btn ${tab === 'login' ? 'active' : ''} px-6 py-2 rounded-t-lg font-semibold text-base focus:outline-none transition-colors duration-200 ${tab === 'login' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white' : 'bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}
             onClick={() => setTab('login')}
+            type="button"
           >
             Login
           </button>
           <button
-            className={`login-tab-btn ${tab === 'register' ? 'active' : ''}`}
-            style={{padding: '8px 24px', borderRadius: '8px 8px 0 0', border: 'none', fontWeight: 600, fontSize: 16, cursor: 'pointer'}}
+            className={`login-tab-btn ${tab === 'register' ? 'active' : ''} px-6 py-2 rounded-t-lg font-semibold text-base focus:outline-none transition-colors duration-200 ${tab === 'register' ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white' : 'bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}
             onClick={() => setTab('register')}
+            type="button"
           >
             Register
           </button>
@@ -305,7 +381,7 @@ const LoginScreen = () => {
                 <option value="user">Pemilih</option>
               </select>
             </div>
-            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
+            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
             <div className="flex justify-end mt-2">
               <button type="button" className="forgot-link" onClick={() => setShowForgot(true)}>Lupa password?</button>
             </div>
@@ -338,7 +414,7 @@ const LoginScreen = () => {
                 <input type="tel" id="otp-phone" value={otpPhone} onChange={e => setOtpPhone(e.target.value)} required placeholder="Contoh: +6281234567890" />
               </div>
             </div>
-            <button type="submit" className="btn-primary w-full" disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
+            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={otpLoading}>{otpLoading ? 'Mengirim OTP...' : 'Kirim OTP'}</button>
           </form>
           {/* Modal forgot password */}
           {showForgot && (
@@ -352,7 +428,7 @@ const LoginScreen = () => {
                   </div>
                   <div className="flex gap-2 mt-2">
                     <button type="submit" className="btn-primary" disabled={forgotLoading}>{forgotLoading ? 'Mengirim...' : 'Kirim Link Reset'}</button>
-                    <button type="button" className="btn-secondary" onClick={() => setShowForgot(false)}>Batal</button>
+                    <button type="button" className="btn-secondary flex justify-center items-center" onClick={() => setShowForgot(false)}>Batal</button>
                   </div>
                 </form>
               </div>
@@ -409,13 +485,31 @@ const LoginScreen = () => {
                 </button>
               </div>
             </div>
-            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
+            <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
           </form>
         )}
         <div className="login-footer">
-          <button id="show-manual" className="btn-secondary" type="button" onClick={handleShowManual}>Lihat Manual</button>
+          <button id="show-manual" className="btn-secondary flex justify-center items-center" type="button" onClick={handleShowManual}>Lihat Manual</button>
         </div>
       </div>
+      {/* Modal input nomor telepon untuk user Google */}
+      {showPhoneModal && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h4>Lengkapi Nomor Telepon</h4>
+            <form onSubmit={handleSubmitPhone}>
+              <div className="form-group">
+                <label htmlFor="google-phone">Nomor HP:</label>
+                <input type="tel" id="google-phone" value={phoneInput} onChange={e => setPhoneInput(e.target.value)} required placeholder="Contoh: +6281234567890" />
+                {phoneError && <div className="text-red-500 text-sm mt-1">{phoneError}</div>}
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button type="submit" className="btn-primary" disabled={phoneLoading}>{phoneLoading ? 'Menyimpan...' : 'Simpan'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
