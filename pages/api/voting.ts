@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       visi: k.visi,
       misi: k.misi,
       foto_url: k.foto_url,
-      suara: k.voting?.length || 0
+      suara: k.voting && k.voting[0] && typeof k.voting[0].count === 'number' ? k.voting[0].count : 0
     }))
     return res.status(200).json({ hasil: result })
   } else {
