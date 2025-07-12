@@ -12,7 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' })
   }
   const { id, name, phone, password, newPassword } = req.body
-  if (!id) return res.status(400).json({ error: 'ID user wajib diisi' })
+  if (!id || typeof id !== 'string' || id.length !== 36 || !id.includes('-')) {
+    return res.status(400).json({ error: 'ID user tidak valid (UUID wajib)' })
+  }
   // Validasi phone
   if (phone) {
     const phoneRegex = /^\+\d{10,}$/
@@ -37,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .select('password')
       .eq('id', id)
       .maybeSingle()
-    if (userError || !user) return res.status(500).json({ error: 'User tidak ditemukan' })
+    if (userError || !user) return res.status(404).json({ error: 'User tidak ditemukan' })
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) return res.status(401).json({ error: 'Password lama salah' })
     // Hash password baru
@@ -65,6 +67,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     .select('id, username, name, email, phone, role')
     .eq('id', id)
     .maybeSingle()
-  if (getError || !updated) return res.status(500).json({ error: 'Gagal ambil data user' })
+  if (getError || !updated) return res.status(404).json({ error: 'User tidak ditemukan' })
   return res.status(200).json({ user: updated })
 } 

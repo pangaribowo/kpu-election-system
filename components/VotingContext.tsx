@@ -18,9 +18,12 @@ export type User = {
 }
 
 export type CurrentUser = {
+  id?: string // UUID user
   username: string
   role: 'admin' | 'user'
   name: string
+  email?: string
+  phone?: string
 } | null
 
 type VotingContextType = {
