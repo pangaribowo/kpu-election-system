@@ -100,3 +100,21 @@ Panduan ini berisi langkah-langkah dan kebutuhan untuk mengembangkan website aga
 
 > **Catatan:**
 > Checklist ini dapat dikembangkan sesuai kebutuhan proyek. Setiap langkah sebaiknya didokumentasikan dan diuji secara bertahap. 
+
+# Quick Count: Polling Periodik
+
+QuickCount kini menggunakan polling periodik (fetch setiap 5 detik) untuk mengambil data hasil voting dari endpoint /api/voting. Subscription Supabase Realtime dinonaktifkan karena fitur replication/realtime Supabase masih dalam tahap early access dan belum stabil untuk kebutuhan produksi.
+
+**Alasan teknis:**
+- Polling lebih sederhana, stabil, dan mudah diimplementasikan.
+- Tidak perlu setup backend khusus atau trigger manual.
+- Bisa diupgrade ke realtime kapan saja jika fitur Supabase Realtime sudah stabil.
+
+**Instruksi upgrade ke realtime:**
+1. Aktifkan fitur Realtime di dashboard Supabase untuk tabel voting.
+2. Restore kode subscription Supabase Realtime di QuickCount.tsx.
+3. Nonaktifkan polling jika subscription sudah berjalan baik.
+
+Polling interval dapat diubah sesuai kebutuhan (default: 5 detik). Pantau performa API dan database secara berkala.
+
+--- 
