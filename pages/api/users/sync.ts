@@ -8,12 +8,21 @@ const supabase = createClient(
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { email, phone } = req.query
+    const { email, phone, username } = req.query
     if (email) {
       const { data, error } = await supabase
         .from('users')
-        .select('*')
+        .select('id, email, username, name, phone, role')
         .eq('email', email as string)
+        .maybeSingle()
+      if (error) return res.status(500).json({ error: 'Gagal cek user' })
+      return res.status(200).json(data || {})
+    }
+    if (username) {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, email, username, name, phone, role')
+        .eq('username', username as string)
         .maybeSingle()
       if (error) return res.status(500).json({ error: 'Gagal cek user' })
       return res.status(200).json(data || {})
@@ -27,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (error) return res.status(500).json({ error: 'Gagal cek phone' })
       return res.status(200).json({ exists: !!data })
     }
-    return res.status(400).json({ error: 'Parameter email atau phone wajib diisi' })
+    return res.status(400).json({ error: 'Parameter email, username, atau phone wajib diisi' })
   }
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
