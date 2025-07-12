@@ -34,10 +34,10 @@ const Dashboard = () => {
 
   return (
     <>
-      <Header />
-      <div className="dashboard-container max-w-[700px] mx-auto my-10 p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg text-center transition-colors duration-300">
-        <h1 className="dashboard-title text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">Selamat datang, {currentUser.name}!</h1>
-        <div className="dashboard-role text-slate-500 dark:text-slate-300 mb-6">Peran: {currentUser.role}</div>
+      {/* <Header /> */}
+      <div className="dashboard-container my-10 p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg text-center transition-colors duration-300 px-4">
+        <h1 className="dashboard-title text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">Selamat Datang, {currentUser.name}!</h1>
+        <div className="dashboard-role text-slate-500 dark:text-slate-300 mb-6">Peran: {currentUser.role === 'user' ? 'Pemilih' : currentUser.role === 'admin' ? 'Petugas KPU' : currentUser.role}</div>
         <div className="dashboard-stats flex flex-wrap gap-5 justify-center mb-8">
           {stats.map((s) => (
             <div className="dashboard-stat bg-slate-100 dark:bg-gray-800 rounded-xl px-7 py-5 min-w-[120px] shadow transition-colors duration-300" key={s.label}>
