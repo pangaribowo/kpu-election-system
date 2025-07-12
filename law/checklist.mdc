@@ -18,13 +18,13 @@ Tahap 1: Fondasi Sistem & Autentikasi
 [x] 1.8. Notifikasi register muncul: instruksi cek email untuk verifikasi
 [x] 1.9. Proteksi: hanya user yang sudah verifikasi email yang bisa login/voting
 [x] 1.10. Update login: input hanya email & password (bukan username)
-[x] 1.11. (Opsional) Tambahkan login via nomor HP/OTP (Supabase Auth phone/OTP)
+[ ] 1.11. (Opsional) Tambahkan login via nomor HP/OTP (Supabase Auth phone/OTP) [Coming Soon]
 [x] 1.12. Update label, placeholder, dan validasi input login
-[x] 1.13. (Opsional) Notifikasi phone/OTP jika fitur ini diaktifkan
-[x] 1.18. Implementasi halaman input OTP (/verify-otp)
-[x] 1.19. Integrasi Supabase Auth signInWithOtp & verifyOtp
-[x] 1.20. Proteksi: hanya user yang sudah verifikasi OTP yang bisa login/voting
-[x] 1.21. Notifikasi: instruksi cek SMS untuk OTP
+[ ] 1.13. (Opsional) Notifikasi phone/OTP jika fitur ini diaktifkan [Coming Soon]
+[ ] 1.18. Implementasi halaman input OTP (/verify-otp) [Coming Soon]
+[ ] 1.19. Integrasi Supabase Auth signInWithOtp & verifyOtp [Coming Soon]
+[ ] 1.20. Proteksi: hanya user yang sudah verifikasi OTP yang bisa login/voting [Coming Soon]
+[ ] 1.21. Notifikasi: instruksi cek SMS untuk OTP [Coming Soon]
 [ ] 1.14. Uji register, verifikasi email, login, voting (E2E)
 [ ] 1.15. Uji login dengan email/phone yang belum diverifikasi (harus gagal)
 [ ] 1.16. Uji login dengan email/phone yang sudah diverifikasi (harus sukses)
@@ -100,7 +100,7 @@ Checklist Eksekusi Tahap 1 (Fondasi & Autentikasi)
 - [x] Link verifikasi email diarahkan ke aplikasi (`/login`).
 - [x] Notifikasi register muncul: instruksi cek email untuk verifikasi.
 - [x] Proteksi: hanya user yang sudah verifikasi email yang bisa login/voting.
-- [x] Uji: klik link verifikasi, pastikan diarahkan ke aplikasi dan status email terverifikasi.
+- [x] Uji: klik link verifikasi, pastikan diarahkan ke aplikasi dan status email sudah terverifikasi.
 
 ### **Tahap 2: OTP/Phone Verification (Opsional)**
 - [ ] Tambahkan opsi register/login via nomor HP (phone/OTP).
@@ -166,3 +166,49 @@ Jika ada preferensi khusus untuk tampilan/UX halaman OTP, silakan informasikan!*
 [x] Perbesar gap antar menu, tambah padding vertikal nav, divider sebelum logout, dan margin bawah menu utama
 [x] Testing visual sidebar: pastikan menu tidak menempel, ada spasi antar menu, dan divider jelas
 [x] Update dokumentasi dan checklist setelah perubahan sidebar
+```
+
+---
+
+## Fitur & Audit User/Google OAuth/OTP/Profile (2024)
+
+### Tahap 1: Fondasi Sistem & Autentikasi
+- [ ] Audit endpoint & halaman `/profile` dan `/users`
+  - [ ] Halaman profile user sudah ada
+  - [ ] User bisa update nomor telepon, email, password
+  - [ ] Verifikasi untuk update data sensitif (OTP/email/password lama)
+  - [ ] Data Google (nama, avatar) sinkron ke tabel users/profiles
+
+### Tahap 2: Validasi & Unik User
+- [ ] Blokir akses fitur utama (voting, dsb) jika user belum punya nomor telepon terverifikasi
+- [ ] Implementasi verifikasi OTP nomor telepon setelah input phone (baik dari Google OAuth maupun register manual)
+- [ ] Sinkronisasi data Google (nama, avatar, dsb) ke tabel users/profiles setiap login Google
+- [ ] Halaman profil user:
+  - [ ] Form update nomor telepon (dengan OTP)
+  - [ ] Form update email (dengan verifikasi email)
+  - [ ] Form update password (dengan password lama)
+  - [ ] Tampilkan nama/avatar Google jika login via Google
+  - [ ] UI modern (Tailwind, responsif)
+- [ ] Endpoint API untuk update data user sudah ada dan aman
+
+### Tahap 3: Testing & Validasi
+- [ ] Uji seluruh flow: login Google, input nomor telepon, verifikasi OTP, cek duplikasi, update profile, blokir akses jika data belum lengkap
+- [ ] Update checklist dan dokumentasi setelah testing
+
+---
+
+## Strategi Eksekusi (Langkah-Langkah Prioritas)
+1. Audit & refactor halaman `/profile` (atau buat jika belum ada)
+2. Implementasi verifikasi OTP setelah input nomor telepon (baik dari Google OAuth maupun register manual)
+3. Sinkronisasi data Google ke tabel users/profiles
+4. Blokir akses fitur utama jika data belum lengkap
+5. Update checklist di @/law
+6. Testing E2E seluruh flow
+7. Audit security & update dokumentasi
+
+---
+
+## Saran Langkah Selanjutnya
+- Lanjutkan ke fitur voting, quick count, CRUD kandidat/user, dsb setelah seluruh flow register/login/profile/OTP selesai dan teruji.
+- Audit keamanan dan validasi secara berkala.
+- Update checklist dan dokumentasi setiap ada perubahan besar.
