@@ -140,21 +140,23 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
               </Link>
             </li>
           ))}
+          <li className="sidebar-item">
+            <Link
+              href="/profile"
+              className={`sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
+                ${router.pathname === '/profile' ? "bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold" : "hover:bg-blue-100/70 dark:hover:bg-blue-800/70 text-gray-700 dark:text-gray-200"}
+              `}
+              onClick={() => isMobile && setOpen(false)}
+            >
+              <span className="inline-flex items-center justify-center w-8 h-8">
+                <FiUser size={22} />
+              </span>
+              <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">
+                Profil Saya
+              </span>
+            </Link>
+          </li>
         </ul>
-        <Link
-          href="/profile"
-          className={`sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200
-            ${router.pathname === '/profile' ? "bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-semibold" : "hover:bg-blue-100/70 dark:hover:bg-blue-800/70 text-gray-700 dark:text-gray-200"}
-          `}
-          onClick={() => isMobile && setOpen(false)}
-        >
-          <span className="inline-flex items-center justify-center w-8 h-8">
-            <FiUser size={22} />
-          </span>
-          <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">
-            Profil Saya
-          </span>
-        </Link>
       </nav>
       {/* Footer modern */}
       <div className="sidebar-footer mt-auto mb-6 flex flex-col items-center gap-3 px-2 bg-white dark:bg-gray-900">
