@@ -27,7 +27,7 @@ const manualContent = {
       <ul>
         <li>✅ Interface yang user-friendly dan responsif</li>
         <li>✅ Keamanan data dengan sistem login</li>
-        <li>✅ Real-time counting dan reporting</li>
+        <li>✅ Realtime counting dan reporting</li>
         <li>✅ Export hasil dalam format text</li>
         <li>✅ Dapat digunakan di desktop dan mobile</li>
       </ul>
@@ -40,13 +40,13 @@ const manualContent = {
       <ol>
         <li>Buka aplikasi di browser</li>
         <li>Masukkan username dan password</li>
-        <li>Pilih role (Petugas atau Pemilih)</li>
+        <li>Pilih role (Petugas KPU atau Pemilih)</li>
         <li>Klik tombol "Login"</li>
       </ol>
       <h4>Akun Demo yang Tersedia:</h4>
       <div className="demo-accounts">
         <div className="account-card">
-          <h5>👨‍💼 Petugas</h5>
+          <h5>👨‍💼 Petugas KPU</h5>
           <p><strong>Username:</strong> admin</p>
           <p><strong>Password:</strong> admin123</p>
           <p><strong>Akses:</strong> Semua fitur termasuk panel admin</p>
@@ -126,7 +126,7 @@ const manualContent = {
     <div id="manual-admin" className="manual-section active">
       <h3>👨‍💼 Panduan Admin</h3>
       <h4>Akses Panel Admin:</h4>
-      <p>Panel Admin hanya dapat diakses oleh user dengan role Petugas.</p>
+      <p>Panel Admin hanya dapat diakses oleh user dengan role Petugas KPU.</p>
       <h4>Fitur-fitur Admin:</h4>
       <h5>1. Tambah Kandidat Baru</h5>
       <ul>
