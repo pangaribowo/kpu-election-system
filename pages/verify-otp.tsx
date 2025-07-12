@@ -24,7 +24,7 @@ const VerifyOtpPage = () => {
       } else {
         // Ambil data user dari user_metadata
         const userMeta = data.user?.user_metadata || {}
-        setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user?.email, phone: data.user?.phone || phone })
+        setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user?.email, phone: data.user?.phone || phone, phone_verified: true })
         setActiveTab('voting')
         setNotification({ message: 'Login via OTP berhasil!', type: 'success' })
         router.replace('/')
