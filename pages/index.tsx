@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useVoting } from '../components/VotingContext'
+import { useVoting, fetchVotingStats } from '../components/VotingContext'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Header from '../components/Header'
 import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
+import { supabase } from '../lib/supabaseClient';
 
 const Dashboard = () => {
   const { currentUser, isAuthChecked } = useVoting()
@@ -12,6 +13,7 @@ const Dashboard = () => {
   const [hasVoted, setHasVoted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const firstLoad = useRef(true)
+  const isRealtimeActive = useRef(false)
 
   useEffect(() => {
     if (isAuthChecked && !currentUser) {
@@ -24,12 +26,11 @@ const Dashboard = () => {
     const fetchStats = async () => {
       if (firstLoad.current) setIsLoading(true)
       try {
-        const res = await fetch('/api/voting')
-        const data = await res.json()
+        const data = await fetchVotingStats()
         const newStats = {
           totalVoters: data.totalVoters || 0,
           totalVoted: data.totalVoted || 0,
-          totalCandidates: data.hasil ? data.hasil.length : 0,
+          totalCandidates: data.totalCandidates || 0,
         }
         // Shallow compare, only update if changed
         if (
@@ -44,8 +45,25 @@ const Dashboard = () => {
       firstLoad.current = false
     }
     fetchStats()
-    polling = setInterval(fetchStats, 5000)
-    return () => polling && clearInterval(polling)
+    // Subscribe ke channel realtime
+    const channel = supabase.channel('kpu-election')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
+        isRealtimeActive.current = true;
+        fetchStats();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+        isRealtimeActive.current = true;
+        fetchStats();
+      })
+      .subscribe();
+    // Polling fallback jika realtime tidak aktif
+    polling = setInterval(() => {
+      if (!isRealtimeActive.current) fetchStats();
+    }, 5000)
+    return () => {
+      polling && clearInterval(polling)
+      supabase.removeChannel(channel)
+    }
     // eslint-disable-next-line
   }, [stats])
 

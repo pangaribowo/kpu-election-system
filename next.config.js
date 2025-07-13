@@ -4,4 +4,4 @@ const nextConfig = {
   // images: { unoptimized: true }, // aktifkan jika memang perlu
 };
 
-module.exports = nextConfig; 
+export default nextConfig; 

@@ -43,6 +43,7 @@ type VotingContextType = {
   notification: { message: string; type: string } | null
   setNotification: (n: { message: string; type: string } | null) => void
   isAuthChecked: boolean
+  fetchVotingStats: () => Promise<any>
 }
 
 const defaultUsers: Record<string, User> = {
@@ -194,6 +195,13 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line
   }, [currentUser])
 
+  // Utility function untuk fetch statistik voting
+  const fetchVotingStats = async () => {
+    const res = await fetch('/api/voting')
+    if (!res.ok) throw new Error('Gagal mengambil data voting')
+    return await res.json()
+  }
+
   return (
     <VotingContext.Provider
       value={{
@@ -212,6 +220,7 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
         notification,
         setNotification,
         isAuthChecked,
+        fetchVotingStats,
       }}
     >
       {children}

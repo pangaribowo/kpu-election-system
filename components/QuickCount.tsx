@@ -12,6 +12,7 @@ const QuickCount = () => {
   useEffect(() => {
     let pollingInterval: NodeJS.Timeout | null = null
     let isUnmounted = false
+    const isRealtimeActive = { current: false };
 
     const fetchQuickCount = async () => {
       setIsLoading(true)
@@ -46,11 +47,26 @@ const QuickCount = () => {
     }
 
     fetchQuickCount()
-    pollingInterval = setInterval(fetchQuickCount, 5000)
+    // Subscribe ke channel realtime
+    const channel = supabase.channel('kpu-election')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
+        isRealtimeActive.current = true;
+        fetchQuickCount();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
+        isRealtimeActive.current = true;
+        fetchQuickCount();
+      })
+      .subscribe();
+    // Polling fallback jika realtime tidak aktif
+    pollingInterval = setInterval(() => {
+      if (!isRealtimeActive.current) fetchQuickCount();
+    }, 5000)
 
     return () => {
       isUnmounted = true
-      if (pollingInterval) clearInterval(pollingInterval)
+      pollingInterval && clearInterval(pollingInterval)
+      supabase.removeChannel(channel)
     }
   }, [])
 
