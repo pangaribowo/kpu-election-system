@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useVoting, fetchVotingStats } from '../components/VotingContext'
+import { useVoting } from '../components/VotingContext'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Header from '../components/Header'
@@ -7,7 +7,7 @@ import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
 import { supabase } from '../lib/supabaseClient';
 
 const Dashboard = () => {
-  const { currentUser, isAuthChecked } = useVoting()
+  const { currentUser, isAuthChecked, fetchVotingStats } = useVoting()
   const router = useRouter()
   const [stats, setStats] = useState({ totalVoters: 0, totalVoted: 0, totalCandidates: 0 })
   const [hasVoted, setHasVoted] = useState(false)
@@ -23,49 +23,47 @@ const Dashboard = () => {
 
   useEffect(() => {
     let polling: NodeJS.Timeout | null = null
+    let isUnmounted = false
+    const isRealtimeActive = { current: false }
+
     const fetchStats = async () => {
-      if (firstLoad.current) setIsLoading(true)
       try {
         const data = await fetchVotingStats()
-        const newStats = {
+        if (!isUnmounted) setStats({
           totalVoters: data.totalVoters || 0,
           totalVoted: data.totalVoted || 0,
           totalCandidates: data.totalCandidates || 0,
-        }
-        // Shallow compare, only update if changed
-        if (
-          newStats.totalVoters !== stats.totalVoters ||
-          newStats.totalVoted !== stats.totalVoted ||
-          newStats.totalCandidates !== stats.totalCandidates
-        ) {
-          setStats(newStats)
-        }
-      } catch {}
-      if (firstLoad.current) setIsLoading(false)
-      firstLoad.current = false
+        })
+      } catch {
+        if (!isUnmounted) setStats({ totalVoters: 0, totalVoted: 0, totalCandidates: 0 })
+      } finally {
+        if (firstLoad.current && !isUnmounted) setIsLoading(false)
+        firstLoad.current = false
+      }
     }
+
     fetchStats()
-    // Subscribe ke channel realtime
     const channel = supabase.channel('kpu-election')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
-        isRealtimeActive.current = true;
-        fetchStats();
+        isRealtimeActive.current = true
+        fetchStats()
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
-        isRealtimeActive.current = true;
-        fetchStats();
+        isRealtimeActive.current = true
+        fetchStats()
       })
-      .subscribe();
-    // Polling fallback jika realtime tidak aktif
+      .subscribe()
+
     polling = setInterval(() => {
-      if (!isRealtimeActive.current) fetchStats();
+      if (!isRealtimeActive.current) fetchStats()
     }, 5000)
+
     return () => {
+      isUnmounted = true
       polling && clearInterval(polling)
       supabase.removeChannel(channel)
     }
-    // eslint-disable-next-line
-  }, [stats])
+  }, [])
 
   useEffect(() => {
     if (currentUser?.username) {

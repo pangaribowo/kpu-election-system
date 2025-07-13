@@ -86,7 +86,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { count: totalVoted } = await supabase
       .from('voting')
       .select('user_id', { count: 'exact', head: true })
-    return res.status(200).json({ hasil: result, totalVoters, totalVoted })
+    // Tambahkan totalCandidates ke response
+    const totalCandidates = result.length
+    return res.status(200).json({ hasil: result, totalVoters, totalVoted, totalCandidates })
   } else {
     return res.status(405).json({ error: 'Method not allowed' })
   }
