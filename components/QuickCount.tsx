@@ -110,78 +110,114 @@ const QuickCount = () => {
     percentages = sortedCandidates.map((candidate) => ({ id: candidate.id, value: 0, raw: 0, remainder: 0 }))
   }
 
-  return (
-    <section id="quickcount" className="section active py-8 px-4">
-      <div className="quickcount-container container mx-auto">
-        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
-          QUICK COUNT REALTIME
-        </h2>
-        {isLoading && (
-          <div className="text-center text-gray-500 dark:text-gray-300 mb-4">Memuat data quick count...</div>
-        )}
-        {error && (
-          <div className="text-center text-red-500 mb-4">{error}</div>
-        )}
-        <div className="stats-grid grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-          <div className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">
-            <div className="stat-number text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="total-votes">
-              {totalVotes.toLocaleString()}
+  // Komponen skeleton loader untuk quick count
+  const SkeletonQuickCount = () => (
+    <div className="quickcount-container container mx-auto">
+      <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
+        QUICK COUNT REALTIME
+      </h2>
+      <div className="stats-grid grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+        {[1,2].map(i => (
+          <div key={i} className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">
+            <div className="stat-number text-4xl font-bold mb-1">
+              <div className="h-8 w-20 mx-auto bg-slate-200 dark:bg-gray-700 rounded animate-pulse" />
             </div>
-            <div className="stat-label text-gray-600 dark:text-gray-300">Total Suara</div>
+            <div className="stat-label h-4 w-24 mx-auto bg-slate-200 dark:bg-gray-700 rounded animate-pulse" />
           </div>
-          <div className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">
-            <div className="stat-number text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="participation-rate">
-              {participationRate}%
+        ))}
+      </div>
+      <div className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 overflow-x-auto w-full max-w-screen-sm mx-auto">
+        <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-6">
+          <div className="h-6 w-32 mx-auto bg-slate-200 dark:bg-gray-700 rounded animate-pulse" />
+        </h3>
+        <div className="flex flex-col gap-3">
+          {[1,2,3].map(i => (
+            <div key={i} className="result-item mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow min-h-[72px] flex flex-col gap-2">
+              <div className="result-name h-5 w-32 bg-slate-200 dark:bg-gray-600 rounded animate-pulse mb-2" />
+              <div className="result-bar w-full bg-slate-200 dark:bg-gray-700 rounded-full h-4 sm:h-5 shadow-inner overflow-hidden flex items-center">
+                <div className="h-full rounded-full animate-pulse" style={{ width: `${30 + Math.random()*40}%`, background: '#60a5fa' }} />
+              </div>
+              <div className="result-votes h-4 w-16 bg-slate-200 dark:bg-gray-600 rounded animate-pulse mt-1 ml-auto" />
             </div>
-            <div className="stat-label text-gray-600 dark:text-gray-300">Partisipasi</div>
-          </div>
-        </div>
-        <div id="results-chart" className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 overflow-x-auto w-full max-w-screen-sm mx-auto">
-          <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-6">Hasil Sementara</h3>
-          <div className="flex flex-col gap-3">
-            {candidates.map((candidate, idx) => {
-              const percentObj = percentages.find(p => p.id === candidate.id);
-              let percentage = percentObj ? percentObj.value : 0;
-              if (typeof percentage !== 'number' || isNaN(percentage)) percentage = 0;
-              const percentStr = percentage.toFixed(1);
-              return (
-                <div key={candidate.id} className="result-item mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow min-h-[72px] flex flex-col gap-2">
-                  <div className="result-info flex flex-col xs:flex-row xs:justify-between xs:items-center mb-2 gap-1 xs:gap-0">
-                    <div className="result-name text-lg font-medium text-gray-700 dark:text-gray-200 truncate">{candidate.name}</div>
-                  </div>
-                  <div
-                    className="result-bar w-full min-w-[80px] bg-slate-200/80 dark:bg-gray-700/80 rounded-full h-4 sm:h-5 shadow-inner overflow-hidden flex items-center"
-                    role="progressbar"
-                    aria-valuenow={percentage}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                  >
-                    <div
-                      className="result-fill h-full rounded-full transition-all duration-700 ease-in-out flex items-center pl-2"
-                      style={{
-                        width: `${percentStr}%`,
-                        minWidth: percentage > 0 ? '8px' : '0px',
-                        background: candidate.color
-                          ? candidate.color
-                          : 'linear-gradient(90deg, #3b82f6 60%, #60a5fa 100%)',
-                        color: percentage > 20 ? '#fff' : '#2563eb',
-                        fontWeight: 600,
-                        fontSize: '0.95rem',
-                      }}
-                    >
-                      {percentage > 20 && <span>{percentStr}%</span>}
-                    </div>
-                    {percentage <= 20 && (
-                      <span className="ml-2 text-blue-700 dark:text-blue-300 font-semibold">{percentStr}%</span>
-                    )}
-                  </div>
-                  <div className="result-votes text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 text-right">{votes[candidate.id] || 0} suara</div>
-                </div>
-              );
-            })}
-          </div>
+          ))}
         </div>
       </div>
+    </div>
+  )
+
+  return (
+    <section id="quickcount" className="section active py-8 px-4">
+      {isLoading ? (
+        <SkeletonQuickCount />
+      ) : (
+        <div className="quickcount-container container mx-auto">
+          <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
+            QUICK COUNT REALTIME
+          </h2>
+          {error && (
+            <div className="text-center text-red-500 mb-4">{error}</div>
+          )}
+          <div className="stats-grid grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+            <div className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">
+              <div className="stat-number text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="total-votes">
+                {totalVotes.toLocaleString()}
+              </div>
+              <div className="stat-label text-gray-600 dark:text-gray-300">Total Suara</div>
+            </div>
+            <div className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">
+              <div className="stat-number text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="participation-rate">
+                {participationRate}%
+              </div>
+              <div className="stat-label text-gray-600 dark:text-gray-300">Partisipasi</div>
+            </div>
+          </div>
+          <div id="results-chart" className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 overflow-x-auto w-full max-w-screen-sm mx-auto">
+            <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-6">Hasil Sementara</h3>
+            <div className="flex flex-col gap-3">
+              {candidates.map((candidate, idx) => {
+                const percentObj = percentages.find(p => p.id === candidate.id);
+                let percentage = percentObj ? percentObj.value : 0;
+                if (typeof percentage !== 'number' || isNaN(percentage)) percentage = 0;
+                const percentStr = percentage.toFixed(1);
+                return (
+                  <div key={candidate.id} className="result-item mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow min-h-[72px] flex flex-col gap-2">
+                    <div className="result-info flex flex-col xs:flex-row xs:justify-between xs:items-center mb-2 gap-1 xs:gap-0">
+                      <div className="result-name text-lg font-medium text-gray-700 dark:text-gray-200 truncate">{candidate.name}</div>
+                    </div>
+                    <div
+                      className="result-bar w-full min-w-[80px] bg-slate-200/80 dark:bg-gray-700/80 rounded-full h-4 sm:h-5 shadow-inner overflow-hidden flex items-center"
+                      role="progressbar"
+                      aria-valuenow={percentage}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    >
+                      <div
+                        className="result-fill h-full rounded-full transition-all duration-700 ease-in-out flex items-center pl-2"
+                        style={{
+                          width: `${percentStr}%`,
+                          minWidth: percentage > 0 ? '8px' : '0px',
+                          background: candidate.color
+                            ? candidate.color
+                            : 'linear-gradient(90deg, #3b82f6 60%, #60a5fa 100%)',
+                          color: percentage > 20 ? '#fff' : '#2563eb',
+                          fontWeight: 600,
+                          fontSize: '0.95rem',
+                        }}
+                      >
+                        {percentage > 20 && <span>{percentStr}%</span>}
+                      </div>
+                      {percentage <= 20 && (
+                        <span className="ml-2 text-blue-700 dark:text-blue-300 font-semibold">{percentStr}%</span>
+                      )}
+                    </div>
+                    <div className="result-votes text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 text-right">{votes[candidate.id] || 0} suara</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

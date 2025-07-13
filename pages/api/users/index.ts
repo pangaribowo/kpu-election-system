@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Ambil user + status voting dengan pagination atau search
   let query = supabase
     .from('users')
-    .select('id, username, name, role, email, phone, voting: voting(id)')
+    .select('id, username, name, role, email, phone, voting:voting!user_id(id)')
     .order('name', { ascending: true })
   if (roleFilter) query = query.eq('role', roleFilter)
   if (search) {
@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   const usersWithVote = (data || []).map(u => ({
     ...u,
-    hasVoted: Array.isArray(u.voting) && u.voting.length > 0
+    hasVoted: !!u.voting
   }))
   res.status(200).json({ users: usersWithVote, total: search ? usersWithVote.length : (total || 0) })
 } 

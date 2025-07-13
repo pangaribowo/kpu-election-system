@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useVoting } from "../../components/VotingContext";
 import { useRouter } from "next/router";
 import { supabase } from '../../lib/supabaseClient'
-import { FiCheckCircle, FiXCircle, FiChevronLeft, FiChevronRight, FiSearch, FiX } from 'react-icons/fi'
+import { FiCheckCircle, FiXCircle, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiChevronsLeft, FiChevronsRight, FiUsers } from 'react-icons/fi'
 
 // Fungsi masking nama: F********* A*** P**********
 function maskName(name: string) {
@@ -46,6 +46,7 @@ const UsersPage = () => {
           return res.json();
         })
         .then((data) => {
+          console.log('API /api/users response:', data)
           setUsers(data.users);
           setTotalPages(Math.ceil(data.total / USERS_PER_PAGE));
           setLoading(false);
@@ -105,6 +106,14 @@ const UsersPage = () => {
     <div className="flex justify-center items-center gap-2 mt-6 select-none">
       <button
         className="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={() => setPage(1)}
+        disabled={page === 1}
+        aria-label="Halaman pertama"
+      >
+        <FiChevronsLeft size={18} />
+      </button>
+      <button
+        className="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={() => setPage(page - 1)}
         disabled={page === 1}
         aria-label="Sebelumnya"
@@ -119,6 +128,7 @@ const UsersPage = () => {
               ? 'bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 border-blue-600 dark:border-blue-400 shadow-lg scale-105'
               : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900'}`}
           onClick={() => setPage(i + 1)}
+          aria-label={`Halaman ${i + 1}`}
         >
           {i + 1}
         </button>
@@ -131,13 +141,24 @@ const UsersPage = () => {
       >
         <FiChevronRight size={18} />
       </button>
+      <button
+        className="px-3 py-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        onClick={() => setPage(totalPages)}
+        disabled={page === totalPages}
+        aria-label="Halaman terakhir"
+      >
+        <FiChevronsRight size={18} />
+      </button>
     </div>
   )
 
   return (
     <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-      <section className="section active rounded-2xl bg-white dark:bg-gray-800 shadow-lg transition-all duration-300">
-        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6 text-center">DAFTAR USER</h1>
+      <section className="section active rounded-2xl bg-white dark:bg-gray-800 shadow-none dark:shadow-lg transition-all duration-300">
+        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6 text-center flex items-center justify-center gap-2">
+          <FiUsers className="inline-block" size={28} />
+          DAFTAR USER
+        </h1>
         {/* Search bar modern */}
         <form onSubmit={handleSearch} className="flex items-center gap-2 mb-6 max-w-md mx-auto">
           <div className="relative flex-1">

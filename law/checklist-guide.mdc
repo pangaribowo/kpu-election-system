@@ -76,8 +76,6 @@ Tahap 7: Testing & Dokumentasi
 [x] Proteksi: hanya user yang sudah verifikasi OTP yang bisa login/voting
 [x] Notifikasi: instruksi cek SMS untuk OTP
 [x] Uji register, verifikasi email, login, voting (E2E)
-[ ] Uji login dengan email/phone yang belum diverifikasi (harus gagal)
-[ ] Uji login dengan email/phone yang sudah diverifikasi (harus sukses)
 [x] Update dokumentasi dan checklist di @/law
 [x] Terapkan font global profesional (Inter) untuk seluruh aplikasi
 [x] Notification di-render di layout global (_app.tsx)
@@ -86,3 +84,24 @@ Tahap 7: Testing & Dokumentasi
 [x] Perbesar gap antar menu, tambah padding vertikal nav, divider sebelum logout, dan margin bawah menu utama
 [x] Testing visual sidebar: pastikan menu tidak menempel, ada spasi antar menu, dan divider jelas
 [x] Update dokumentasi dan checklist setelah perubahan sidebar
+
+---
+
+## Fitur & Audit User/Google OAuth/OTP/Profile (2024)
+
+- [ ] Audit halaman `/profile` dan endpoint terkait (update nomor telepon, email, password, dsb)
+- [ ] Implementasi verifikasi OTP nomor telepon setelah input phone (Google OAuth/manual)
+- [ ] Sinkronisasi data Google (nama, avatar) ke tabel users/profiles setiap login Google
+- [ ] Blokir akses fitur utama jika user belum punya nomor telepon terverifikasi
+- [ ] Halaman profil user modern (Tailwind, responsif, bisa update data diri, verifikasi data sensitif)
+- [ ] Testing E2E seluruh flow (login Google, input phone, OTP, update profile, dsb)
+- [ ] Update checklist dan dokumentasi setelah testing
+
+### Strategi Eksekusi
+1. Audit/refactor halaman `/profile` (atau buat jika belum ada)
+2. Implementasi OTP setelah input nomor telepon
+3. Sinkronisasi data Google ke database
+4. Blokir akses fitur utama jika data belum lengkap
+5. Update checklist @/law
+6. Testing E2E
+7. Audit security & dokumentasi

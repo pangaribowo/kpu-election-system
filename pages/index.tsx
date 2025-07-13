@@ -7,10 +7,9 @@ import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
 import { supabase } from '../lib/supabaseClient';
 
 const Dashboard = () => {
-  const { currentUser, isAuthChecked, fetchVotingStats } = useVoting()
+  const { currentUser, isAuthChecked, fetchVotingStats, hasVoted } = useVoting()
   const router = useRouter()
   const [stats, setStats] = useState({ totalVoters: 0, totalVoted: 0, totalCandidates: 0 })
-  const [hasVoted, setHasVoted] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const firstLoad = useRef(true)
   const isRealtimeActive = useRef(false)
@@ -27,6 +26,7 @@ const Dashboard = () => {
     const isRealtimeActive = { current: false }
 
     const fetchStats = async () => {
+      setIsLoading(true)
       try {
         const data = await fetchVotingStats()
         if (!isUnmounted) setStats({
@@ -37,12 +37,14 @@ const Dashboard = () => {
       } catch {
         if (!isUnmounted) setStats({ totalVoters: 0, totalVoted: 0, totalCandidates: 0 })
       } finally {
-        if (firstLoad.current && !isUnmounted) setIsLoading(false)
-        firstLoad.current = false
+        if (!isUnmounted) setIsLoading(false)
       }
     }
 
-    fetchStats()
+    // Hanya fetch jika sudah auth checked dan user ada
+    if (isAuthChecked && currentUser) {
+      fetchStats()
+    }
     const channel = supabase.channel('kpu-election')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
         isRealtimeActive.current = true
@@ -55,12 +57,12 @@ const Dashboard = () => {
       .subscribe()
 
     polling = setInterval(() => {
-      if (!isRealtimeActive.current) fetchStats()
+      if (!isRealtimeActive.current && isAuthChecked && currentUser) fetchStats()
     }, 5000)
 
-    // Tambahkan listener perubahan route ke dashboard
+    // Listener perubahan route ke dashboard
     const handleRouteChange = (url: string) => {
-      if (url === '/') fetchStats()
+      if (url === '/' && isAuthChecked && currentUser) fetchStats()
     }
     router.events?.on('routeChangeComplete', handleRouteChange)
 
@@ -70,16 +72,7 @@ const Dashboard = () => {
       supabase.removeChannel(channel)
       router.events?.off('routeChangeComplete', handleRouteChange)
     }
-  }, [])
-
-  useEffect(() => {
-    if (currentUser?.username) {
-      fetch(`/api/voting?username=${encodeURIComponent(currentUser.username)}`)
-        .then(res => res.json())
-        .then(data => setHasVoted(!!data.hasVoted))
-        .catch(() => setHasVoted(false))
-    }
-  }, [currentUser])
+  }, [isAuthChecked, currentUser, router.pathname])
 
   if (!isAuthChecked) return null
   if (!currentUser) return null
