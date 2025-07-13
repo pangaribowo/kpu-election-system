@@ -204,22 +204,43 @@ const LoginScreen = () => {
       } else {
         // Ambil data user dari user_metadata
         const userMeta = data.user.user_metadata || {}
-        if (userMeta.role !== role) {
-          setNotification({ message: 'Role tidak sesuai!', type: 'error' })
-        } else {
-          setCurrentUser({ username: userMeta.username, role: userMeta.role, name: userMeta.name, email: data.user.email, phone: userMeta.phone, phone_verified: !!data.user.phone_confirmed_at })
-          setActiveTab('voting')
-          setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
-          // Sinkronisasi ke tabel users
-          const syncRes = await fetch('/api/users/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, phone: userMeta.phone, name: userMeta.name, username: userMeta.username, role: userMeta.role })
+        // Ambil data user dari database custom
+        let userDb = null
+        try {
+          const userRes = await fetch(`/api/users/sync?email=${encodeURIComponent(data.user.email)}`)
+          userDb = await userRes.json()
+        } catch {}
+        if (userDb && userDb.id) {
+          setCurrentUser({
+            id: userDb.id,
+            username: userDb.username || '-',
+            role: userDb.role,
+            name: userDb.name,
+            email: userDb.email,
+            phone: userDb.phone || '-',
+            phone_verified: !!data.user.phone_confirmed_at,
           })
-          if (!syncRes.ok) {
-            const err = await syncRes.json().catch(() => null)
-            setNotification({ message: err?.error || 'Login berhasil, tapi gagal sinkronisasi user ke database.', type: 'warning' })
-          }
+        } else {
+          setCurrentUser({
+            username: userMeta.username || '-',
+            role: userMeta.role,
+            name: userMeta.name,
+            email: data.user.email,
+            phone: userMeta.phone || '-',
+            phone_verified: !!data.user.phone_confirmed_at,
+          })
+        }
+        setActiveTab('voting')
+        setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
+        // Sinkronisasi ke tabel users
+        const syncRes = await fetch('/api/users/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, phone: userMeta.phone, name: userMeta.name, username: userMeta.username, role: userMeta.role })
+        })
+        if (!syncRes.ok) {
+          const err = await syncRes.json().catch(() => null)
+          setNotification({ message: err?.error || 'Login berhasil, tapi gagal sinkronisasi user ke database.', type: 'warning' })
         }
       }
     } catch (err) {
@@ -247,6 +268,24 @@ const LoginScreen = () => {
     }
     setLoading(true)
     try {
+      // Validasi duplikasi email
+      const checkEmailRes = await fetch(`/api/users/sync?email=${encodeURIComponent(email)}`)
+      const checkEmailData = await checkEmailRes.json()
+      if (checkEmailData && checkEmailData.id) {
+        setNotification({ message: 'Email sudah terdaftar!', type: 'error' })
+        setLoading(false)
+        return
+      }
+      // Validasi duplikasi phone
+      if (phone && phone !== '-') {
+        const checkPhoneRes = await fetch(`/api/users/sync?phone=${encodeURIComponent(phone)}`)
+        const checkPhoneData = await checkPhoneRes.json()
+        if (checkPhoneData && checkPhoneData.exists) {
+          setNotification({ message: 'Nomor HP sudah terdaftar!', type: 'error' })
+          setLoading(false)
+          return
+        }
+      }
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
       // Register ke Supabase Auth
       const { data, error } = await supabase.auth.signUp({
@@ -259,13 +298,21 @@ const LoginScreen = () => {
       })
       if (error) {
         setNotification({ message: error.message || 'Registrasi gagal', type: 'error' })
+        setLoading(false)
+        return
       } else {
         // Sinkronisasi ke tabel users custom
-        await fetch('/api/users/sync', {
+        const syncRes = await fetch('/api/users/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, name, username: email, phone, role: 'user' })
         })
+        if (!syncRes.ok) {
+          const err = await syncRes.json().catch(() => null)
+          setNotification({ message: err?.error || 'Registrasi gagal sinkronisasi ke database.', type: 'error' })
+          setLoading(false)
+          return
+        }
         setNotification({ message: 'Registrasi sukses! Silakan cek email untuk verifikasi.', type: 'success' })
         setTab('login')
       }
