@@ -31,7 +31,7 @@ Panduan ini berisi langkah-langkah dan kebutuhan untuk mengembangkan website aga
 ## 3. Kebutuhan Pengembangan
 
 ### a. Database
-- [ ] Pilih database (misal: Supabase/PostgreSQL)
+- [ ] Pilih database (misal: PostgreSQL)
 - [ ] Buat tabel sesuai kebutuhan data
 - [ ] Siapkan koneksi & environment variable (.env)
 

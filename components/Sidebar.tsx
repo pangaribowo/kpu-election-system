@@ -2,13 +2,13 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FiHome, FiCheckSquare, FiBarChart, FiUsers, FiInfo, FiBookOpen, FiLogOut, FiX, FiUser } from "react-icons/fi";
+import { FiHome, FiCheckSquare, FiBarChart, FiUsers, FiInfo, FiBookOpen, FiLogOut, FiX, FiUser, FiFileText } from "react-icons/fi";
 import { supabase } from '../lib/supabaseClient';
 import { useVoting } from './VotingContext';
 import { Moon, Sun } from 'lucide-react';
 
 const menuItems = [
-  { href: "/", label: "Dashboard" },
+  // { href: "/", label: "Dashboard" }, // Dihapus agar tidak duplikat
   { href: "/voting", label: "Voting" },
   { href: "/quickcount", label: "Quick Count" },
   { href: "/users", label: "Users" },
@@ -117,6 +117,23 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
       {/* Menu modern */}
       <nav className="sidebar-nav flex-1 flex flex-col gap-2 mt-2">
         <ul className="sidebar-menu flex flex-col gap-2 px-2">
+          <li className="sidebar-item">
+            <a
+              className="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-blue-100/70 dark:hover:bg-blue-800/70 text-gray-700 dark:text-gray-200"
+              href="/"
+              onClick={e => {
+                e.preventDefault()
+                if (router.pathname === '/') {
+                  window.location.reload()
+                } else {
+                  router.push('/')
+                }
+              }}
+            >
+              <span className="inline-flex items-center justify-center w-8 h-8"><FiHome size={22} /></span>
+              <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">Dashboard</span>
+            </a>
+          </li>
           {menuItems.map((item) => (
             <li className="sidebar-item" key={item.href}>
               <Link
@@ -140,6 +157,12 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
               </Link>
             </li>
           ))}
+          <li className="sidebar-item">
+            <a className="sidebar-link flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-blue-100/70 dark:hover:bg-blue-800/70 text-gray-700 dark:text-gray-200" href="/documentation">
+              <span className="inline-flex items-center justify-center w-8 h-8"><FiFileText size={22} /></span>
+              <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">Dokumentasi</span>
+            </a>
+          </li>
           <li className="sidebar-item">
             <Link
               href="/profile"

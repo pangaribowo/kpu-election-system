@@ -58,10 +58,17 @@ const Dashboard = () => {
       if (!isRealtimeActive.current) fetchStats()
     }, 5000)
 
+    // Tambahkan listener perubahan route ke dashboard
+    const handleRouteChange = (url: string) => {
+      if (url === '/') fetchStats()
+    }
+    router.events?.on('routeChangeComplete', handleRouteChange)
+
     return () => {
       isUnmounted = true
       polling && clearInterval(polling)
       supabase.removeChannel(channel)
+      router.events?.off('routeChangeComplete', handleRouteChange)
     }
   }, [])
 

@@ -20,12 +20,27 @@ const ProfilePage = () => {
 
   React.useEffect(() => {
     if (!currentUser) router.replace('/login')
+    // Reset pesan reset password saat halaman dimount
+    setResetMsg('')
   }, [currentUser, router])
+
+  // Auto-dismiss resetMsg setelah 5 detik
+  React.useEffect(() => {
+    if (resetMsg) {
+      const timer = setTimeout(() => setResetMsg(''), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [resetMsg])
 
   if (!currentUser) return null
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleEditProfile = () => {
+    setEditMode(true)
+    setResetMsg('') // Reset pesan reset password saat masuk edit mode
   }
 
   const handleSubmit = async e => {
@@ -96,7 +111,7 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-xl mx-auto my-10 bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
-      <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">Profil Saya</h2>
+      <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4 text-center tracking-wide">PROFIL SAYA</h2>
       <div className="flex items-center gap-4 mb-6">
         {currentUser && currentUser.name && (
           <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center text-3xl text-blue-500 font-bold">
@@ -112,12 +127,16 @@ const ProfilePage = () => {
         <>
           <div className="mb-2"><b>Nomor HP:</b> {currentUser.phone || <span className="text-red-500">Belum diisi</span>}</div>
           <div className="mb-2"><b>Role:</b> {currentUser.role === 'admin' ? 'Petugas KPU' : currentUser.role === 'user' ? 'Pemilih' : currentUser.role}</div>
-          <button className="btn-primary mt-4" onClick={() => setEditMode(true)}>Edit Profil</button>
+          <div className="flex justify-center mt-4">
+            <button className="btn-primary w-full max-w-xs flex justify-center items-center" onClick={handleEditProfile}>Edit Profil</button>
+          </div>
           <div className="mt-8 border-t pt-6">
-            <div className="mb-2 text-sm text-gray-600 dark:text-gray-300">Ingin ganti password?</div>
-            <button className="btn-secondary" onClick={handleResetPassword} disabled={resetLoading}>{resetLoading ? 'Mengirim...' : 'Reset Password via Email'}</button>
-            {resetMsg && <div className="mt-2 text-sm text-green-500 dark:text-green-400">{resetMsg}</div>}
-            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">Password hanya bisa diganti melalui email reset. Klik tombol di atas, lalu cek inbox/spam email Anda.</div>
+            <div className="mb-2 text-sm text-gray-600 dark:text-gray-300 text-center">Ingin ganti password?</div>
+            <div className="flex justify-center">
+              <button className="btn-secondary w-full max-w-xs flex justify-center items-center" onClick={handleResetPassword} disabled={resetLoading}>{resetLoading ? 'Mengirim...' : 'Reset Password via Email'}</button>
+            </div>
+            {resetMsg && <div className="mt-2 text-sm text-green-500 dark:text-green-400 text-center">{resetMsg}</div>}
+            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">Password hanya bisa diganti melalui email reset. Klik tombol di atas, lalu cek inbox/spam email Anda.</div>
           </div>
         </>
       ) : (
@@ -137,8 +156,8 @@ const ProfilePage = () => {
           {error && <div className="text-red-500 text-sm">{error}</div>}
           {success && <div className="text-green-500 text-sm">{success}</div>}
           <div className="flex gap-3 mt-2">
-            <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Menyimpan...' : 'Simpan Perubahan'}</button>
-            <button type="button" className="btn-secondary" onClick={() => setEditMode(false)} disabled={loading}>Batal</button>
+            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Menyimpan...' : 'Simpan Perubahan'}</button>
+            <button type="button" className="btn-secondary w-full" onClick={() => setEditMode(false)} disabled={loading}>Batal</button>
           </div>
         </form>
       )}

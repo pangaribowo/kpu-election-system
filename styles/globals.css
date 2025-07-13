@@ -772,8 +772,9 @@ input, button, select, textarea {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 14px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 

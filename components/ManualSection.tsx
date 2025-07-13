@@ -1,203 +1,216 @@
 import * as React from 'react'
+import { FiChevronDown } from 'react-icons/fi'
 
 const manualContent = {
   overview: (
     <div id="manual-overview" className="manual-section active">
-      <h3>📋 Overview Sistem</h3>
-      <p>Sistem Pemilihan Ketua Organisasi adalah aplikasi web yang dirancang untuk memfasilitasi proses pemilihan secara digital dengan fitur-fitur berikut:</p>
-      <div className="feature-grid">
-        <div className="feature-card">
-          <h4>🗳️ Sistem Voting</h4>
-          <p>Pemilihan kandidat yang aman dan mudah digunakan</p>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 sm:p-8 mb-6 border border-gray-200 dark:border-gray-800">
+        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-2"><span>📋</span> Overview Sistem</h3>
+        <p className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+          <b>Sistem Voting Komisi Pemilihan Umum (KPU)</b> adalah aplikasi web modern yang dirancang untuk mendukung proses pemilihan secara <b>aman, transparan, dan efisien</b>. Sistem ini dapat digunakan untuk berbagai kebutuhan pemilihan, baik pemilihan umum, organisasi, maupun internal institusi. Dengan fitur <b>voting online, quick count realtime, panel admin, dan dokumentasi manual</b>, platform ini memastikan pengalaman pemilihan yang profesional dan terpercaya.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div className="feature-card flex items-start gap-3 bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <span className="text-2xl">🗳️</span>
+            <div>
+              <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">Sistem Voting</h4>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">Proses pemilihan kandidat yang aman, transparan, dan mudah digunakan.</p>
+            </div>
+          </div>
+          <div className="feature-card flex items-start gap-3 bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <span className="text-2xl">📊</span>
+            <div>
+              <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">Quick Count</h4>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">Perhitungan suara real-time dengan visualisasi grafik interaktif.</p>
+            </div>
+          </div>
+          <div className="feature-card flex items-start gap-3 bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <span className="text-2xl">👨‍💼</span>
+            <div>
+              <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">Panel Admin</h4>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">Kelola kandidat, reset data, dan ekspor hasil pemilihan secara terpusat.</p>
+            </div>
+          </div>
+          <div className="feature-card flex items-start gap-3 bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <span className="text-2xl">🔐</span>
+            <div>
+              <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">Sistem Login</h4>
+              <p className="text-gray-700 dark:text-gray-300 text-sm">Autentikasi pengguna dengan peran Admin dan Pemilih untuk keamanan data.</p>
+            </div>
+          </div>
         </div>
-        <div className="feature-card">
-          <h4>📊 Quick Count</h4>
-          <p>Perhitungan suara real-time dengan visualisasi grafik</p>
-        </div>
-        <div className="feature-card">
-          <h4>👨‍💼 Panel Admin</h4>
-          <p>Kelola kandidat, reset data, dan export hasil</p>
-        </div>
-        <div className="feature-card">
-          <h4>🔐 Sistem Login</h4>
-          <p>Autentikasi user dengan role Admin dan Pemilih</p>
-        </div>
+        <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">Keunggulan Sistem:</h4>
+        <ul className="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-300 text-sm">
+          <li>✅ Antarmuka modern, responsif, dan ramah pengguna</li>
+          <li>✅ Keamanan data dengan autentikasi dan otorisasi</li>
+          <li>✅ Perhitungan suara real-time dan pelaporan instan</li>
+          <li>✅ Ekspor hasil pemilihan dalam format teks</li>
+          <li>✅ Dukungan multi-perangkat: desktop & mobile</li>
+        </ul>
       </div>
-      <h4>Keunggulan Sistem:</h4>
-      <ul>
-        <li>✅ Interface yang user-friendly dan responsif</li>
-        <li>✅ Keamanan data dengan sistem login</li>
-        <li>✅ Realtime counting dan reporting</li>
-        <li>✅ Export hasil dalam format text</li>
-        <li>✅ Dapat digunakan di desktop dan mobile</li>
-      </ul>
     </div>
   ),
   login: (
     <div id="manual-login" className="manual-section active">
-      <h3>🔐 Panduan Login</h3>
-      <h4>Langkah-langkah Login:</h4>
-      <ol>
-        <li>Buka aplikasi di browser</li>
-        <li>Masukkan username dan password</li>
-        <li>Pilih role (Petugas KPU atau Pemilih)</li>
-        <li>Klik tombol "Login"</li>
-      </ol>
-      <h4>Akun Demo yang Tersedia:</h4>
-      <div className="demo-accounts">
-        <div className="account-card">
-          <h5>👨‍💼 Petugas KPU</h5>
-          <p><strong>Username:</strong> admin</p>
-          <p><strong>Password:</strong> admin123</p>
-          <p><strong>Akses:</strong> Semua fitur termasuk panel admin</p>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 sm:p-8 mb-6 border border-gray-200 dark:border-gray-800">
+        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-2"><span>🔐</span> Panduan Login</h3>
+        <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">Langkah-langkah Login:</h4>
+        <ol className="list-decimal pl-6 mb-4 text-gray-700 dark:text-gray-300 space-y-1 text-sm">
+          <li>Buka aplikasi melalui browser perangkat Anda.</li>
+          <li>Masukkan username dan password yang telah dibuat.</li>
+          <li>Pilih peran sesuai hak akses (Admin atau Pemilih).</li>
+          <li>Klik tombol <b>Login</b> untuk masuk ke sistem.</li>
+        </ol>
+        <div className="info-box bg-blue-50 dark:bg-blue-950 rounded-lg p-4 mb-3">
+          <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1 flex items-center gap-2"><span>ℹ️</span> Informasi:</h5>
+          <p className="text-gray-700 dark:text-gray-300 text-sm">Setiap pengguna memiliki hak akses berbeda sesuai peran. Admin dapat mengelola sistem, sedangkan Pemilih hanya dapat melakukan voting dan melihat hasil.</p>
         </div>
-        <div className="account-card">
-          <h5>👤 Pemilih</h5>
-          <p><strong>Username:</strong> user</p>
-          <p><strong>Password:</strong> user123</p>
-          <p><strong>Akses:</strong> Voting dan Quick Count</p>
+        <div className="warning-box bg-yellow-50 dark:bg-yellow-900 rounded-lg p-4 border-l-4 border-yellow-400 dark:border-yellow-600">
+          <h5 className="font-semibold text-yellow-700 dark:text-yellow-300 mb-1 flex items-center gap-2"><span>⚠️</span> Catatan Penting:</h5>
+          <p className="text-gray-700 dark:text-gray-200 text-sm">Pastikan menjaga kerahasiaan akun Anda. Jika mengalami kendala login, silakan hubungi administrator sistem.</p>
         </div>
-      </div>
-      <div className="warning-box">
-        <h5>⚠️ Catatan Penting:</h5>
-        <p>Pastikan memilih role yang sesuai saat login. Admin memiliki akses penuh, sedangkan Pemilih hanya dapat melakukan voting dan melihat hasil.</p>
       </div>
     </div>
   ),
   voting: (
     <div id="manual-voting" className="manual-section active">
-      <h3>🗳️ Panduan Voting</h3>
-      <h4>Cara Melakukan Voting:</h4>
-      <ol>
-        <li>Login sebagai Pemilih</li>
-        <li>Pilih tab "VOTING"</li>
-        <li>Baca profil dan visi setiap kandidat</li>
-        <li>Klik tombol "PILIH" pada kandidat pilihan Anda</li>
-        <li>Konfirmasi pilihan Anda</li>
-        <li>Sistem akan menampilkan notifikasi berhasil</li>
-      </ol>
-      <h4>Informasi Kandidat:</h4>
-      <p>Setiap kartu kandidat menampilkan:</p>
-      <ul>
-        <li>Nomor urut kandidat</li>
-        <li>Nama lengkap kandidat</li>
-        <li>Visi dan misi kandidat</li>
-        <li>Tombol untuk memilih</li>
-      </ul>
-      <div className="info-box">
-        <h5>ℹ️ Informasi Penting:</h5>
-        <ul>
-          <li>Setiap user hanya dapat memilih satu kali</li>
-          <li>Pilihan tidak dapat diubah setelah dikonfirmasi</li>
-          <li>Status voting akan ditampilkan di bagian bawah</li>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 sm:p-8 mb-6 border border-gray-200 dark:border-gray-800">
+        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-2"><span>🗳️</span> Panduan Voting</h3>
+        <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">Cara Melakukan Voting:</h4>
+        <ol className="list-decimal pl-6 mb-4 text-gray-700 dark:text-gray-300 space-y-1 text-sm">
+          <li>Login sebagai Pemilih.</li>
+          <li>Pilih tab <b>VOTING</b> pada menu utama.</li>
+          <li>Baca profil dan visi-misi setiap kandidat.</li>
+          <li>Klik tombol <b>PILIH</b> pada kandidat pilihan Anda.</li>
+          <li>Konfirmasi pilihan Anda pada dialog yang muncul.</li>
+          <li>Sistem akan menampilkan notifikasi keberhasilan voting.</li>
+        </ol>
+        <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">Informasi Kandidat:</h4>
+        <ul className="list-disc pl-6 mb-4 text-gray-700 dark:text-gray-300 space-y-1 text-sm">
+          <li>Nomor urut kandidat</li>
+          <li>Nama lengkap kandidat</li>
+          <li>Visi dan misi kandidat</li>
+          <li>Tombol untuk memilih</li>
         </ul>
+        <div className="info-box bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+          <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1 flex items-center gap-2"><span>ℹ️</span> Informasi Penting:</h5>
+          <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 text-sm space-y-1">
+            <li>Setiap pemilih hanya dapat memberikan suara satu kali.</li>
+            <li>Pilihan tidak dapat diubah setelah dikonfirmasi.</li>
+            <li>Status voting akan ditampilkan di bagian bawah halaman.</li>
+          </ul>
+        </div>
       </div>
     </div>
   ),
   quickcount: (
     <div id="manual-quickcount" className="manual-section active">
-      <h3>📊 Panduan Quick Count</h3>
-      <h4>Fitur Quick Count:</h4>
-      <p>Quick Count menampilkan hasil pemilihan secara real-time dengan informasi:</p>
-      <h5>Statistik Umum:</h5>
-      <ul>
-        <li><strong>Total Suara:</strong> Jumlah total suara yang masuk</li>
-        <li><strong>Partisipasi:</strong> Persentase partisipasi pemilih</li>
-      </ul>
-      <h5>Grafik Hasil:</h5>
-      <ul>
-        <li>Nama kandidat dan jumlah suara</li>
-        <li>Bar chart dengan persentase</li>
-        <li>Urutan berdasarkan perolehan suara tertinggi</li>
-      </ul>
-      <h4>Cara Mengakses:</h4>
-      <ol>
-        <li>Login dengan akun Admin atau Pemilih</li>
-        <li>Klik tab "QUICK COUNT"</li>
-        <li>Data akan ter-update otomatis setiap 5 detik</li>
-      </ol>
-      <div className="tip-box">
-        <h5>💡 Tips:</h5>
-        <p>Halaman Quick Count akan refresh otomatis untuk menampilkan data terbaru. Anda juga dapat refresh manual dengan berganti tab.</p>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 sm:p-8 mb-6 border border-gray-200 dark:border-gray-800">
+        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-2"><span>📊</span> Panduan Quick Count</h3>
+        <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">Fitur Quick Count:</h4>
+        <p className="mb-3 text-gray-700 dark:text-gray-300 text-sm">Quick Count menampilkan hasil pemilihan secara real-time dengan informasi berikut:</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 flex items-start gap-3">
+            <span className="text-xl">📈</span>
+            <div>
+              <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">Statistik Umum</h5>
+              <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300 text-sm space-y-1">
+                <li><b>Total Suara:</b> Jumlah total suara yang masuk</li>
+                <li><b>Partisipasi:</b> Persentase partisipasi pemilih</li>
+              </ul>
+            </div>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4 flex items-start gap-3">
+            <span className="text-xl">📊</span>
+            <div>
+              <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">Grafik Hasil</h5>
+              <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300 text-sm space-y-1">
+                <li>Nama kandidat dan jumlah suara</li>
+                <li>Bar chart dengan persentase suara</li>
+                <li>Urutan berdasarkan perolehan suara tertinggi</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">Cara Mengakses:</h4>
+        <ol className="list-decimal pl-6 mb-4 text-gray-700 dark:text-gray-300 space-y-1 text-sm">
+          <li>Login sebagai Admin atau Pemilih.</li>
+          <li>Klik tab <b>QUICK COUNT</b> pada menu utama.</li>
+          <li>Data akan ter-update otomatis setiap beberapa detik.</li>
+        </ol>
+        <div className="tip-box bg-green-50 dark:bg-green-950 rounded-lg p-4">
+          <h5 className="font-semibold text-green-700 dark:text-green-300 mb-1 flex items-center gap-2"><span>💡</span> Tips:</h5>
+          <p className="text-gray-700 dark:text-gray-300 text-sm">Halaman Quick Count akan memperbarui data secara otomatis. Anda juga dapat melakukan refresh manual dengan berpindah tab.</p>
+        </div>
       </div>
     </div>
   ),
   admin: (
     <div id="manual-admin" className="manual-section active">
-      <h3>👨‍💼 Panduan Admin</h3>
-      <h4>Akses Panel Admin:</h4>
-      <p>Panel Admin hanya dapat diakses oleh user dengan role Petugas KPU.</p>
-      <h4>Fitur-fitur Admin:</h4>
-      <h5>1. Tambah Kandidat Baru</h5>
-      <ul>
-        <li>Isi nama kandidat</li>
-        <li>Masukkan visi dan misi</li>
-        <li>Pilih warna tema</li>
-        <li>Klik "Tambah Kandidat"</li>
-      </ul>
-      <h5>2. Kelola Kandidat</h5>
-      <ul>
-        <li>Lihat daftar semua kandidat</li>
-        <li>Hapus kandidat yang tidak diinginkan</li>
-        <li>Edit informasi kandidat</li>
-      </ul>
-      <h5>3. Reset Semua Suara</h5>
-      <ul>
-        <li>Menghapus semua data voting</li>
-        <li>Reset status pemilih</li>
-        <li>Memulai pemilihan dari awal</li>
-      </ul>
-      <h5>4. Export Hasil</h5>
-      <ul>
-        <li>Download laporan dalam format text</li>
-        <li>Berisi statistik lengkap</li>
-        <li>Timestamp export</li>
-      </ul>
-      <div className="warning-box">
-        <h5>⚠️ Peringatan:</h5>
-        <p>Fitur Reset Semua Suara akan menghapus semua data voting secara permanen. Pastikan untuk export hasil terlebih dahulu jika diperlukan.</p>
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 sm:p-8 mb-6 border border-gray-200 dark:border-gray-800">
+        <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-2"><span>👨‍💼</span> Panduan Admin</h3>
+        <h4 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">Akses Panel Admin:</h4>
+        <p className="mb-4 text-gray-700 dark:text-gray-300 text-sm">Panel Admin hanya dapat diakses oleh pengguna dengan peran Admin (Petugas KPU).</p>
+        <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">Fitur-fitur Admin:</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">1. Tambah Kandidat Baru</h5>
+            <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300 text-sm space-y-1">
+              <li>Isi nama kandidat</li>
+              <li>Masukkan visi dan misi</li>
+              <li>Pilih warna tema kandidat</li>
+              <li>Klik <b>Tambah Kandidat</b></li>
+            </ul>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">2. Kelola Kandidat</h5>
+            <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300 text-sm space-y-1">
+              <li>Lihat daftar seluruh kandidat</li>
+              <li>Edit atau hapus kandidat sesuai kebutuhan</li>
+            </ul>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">3. Reset Semua Suara</h5>
+            <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300 text-sm space-y-1">
+              <li>Menghapus seluruh data voting</li>
+              <li>Reset status pemilih</li>
+              <li>Memulai ulang proses pemilihan</li>
+            </ul>
+          </div>
+          <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
+            <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">4. Ekspor Hasil</h5>
+            <ul className="list-disc pl-5 text-gray-700 dark:text-gray-300 text-sm space-y-1">
+              <li>Unduh laporan hasil voting dalam format teks</li>
+              <li>Berisi statistik lengkap dan timestamp</li>
+            </ul>
+          </div>
+        </div>
+        <div className="warning-box bg-yellow-50 dark:bg-yellow-900 rounded-lg p-4 border-l-4 border-yellow-400 dark:border-yellow-600">
+          <h5 className="font-semibold text-yellow-700 dark:text-yellow-300 mb-1 flex items-center gap-2"><span>⚠️</span> Peringatan:</h5>
+          <p className="text-gray-700 dark:text-gray-200 text-sm">Fitur <b>Reset Semua Suara</b> akan menghapus seluruh data voting secara permanen. Pastikan melakukan ekspor hasil terlebih dahulu jika diperlukan.</p>
+        </div>
       </div>
     </div>
   ),
   faq: (
     <div id="manual-faq" className="manual-section active">
-      <h3>❓ Frequently Asked Questions</h3>
-      <div className="faq-item">
-        <h4>Q: Bagaimana jika lupa password?</h4>
-        <p>A: Untuk demo ini, gunakan akun yang tersedia (admin/admin123 atau user/user123). Pada implementasi nyata, hubungi administrator sistem.</p>
+      <h3 className="text-2xl font-bold mb-6 text-blue-700 dark:text-blue-300 text-center">❓ Frequently Asked Questions</h3>
+      <FAQAccordion />
+      <h4 className="mt-10 mb-2 text-lg font-semibold text-blue-600 dark:text-blue-400">🛠️ Troubleshooting</h4>
+      <div className="troubleshooting bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-4">
+        <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Masalah: Tidak bisa login</h5>
+        <p className="mb-2 text-gray-700 dark:text-gray-300"><b>Solusi:</b> Pastikan username, password, dan peran sudah benar. Jika masih gagal, hubungi administrator.</p>
+        <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Masalah: Data tidak tersimpan</h5>
+        <p className="mb-2 text-gray-700 dark:text-gray-300"><b>Solusi:</b> Pastikan browser mendukung localStorage dan tidak dalam mode incognito.</p>
+        <h5 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Masalah: Quick Count tidak update</h5>
+        <p className="mb-2 text-gray-700 dark:text-gray-300"><b>Solusi:</b> Refresh halaman atau ganti tab untuk memperbarui data.</p>
       </div>
-      <div className="faq-item">
-        <h4>Q: Bisakah mengubah pilihan setelah voting?</h4>
-        <p>A: Tidak, setiap user hanya dapat memilih satu kali dan tidak dapat mengubah pilihan.</p>
-      </div>
-      <div className="faq-item">
-        <h4>Q: Apakah data aman?</h4>
-        <p>A: Data disimpan secara lokal di browser. Untuk keamanan maksimal, gunakan HTTPS dan database server.</p>
-      </div>
-      <div className="faq-item">
-        <h4>Q: Bagaimana cara menambah kandidat?</h4>
-        <p>A: Login sebagai Admin, masuk ke panel Admin, dan gunakan form "Tambah Kandidat Baru".</p>
-      </div>
-      <div className="faq-item">
-        <h4>Q: Apakah bisa digunakan di mobile?</h4>
-        <p>A: Ya, sistem ini responsive dan dapat digunakan di smartphone dan tablet.</p>
-      </div>
-      <div className="faq-item">
-        <h4>Q: Bagaimana cara export hasil?</h4>
-        <p>A: Login sebagai Admin, masuk ke panel Admin, dan klik tombol "Export Hasil".</p>
-      </div>
-      <h4>🛠️ Troubleshooting</h4>
-      <div className="troubleshooting">
-        <h5>Masalah: Tidak bisa login</h5>
-        <p><strong>Solusi:</strong> Pastikan username, password, dan role sudah benar. Coba refresh halaman.</p>
-        <h5>Masalah: Data tidak tersimpan</h5>
-        <p><strong>Solusi:</strong> Pastikan browser mendukung localStorage dan tidak dalam mode incognito.</p>
-        <h5>Masalah: Quick Count tidak update</h5>
-        <p><strong>Solusi:</strong> Refresh halaman atau ganti tab untuk memperbarui data.</p>
-      </div>
-      <div className="contact-box">
-        <h5>📞 Butuh Bantuan?</h5>
-        <p>Jika mengalami masalah teknis, hubungi administrator sistem atau tim IT organisasi Anda.</p>
+      <div className="contact-box bg-blue-50 dark:bg-blue-950 rounded-lg p-4 flex items-center gap-3">
+        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white dark:bg-blue-400 dark:text-blue-950 text-lg">📞</span>
+        <div>
+          <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-1">Butuh Bantuan?</h5>
+          <p className="text-gray-700 dark:text-gray-300">Jika mengalami kendala teknis, silakan hubungi administrator sistem atau tim IT di institusi Anda.</p>
+        </div>
       </div>
     </div>
   ),
@@ -211,6 +224,78 @@ const tabs = [
   { key: 'admin', label: 'Admin' },
   { key: 'faq', label: 'FAQ' },
 ]
+
+// Daftar FAQ dalam bentuk array agar mudah di-render sebagai accordion
+const faqList = [
+  {
+    q: 'Bagaimana jika lupa password?',
+    a: 'Silakan hubungi administrator sistem untuk reset password atau bantuan lebih lanjut.'
+  },
+  {
+    q: 'Bisakah mengubah pilihan setelah voting?',
+    a: 'Tidak, setiap pemilih hanya dapat memberikan suara satu kali dan tidak dapat mengubah pilihan setelah dikonfirmasi.'
+  },
+  {
+    q: 'Apakah data aman?',
+    a: 'Data disimpan secara aman di server dan/atau browser. Untuk keamanan maksimal, gunakan koneksi HTTPS dan akun yang valid.'
+  },
+  {
+    q: 'Bagaimana cara menambah kandidat?',
+    a: 'Login sebagai Admin, masuk ke panel Admin, dan gunakan form Tambah Kandidat Baru.'
+  },
+  {
+    q: 'Apakah bisa digunakan di mobile?',
+    a: 'Ya, sistem ini responsif dan dapat digunakan di berbagai perangkat, termasuk smartphone dan tablet.'
+  },
+  {
+    q: 'Bagaimana cara ekspor hasil?',
+    a: 'Login sebagai Admin, masuk ke panel Admin, dan klik tombol Ekspor Hasil.'
+  },
+]
+
+// Accordion FAQ component
+function FAQAccordion() {
+  const [openIdx, setOpenIdx] = React.useState<number | null>(null)
+  return (
+    <div className="w-full max-w-2xl mx-auto divide-y divide-gray-200 dark:divide-gray-700 rounded-xl bg-white dark:bg-gray-900 shadow-lg">
+      {faqList.map((item, idx) => (
+        <div key={idx} className="faq-accordion-item">
+          <button
+            className={
+              'w-full flex items-center justify-between py-5 px-6 text-left focus:outline-none transition-colors duration-200 ' +
+              (openIdx === idx
+                ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200')
+            }
+            aria-expanded={openIdx === idx}
+            onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
+          >
+            <span className="font-medium text-base sm:text-lg flex-1">{item.q}</span>
+            <FiChevronDown
+              className={
+                'ml-4 text-xl transition-transform duration-300 ' +
+                (openIdx === idx ? 'rotate-180 text-blue-500' : 'rotate-0 text-gray-400')
+              }
+              aria-hidden="true"
+            />
+          </button>
+          <div
+            className={
+              'overflow-hidden transition-all duration-300 ' +
+              (openIdx === idx ? 'max-h-40 opacity-100 py-2 px-6' : 'max-h-0 opacity-0 py-0 px-6')
+            }
+            style={{
+              transitionProperty: 'max-height, opacity, padding',
+            }}
+            aria-hidden={openIdx !== idx}
+          >
+            <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base leading-relaxed">{item.a}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const ManualSection = () => {
   const [activeTab, setActiveTab] = React.useState("overview");

@@ -197,7 +197,7 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
 
   // Utility function untuk fetch statistik voting
   const fetchVotingStats = async () => {
-    const res = await fetch('/api/voting')
+    const res = await fetch('/api/voting', { cache: 'no-store' })
     if (!res.ok) throw new Error('Gagal mengambil data voting')
     return await res.json()
   }
