@@ -11,6 +11,8 @@ const LoginScreen = () => {
     setNotification,
     currentUser,
   } = useVoting()
+  // eslint-disable-next-line no-console
+  console.log('[LoginForm] context:', { setCurrentUser, currentUser })
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -313,10 +315,18 @@ const LoginScreen = () => {
     }
   }
 
-  const handleShowManual = () => {
-    setCurrentUser({ username: 'guest', role: 'user', name: 'Guest' })
-    setActiveTab('manual')
-  }
+  const handleShowManual = async () => {
+    // eslint-disable-next-line no-console
+    console.log('[LoginForm] setCurrentUser guest...')
+    setCurrentUser({ username: 'guest', role: 'guest', name: 'Guest' });
+    setTimeout(() => {
+      // eslint-disable-next-line no-console
+      console.log('[LoginForm] after setCurrentUser, currentUser:', currentUser)
+      // eslint-disable-next-line no-console
+      console.log('[LoginForm] localStorage currentUser:', localStorage.getItem('currentUser'))
+      router.push('/manual');
+    }, 150);
+  };
 
   if (currentUser) return null;
 
@@ -399,6 +409,17 @@ const LoginScreen = () => {
                   <button type="button" className="forgot-link" onClick={() => setShowForgot(true)}>Lupa password?</button>
                 </div>
               </form>
+              {/* Tombol akses manual guest */}
+              {(() => { console.log('[LoginForm] render tombol guest'); return null })()}
+              <button
+                type="button"
+                className="w-full mt-2 py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                tabIndex={0}
+                aria-label="Lihat Manual/Panduan sebagai Guest"
+                onClick={() => { console.log('[LoginForm] tombol guest diklik'); handleShowManual(); }}
+              >
+                Lihat Manual/Panduan Tanpa Login
+              </button>
               <div className="login-or-separator">
                 <span className="login-or-text">atau</span>
               </div>
@@ -485,6 +506,16 @@ const LoginScreen = () => {
                 </div>
                 <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
               </form>
+              {/* Tombol akses manual guest */}
+              <button
+                type="button"
+                className="w-full mt-2 py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                onClick={() => router.push('/manual')}
+                tabIndex={0}
+                aria-label="Lihat Manual/Panduan sebagai Guest"
+              >
+                Lihat Manual/Panduan Tanpa Login
+              </button>
               <div className="text-center mt-4">
                 <span className="text-sm text-gray-500 dark:text-gray-400">Sudah punya akun? </span>
                 <button type="button" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline text-sm" onClick={() => setTab('login')}>Login di sini</button>

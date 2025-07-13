@@ -13,14 +13,14 @@ export type Candidate = {
 export type User = {
   username: string
   password: string
-  role: 'admin' | 'user'
+  role: 'admin' | 'user' | 'guest'
   name: string
 }
 
 export type CurrentUser = {
   id?: string // UUID user
   username: string
-  role: 'admin' | 'user'
+  role: 'admin' | 'user' | 'guest'
   name: string
   email?: string
   phone?: string
@@ -99,14 +99,20 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
   // Ambil currentUser dari localStorage dan Supabase session saat mount
   useEffect(() => {
     async function initUser() {
-      let userSet = false;
       // 1. Cek localStorage
-    const storedUser = localStorage.getItem('currentUser')
-    if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser))
-        userSet = true;
+      const storedUser = localStorage.getItem('currentUser')
+      // eslint-disable-next-line no-console
+      console.log('[VotingContext] read localStorage currentUser:', storedUser)
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser)
+        setCurrentUser(parsed)
+        // Jika guest, JANGAN cek Supabase Auth
+        if (parsed.role === 'guest') {
+          setIsAuthChecked(true)
+          return
+        }
       }
-      // 2. Cek Supabase session (misal login Google)
+      // 2. Cek Supabase session (hanya jika bukan guest)
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         // Ambil data user dari Supabase dan set ke context
@@ -120,9 +126,8 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
           phone: user.phone || '-',
           phone_verified: !!user.phone_confirmed_at,
         })
-        userSet = true;
-    }
-    setIsAuthChecked(true)
+      }
+      setIsAuthChecked(true)
     }
     initUser()
   }, [])
@@ -201,6 +206,15 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
     if (!res.ok) throw new Error('Gagal mengambil data voting')
     return await res.json()
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('[VotingContext] currentUser:', currentUser)
+  }, [currentUser])
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('[VotingContext] isAuthChecked:', isAuthChecked)
+  }, [isAuthChecked])
 
   return (
     <VotingContext.Provider

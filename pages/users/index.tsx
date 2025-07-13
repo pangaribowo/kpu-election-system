@@ -29,6 +29,7 @@ const UsersPage = () => {
   const [searchResult, setSearchResult] = useState<any[] | null>(null)
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
+  const [voteFilter, setVoteFilter] = useState<'all' | 'voted' | 'notvoted'>('all')
 
   useEffect(() => {
     if (isAuthChecked && !currentUser) {
@@ -99,6 +100,13 @@ const UsersPage = () => {
         setSearchError(err.message)
         setSearchLoading(false)
       })
+  }
+
+  // Filter user sesuai voteFilter
+  const filterUsers = (list: any[]) => {
+    if (voteFilter === 'voted') return list.filter(u => u.hasVoted)
+    if (voteFilter === 'notvoted') return list.filter(u => !u.hasVoted)
+    return list
   }
 
   // Pagination bar
@@ -194,13 +202,46 @@ const UsersPage = () => {
             <span className="hidden sm:inline">Cari</span>
           </button>
         </form>
+        {/* Filter vote */}
+        <div className="flex justify-center gap-2 mb-4">
+          <button
+            type="button"
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+              ${voteFilter === 'all'
+                ? 'bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 border-blue-600 dark:border-blue-400 shadow-lg scale-105'
+                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900'}`}
+            onClick={() => setVoteFilter('all')}
+          >
+            Semua
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+              ${voteFilter === 'voted'
+                ? 'bg-green-600 dark:bg-green-400 text-white dark:text-gray-900 border-green-600 dark:border-green-400 shadow-lg scale-105'
+                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-green-900'}`}
+            onClick={() => setVoteFilter('voted')}
+          >
+            Sudah Vote
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+              ${voteFilter === 'notvoted'
+                ? 'bg-red-600 dark:bg-red-400 text-white dark:text-gray-900 border-red-600 dark:border-red-400 shadow-lg scale-105'
+                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900'}`}
+            onClick={() => setVoteFilter('notvoted')}
+          >
+            Belum Vote
+          </button>
+        </div>
         {/* Hasil search */}
         {searchLoading ? (
           <div className="text-center py-6 text-gray-500 dark:text-gray-400 animate-pulse">Mencari user...</div>
         ) : searchResult !== null ? (
           searchResult.length > 0 ? (
             <ul className="user-list list-none p-0">
-              {(currentUser.role === 'admin' ? searchResult : searchResult.filter(u => u.role === 'user')).map((user, idx) => {
+              {(currentUser.role === 'admin' ? filterUsers(searchResult) : filterUsers(searchResult.filter(u => u.role === 'user'))).map((user, idx) => {
                 const statusVote = user.hasVoted ? (
                   <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
                     <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
@@ -233,7 +274,7 @@ const UsersPage = () => {
         ) : (
           <>
             <ul className="user-list list-none p-0">
-              {(currentUser.role === 'admin' ? users : users.filter(u => u.role === 'user')).map((user, idx) => {
+              {(currentUser.role === 'admin' ? filterUsers(users) : filterUsers(users.filter(u => u.role === 'user'))).map((user, idx) => {
                 const statusVote = user.hasVoted ? (
                   <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
                     <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
