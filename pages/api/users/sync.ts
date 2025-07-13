@@ -57,11 +57,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Format nomor HP harus internasional (misal: +6281234567890)' })
     }
   }
-  // Cek apakah user sudah ada (berdasarkan email/phone)
+  // Cek apakah user sudah ada (berdasarkan email SAJA, karena email unique)
   const { data: existing, error: findError } = await supabase
     .from('users')
     .select('id')
-    .or(`email.eq.${email},phone.eq.${phone}`)
+    .eq('email', email)
     .maybeSingle()
   if (findError) {
     return res.status(500).json({ error: 'Gagal cek user' })

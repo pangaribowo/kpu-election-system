@@ -9,9 +9,11 @@ function getUser(req: NextApiRequest) {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    // Submit suara
+    // BEST PRACTICE 2025: Log payload voting untuk debugging
+    console.log('[API/VOTING] Payload diterima:', req.body)
     const { kandidat_id, username } = req.body
     if (!kandidat_id || !username) {
+      console.log('[API/VOTING] ERROR: kandidat_id atau username kosong', req.body)
       return res.status(400).json({ error: 'Kandidat dan user wajib diisi' })
     }
     // Cari user_id dari username

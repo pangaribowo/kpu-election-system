@@ -18,6 +18,15 @@ const VotingPanel = () => {
   const [votingLoading, setVotingLoading] = useState<number | null>(null)
 
   const handleVote = async (candidateId: number) => {
+    // BEST PRACTICE 2025: Validasi context user & payload sebelum submit voting
+    if (!currentUser || !currentUser.username) {
+      setNotification({ message: 'Anda harus login sebagai pemilih untuk voting.', type: 'error' })
+      return
+    }
+    if (!candidateId) {
+      setNotification({ message: 'Kandidat tidak valid.', type: 'error' })
+      return
+    }
     if (currentUser?.role !== 'user') {
       setNotification({ message: 'Hanya pemilih yang dapat melakukan voting!', type: 'error' })
       return
@@ -34,10 +43,12 @@ const VotingPanel = () => {
     }
     try {
       setVotingLoading(candidateId)
+      // Log payload voting
+      console.log('[VOTING] Submit payload:', { kandidat_id: candidateId, username: currentUser.username })
       const res = await fetch('/api/voting', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ kandidat_id: candidateId, username: currentUser.username })
+        body: JSON.stringify({ kandidat_id: candidateId, username: String(currentUser.username) })
       })
       const result = await res.json()
       if (!res.ok) {
