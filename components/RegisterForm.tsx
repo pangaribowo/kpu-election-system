@@ -10,6 +10,8 @@ const RegisterForm = () => {
   const roleRef = useRef<HTMLSelectElement>(null)
   const [loading, setLoading] = useState(false)
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     const email = usernameRef.current?.value.trim() || ''
@@ -27,7 +29,8 @@ const RegisterForm = () => {
         email,
         password,
         options: {
-          data: { name, role, username: email }
+          data: { name, role, username: email },
+          emailRedirectTo: baseUrl + '/login',
         }
       })
       if (error) {

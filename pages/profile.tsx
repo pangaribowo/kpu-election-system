@@ -97,8 +97,9 @@ const ProfilePage = () => {
     setResetLoading(true)
     setResetMsg('')
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
       const { error } = await supabase.auth.resetPasswordForEmail(currentUser.email, {
-        redirectTo: window.location.origin + '/login'
+        redirectTo: baseUrl + '/login'
       })
       if (error) throw new Error(error.message || 'Gagal mengirim email reset password')
       setResetMsg('Email reset password telah dikirim! Silakan cek inbox/spam email Anda.')

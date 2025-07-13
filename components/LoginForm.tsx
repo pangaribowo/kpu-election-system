@@ -220,12 +220,14 @@ const LoginScreen = () => {
     }
     setLoading(true)
     try {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
       // Register ke Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { name, phone, username: email, role: 'user' }
+          data: { name, phone, username: email, role: 'user' },
+          emailRedirectTo: baseUrl + '/login',
         }
       })
       if (error) {
