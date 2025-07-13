@@ -77,10 +77,16 @@ const LoginScreen = () => {
           body: JSON.stringify({
             email: user.email,
             name: userMeta.full_name || userMeta.name || '-',
-            username: userMeta.preferred_username || userMeta.name || user.email,
+            username: user.email, // PENTING: username = email agar konsisten
             phone: user.phone || '-',
             role: 'user',
           })
+        }).then(async (res) => {
+          if (!res.ok) {
+            const err = await res.json().catch(() => null)
+            setNotification && setNotification({ message: 'Gagal sinkronisasi user Google: ' + (err?.error || 'Unknown error'), type: 'error' })
+            return;
+          }
         })
         // Ambil UUID dari tabel users custom
         const getRes = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)

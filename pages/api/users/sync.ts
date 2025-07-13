@@ -73,7 +73,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .update({ name, username, role, email, phone })
       .eq('id', existing.id)
     if (updateError) {
-      return res.status(500).json({ error: 'Gagal update user' })
+      console.error('[API/users/sync] ERROR update user:', updateError)
+      return res.status(500).json({ error: 'Gagal update user', detail: updateError.message })
     }
     return res.status(200).json({ message: 'User diupdate' })
   } else {
@@ -82,7 +83,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('users')
       .insert([{ name, username, role, email, phone }]) // password dihapus
     if (insertError) {
-      return res.status(500).json({ error: 'Gagal insert user' })
+      console.error('[API/users/sync] ERROR insert user:', insertError)
+      return res.status(500).json({ error: 'Gagal insert user', detail: insertError.message })
     }
     return res.status(201).json({ message: 'User ditambahkan' })
   }

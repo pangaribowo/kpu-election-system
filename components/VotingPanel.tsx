@@ -32,8 +32,9 @@ const VotingPanel = () => {
       return
     }
     // Cek status verifikasi email
-    const session = supabase.auth.getSession && (await supabase.auth.getSession()).data.session
-    if (!session?.user?.email_confirmed_at) {
+    const { data: { session } } = await supabase.auth.getSession();
+    const provider = session?.user?.app_metadata?.provider;
+    if (provider !== 'google' && !session?.user?.email_confirmed_at) {
       setNotification({ message: 'Akun Anda belum diverifikasi. Silakan cek email Anda.', type: 'error' })
       return
     }
