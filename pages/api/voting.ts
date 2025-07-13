@@ -17,13 +17,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Kandidat dan user wajib diisi' })
     }
     // Cari user_id dari username
-    const { data: user, error: userError } = await supabase
+    let userQuery = supabase
       .from('users')
       .select('id')
       .eq('username', username)
       .single()
+    let { data: user, error: userError } = await userQuery
     if (!user) {
-      return res.status(401).json({ error: 'User tidak ditemukan' })
+      // Fallback: coba cari berdasarkan email
+      const { data: userByEmail, error: userByEmailError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', username)
+        .single()
+      if (userByEmail) {
+        console.log('[API/VOTING] Fallback: user ditemukan berdasarkan email', username)
+        user = userByEmail
+      } else {
+        console.log('[API/VOTING] ERROR: User tidak ditemukan, username/email:', username)
+        return res.status(401).json({ error: 'User tidak ditemukan. Pastikan Anda sudah register dan login dengan benar.' })
+      }
     }
     // Cek apakah user sudah voting
     const { data: existingVote } = await supabase

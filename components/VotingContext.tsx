@@ -117,9 +117,10 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
       if (user) {
         // Ambil data user dari Supabase dan set ke context
         const userMeta = user.user_metadata || {}
+        // BEST PRACTICE 2025: username harus selalu email
         setCurrentUser({
           id: user.id,
-          username: userMeta.preferred_username || userMeta.name || user.email,
+          username: user.email, // username = email
           role: userMeta.role || 'user',
           name: userMeta.full_name || userMeta.name || '-',
           email: user.email,
