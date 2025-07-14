@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { FiChevronDown } from 'react-icons/fi'
+import { FiChevronDown, FiArrowLeft, FiHome } from 'react-icons/fi'
+import { useVoting } from './VotingContext'
 
 const manualContent = {
   overview: (
@@ -299,6 +300,7 @@ function FAQAccordion() {
 
 const ManualSection = () => {
   const [activeTab, setActiveTab] = React.useState("overview");
+  const { currentUser, isAuthChecked } = useVoting();
 
   // It's better to move manualContent and tabs outside if they don't depend on component's state/props
   // For brevity, keeping them here but applying dark mode classes directly.
@@ -342,6 +344,21 @@ const ManualSection = () => {
             {/* This requires manualContent's JSX to use dark:text-gray-300 etc. or global styles for h3,p,li */}
             <div className="prose dark:prose-invert max-w-none">
                  {manualContent[activeTab as keyof typeof manualContent]}
+            </div>
+            <div className="flex justify-center mt-8">
+              {isAuthChecked && (
+                (!currentUser || currentUser.role === 'guest') ? (
+                  <a href="/login" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                    <FiArrowLeft size={20} className="-ml-1" />
+                    Kembali ke Halaman Login
+                  </a>
+                ) : (
+                  <a href="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                    <FiHome size={20} className="-ml-1" />
+                    Kembali ke Dashboard
+                  </a>
+                )
+              )}
             </div>
           </div>
         </div>

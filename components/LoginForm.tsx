@@ -3,6 +3,7 @@ import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import { useRouter } from 'next/router'
 import { Mail, Lock, Eye, EyeOff, KeyRound, User, Phone } from 'lucide-react'
+import RegisterForm from './RegisterForm'
 
 const LoginScreen = () => {
   const {
@@ -29,6 +30,7 @@ const LoginScreen = () => {
   const regNameRef = useRef<HTMLInputElement>(null)
   const regEmailRef = useRef<HTMLInputElement>(null)
   const regPhoneRef = useRef<HTMLInputElement>(null)
+  const [regPhoneError, setRegPhoneError] = useState<string | null>(null)
   // Show/hide password state
   const [showRegPassword, setShowRegPassword] = useState(false)
   const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false)
@@ -253,11 +255,12 @@ const LoginScreen = () => {
   // Handle Register
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
+    setRegPhoneError(null)
     const email = regEmailRef.current?.value.trim() || ''
     const password = regPasswordRef.current?.value.trim() || ''
     const confirmPassword = regConfirmPasswordRef.current?.value.trim() || ''
     const name = regNameRef.current?.value.trim() || ''
-    const phone = regPhoneRef.current?.value.trim() || ''
+    const phoneRaw = regPhoneRef.current?.value.trim() || ''
     if (!email || !password || !confirmPassword || !name) {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
       return
@@ -277,8 +280,8 @@ const LoginScreen = () => {
         return
       }
       // Validasi duplikasi phone
-      if (phone && phone !== '-') {
-        const checkPhoneRes = await fetch(`/api/users/sync?phone=${encodeURIComponent(phone)}`)
+      if (phoneRaw && phoneRaw !== '-') {
+        const checkPhoneRes = await fetch(`/api/users/sync?phone=${encodeURIComponent(phoneRaw)}`)
         const checkPhoneData = await checkPhoneRes.json()
         if (checkPhoneData && checkPhoneData.exists) {
           setNotification({ message: 'Nomor HP sudah terdaftar!', type: 'error' })
@@ -292,7 +295,7 @@ const LoginScreen = () => {
         email,
         password,
         options: {
-          data: { name, phone, username: email, role: 'user' },
+          data: { name, phone: phoneRaw, username: email, role: 'user' },
           emailRedirectTo: baseUrl + '/login',
         }
       })
@@ -305,7 +308,7 @@ const LoginScreen = () => {
         const syncRes = await fetch('/api/users/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name, username: email, phone, role: 'user' })
+          body: JSON.stringify({ email, name, username: email, phone: phoneRaw, role: 'user' })
         })
         if (!syncRes.ok) {
           const err = await syncRes.json().catch(() => null)
@@ -419,7 +422,7 @@ const LoginScreen = () => {
         {/* Judul besar modern di atas tab */}
         <div className="login-title mb-2">
           <h1 className="text-3xl sm:text-4xl font-extrabold uppercase mb-2 text-blue-600 dark:text-blue-400 text-center font-sans">Sistem Voting KPU</h1>
-          <div className="w-20 h-1 rounded bg-blue-600 dark:bg-blue-400 mx-auto mb-2" />
+          <div className="w-20 h-1 rounded bg-blue-600 dark:bg-blue-400 mx-auto mb-2 shadow-[0_0_16px_2px_rgba(59,130,246,0.4)] animate-pulse" />
         </div>
         <div className="flex justify-center gap-2 mb-2">
           <button
@@ -451,7 +454,7 @@ const LoginScreen = () => {
         </div>
         <div className="w-full flex flex-col gap-6">
           {tab === 'login' && (
-            <>
+            <div className="flex flex-col gap-3">
               <form id="login-form" className="login-form fade-in" onSubmit={handleLogin}>
                 <div className="form-group">
                   <label htmlFor="login-email">Email:</label>
@@ -485,21 +488,10 @@ const LoginScreen = () => {
                   <button type="button" className="forgot-link" onClick={() => setShowForgot(true)}>Lupa password?</button>
                 </div>
               </form>
-              {/* Tombol akses manual guest */}
-              {(() => { console.log('[LoginForm] render tombol guest'); return null })()}
-              <button
-                type="button"
-                className="w-full mt-2 py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                tabIndex={0}
-                aria-label="Lihat Manual/Panduan sebagai Guest"
-                onClick={() => { console.log('[LoginForm] tombol guest diklik'); handleShowManual(); }}
-              >
-                Lihat Manual/Panduan Tanpa Login
-              </button>
               <div className="login-or-separator">
                 <span className="login-or-text">atau</span>
               </div>
-              <button type="button" className="btn-google w-full mt-2 flex items-center justify-center gap-2" onClick={handleGoogleLogin} disabled={loading} style={{fontWeight:600}}>
+              <button type="button" className="btn-google w-full flex items-center justify-center gap-2" onClick={handleGoogleLogin} disabled={loading} style={{fontWeight:600}}>
                 <span className="google-logo" style={{display:'flex',alignItems:'center',marginRight:12}}>
                   {/* SVG Google G resmi */}
                   <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -512,6 +504,15 @@ const LoginScreen = () => {
                   </svg>
                 </span>
                 <span>Login dengan Google</span>
+              </button>
+              <button
+                type="button"
+                className="w-full py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                tabIndex={0}
+                aria-label="Lihat Manual/Panduan sebagai Guest"
+                onClick={() => { handleShowManual(); }}
+              >
+                Lihat Manual/Panduan Tanpa Login
               </button>
               <div className="login-or-separator">
                 <span className="login-or-text">atau login dengan nomor HP</span>
@@ -527,75 +528,11 @@ const LoginScreen = () => {
                 </div>
                 <button type="button" className="btn-primary w-full flex justify-center items-center rounded-full" disabled>Coming Soon</button>
               </form>
-            </>
+            </div>
           )}
           {tab === 'register' && (
             <>
-              <form id="register-form" className="login-form fade-in" onSubmit={handleRegister}>
-                <div className="form-group">
-                  <label htmlFor="reg-username">Username:</label>
-                  <div className="input-icon-group">
-                    <User size={18} className="input-icon" />
-                    <input type="text" id="reg-username" ref={regUsernameRef} required placeholder="Username unik" />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="reg-name">Nama Lengkap:</label>
-                  <div className="input-icon-group">
-                    <User size={18} className="input-icon" />
-                    <input type="text" id="reg-name" ref={regNameRef} required placeholder="Nama lengkap Anda" />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="reg-email">Email:</label>
-                  <div className="input-icon-group">
-                    <Mail size={18} className="input-icon" />
-                    <input type="email" id="reg-email" ref={regEmailRef} required placeholder="Email aktif" />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="reg-phone">Nomor HP:</label>
-                  <div className="input-icon-group">
-                    <Phone size={18} className="input-icon" />
-                    <input type="tel" id="reg-phone" ref={regPhoneRef} required placeholder="Contoh: +6281234567890" />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="reg-password">Password:</label>
-                  <div className="input-icon-group">
-                    <Lock size={18} className="input-icon" />
-                    <input type={showRegPassword ? 'text' : 'password'} id="reg-password" ref={regPasswordRef} required placeholder="Password minimal 8 karakter" />
-                    <button type="button" className="show-password-btn" onClick={() => setShowRegPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                      {showRegPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="reg-confirm-password">Konfirmasi Password:</label>
-                  <div className="input-icon-group">
-                    <Lock size={18} className="input-icon" />
-                    <input type={showRegConfirmPassword ? 'text' : 'password'} id="reg-confirm-password" ref={regConfirmPasswordRef} required placeholder="Ulangi password" />
-                    <button type="button" className="show-password-btn" onClick={() => setShowRegConfirmPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
-                      {showRegConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-                <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
-              </form>
-              {/* Tombol akses manual guest */}
-              <button
-                type="button"
-                className="w-full mt-2 py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                onClick={() => router.push('/manual')}
-                tabIndex={0}
-                aria-label="Lihat Manual/Panduan sebagai Guest"
-              >
-                Lihat Manual/Panduan Tanpa Login
-              </button>
-              <div className="text-center mt-4">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Sudah punya akun? </span>
-                <button type="button" className="text-blue-600 dark:text-blue-400 font-semibold hover:underline text-sm" onClick={() => setTab('login')}>Login di sini</button>
-              </div>
+              <RegisterForm />
             </>
           )}
         </div>

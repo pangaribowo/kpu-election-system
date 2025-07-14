@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   console.log('[API/users/sync] Payload:', req.body)
   const { email, phone, name, username, role } = req.body
-  if (!email || !name || !username || !role) {
+  if (!email || !name || !username) {
     return res.status(400).json({ error: 'Data tidak lengkap' })
   }
   // Validasi format email
@@ -51,11 +51,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Format email tidak valid' })
   }
-  // Validasi format phone HANYA jika phone diisi dan bukan '-' atau kosong/null
+  // Validasi & normalisasi format phone HANYA jika phone diisi dan bukan '-' atau kosong/null
+  let normPhone = phone;
   if (phone && phone !== '-' && phone.trim() !== '') {
-    const phoneRegex = /^\+\d{10,}$/
-    if (!phoneRegex.test(phone)) {
-      return res.status(400).json({ error: 'Format nomor HP harus internasional (misal: +6281234567890)' })
+    let raw = phone.trim();
+    // Jika diawali 0, hapus 0
+    if (raw.startsWith('0')) raw = raw.slice(1);
+    // Jika tidak diawali +62, tambahkan
+    if (!raw.startsWith('+62')) raw = '+62' + raw.replace(/^\+?62?/, '');
+    // Pastikan setelah +62 hanya angka
+    const after62 = raw.replace('+62', '');
+    if (!/^[0-9]{9,13}$/.test(after62)) {
+      return res.status(400).json({ error: 'Nomor HP hanya boleh berisi angka setelah +62 dan panjang 9-13 digit' });
+    }
+    normPhone = '+62' + after62;
+  }
+  if (normPhone && normPhone !== '-' && normPhone.trim() !== '') {
+    const phoneRegex = /^\+62[0-9]{9,13}$/;
+    if (!phoneRegex.test(normPhone)) {
+      return res.status(400).json({ error: 'Format nomor HP harus +62 diikuti 9-13 digit angka, contoh: +6281234567890' })
     }
   }
   // Cek apakah user sudah ada (berdasarkan email SAJA, karena email unique)
@@ -69,9 +83,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   if (existing) {
     // Update user
+    // Hanya izinkan update role jika sudah ada di database, dan role bukan dari register
+    const updateObj: any = { name, username, email, phone: normPhone }
+    if (role && (role === 'admin' || role === 'user')) updateObj.role = role
     const { error: updateError } = await supabase
       .from('users')
-      .update({ name, username, role, email, phone })
+      .update(updateObj)
       .eq('id', existing.id)
     if (updateError) {
       console.error('[API/users/sync] ERROR update user:', updateError)
@@ -80,9 +97,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ message: 'User diupdate' })
   } else {
     // Insert user
+    // Selalu set role = 'user' saat register
+    if (role && role !== 'user') {
+      return res.status(403).json({ error: 'Tidak boleh register sebagai admin!' })
+    }
     const { error: insertError } = await supabase
       .from('users')
-      .insert([{ name, username, role, email, phone }]) // password dihapus
+      .insert([{ name, username, role: 'user', email, phone: normPhone }]) // password dihapus
     if (insertError) {
       console.error('[API/users/sync] ERROR insert user:', insertError)
       return res.status(500).json({ error: 'Gagal insert user', detail: insertError.message })
