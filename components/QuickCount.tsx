@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
+import CountUp from 'react-countup'
 
 const QuickCount = () => {
   const { candidates, votes, setVotes, setCandidates } = useVoting()
   const [totalVoters, setTotalVoters] = useState<number>(0)
   const [totalVoted, setTotalVoted] = useState<number>(0)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const prevStats = React.useRef({ totalVotes: 0, totalVoted: 0, totalVoters: 0, votes: {} })
+  const isFirstLoad = React.useRef(true)
+  const isRealtimeActive = React.useRef(false)
 
   useEffect(() => {
     let pollingInterval: NodeJS.Timeout | null = null
     let isUnmounted = false
-    const isRealtimeActive = { current: false };
-
-    const fetchQuickCount = async () => {
-      setIsLoading(true)
+    const fetchQuickCount = async (isInitial = false) => {
+      if (isInitial) setIsInitialLoading(true)
+      else setIsUpdating(true)
       setError(null)
       try {
         const res = await fetch('/api/voting')
@@ -36,33 +40,40 @@ const QuickCount = () => {
           setCandidates(newCandidates)
           setTotalVoters(data.totalVoters || 0)
           setTotalVoted(data.totalVoted || 0)
+          prevStats.current = {
+            totalVotes: Object.values(newVotes).reduce((sum, v) => sum + v, 0),
+            totalVoted: data.totalVoted || 0,
+            totalVoters: data.totalVoters || 0,
+            votes: newVotes,
+          }
         } else if (!res.ok) {
           setError(data.error || 'Gagal mengambil data quick count')
         }
       } catch (err) {
         setError('Gagal mengambil data quick count')
       } finally {
-        if (!isUnmounted) setIsLoading(false)
+        if (!isUnmounted) {
+          if (isInitial) setIsInitialLoading(false)
+          else setIsUpdating(false)
+        }
       }
     }
-
-    fetchQuickCount()
+    fetchQuickCount(true)
     // Subscribe ke channel realtime
     const channel = supabase.channel('kpu-election')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
         isRealtimeActive.current = true;
-        fetchQuickCount();
+        fetchQuickCount(false)
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => {
         isRealtimeActive.current = true;
-        fetchQuickCount();
+        fetchQuickCount(false)
       })
       .subscribe();
     // Polling fallback jika realtime tidak aktif
     pollingInterval = setInterval(() => {
-      if (!isRealtimeActive.current) fetchQuickCount();
-    }, 5000)
-
+      if (!isRealtimeActive.current) fetchQuickCount(false)
+    }, 30000)
     return () => {
       isUnmounted = true
       pollingInterval && clearInterval(pollingInterval)
@@ -147,7 +158,7 @@ const QuickCount = () => {
 
   return (
     <section id="quickcount" className="section active py-8 px-4">
-      {isLoading ? (
+      {isInitialLoading ? (
         <SkeletonQuickCount />
       ) : (
         <div className="quickcount-container container mx-auto">
@@ -160,13 +171,23 @@ const QuickCount = () => {
           <div className="stats-grid grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
             <div className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">
               <div className="stat-number text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="total-votes">
-                {totalVotes.toLocaleString()}
+                <CountUp
+                  start={prevStats.current.totalVotes}
+                  end={totalVotes}
+                  duration={isUpdating ? 0.7 : 0.2}
+                  separator="," />
               </div>
               <div className="stat-label text-gray-600 dark:text-gray-300">Total Suara</div>
             </div>
             <div className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">
               <div className="stat-number text-4xl font-bold text-blue-600 dark:text-blue-400 mb-1" id="participation-rate">
-                {participationRate}%
+                <CountUp
+                  start={prevStats.current.totalVoted && prevStats.current.totalVoters ? ((prevStats.current.totalVoted / prevStats.current.totalVoters) * 100) : 0}
+                  end={parseFloat(participationRate)}
+                  duration={isUpdating ? 0.7 : 0.2}
+                  decimals={1}
+                  suffix="%"
+                />
               </div>
               <div className="stat-label text-gray-600 dark:text-gray-300">Partisipasi</div>
             </div>
@@ -204,13 +225,25 @@ const QuickCount = () => {
                           fontSize: '0.95rem',
                         }}
                       >
-                        {percentage > 20 && <span>{percentStr}%</span>}
+                        {percentage > 20 && (
+                          <CountUp
+                            start={prevStats.current.votes[candidate.id] || 0}
+                            end={votes[candidate.id] || 0}
+                            duration={isUpdating ? 0.7 : 0.2}
+                            suffix={` suara (${percentStr}%)`}
+                          />
+                        )}
                       </div>
                       {percentage <= 20 && (
-                        <span className="ml-2 text-blue-700 dark:text-blue-300 font-semibold">{percentStr}%</span>
+                        <span className="ml-2 text-blue-700 dark:text-blue-300 font-semibold">
+                          <CountUp
+                            start={prevStats.current.votes[candidate.id] || 0}
+                            end={votes[candidate.id] || 0}
+                            duration={isUpdating ? 0.7 : 0.2}
+                          /> suara ({percentStr}%)
+                        </span>
                       )}
                     </div>
-                    <div className="result-votes text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 text-right">{votes[candidate.id] || 0} suara</div>
                   </div>
                 );
               })}
