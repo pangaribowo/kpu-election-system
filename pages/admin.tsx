@@ -8,6 +8,10 @@ const AdminPage = () => {
   const router = useRouter()
 
   React.useEffect(() => {
+    if (isAuthChecked && currentUser?.role === 'guest') {
+      router.replace('/manual')
+      return
+    }
     if (isAuthChecked && (!currentUser || currentUser.role !== 'admin')) {
       router.replace('/')
     }

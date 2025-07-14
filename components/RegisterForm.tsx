@@ -2,9 +2,11 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import { User, Mail, Lock, Eye, Phone } from 'lucide-react'
+import { useRouter } from 'next/router'
 
 const RegisterForm = () => {
   const { setCurrentUser, setActiveTab, setNotification } = useVoting()
+  const router = useRouter()
   const usernameRef = useRef<HTMLInputElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
@@ -241,7 +243,12 @@ const RegisterForm = () => {
       <button
         type="button"
         className="w-full mt-2 py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-        onClick={() => window.location.href = '/manual'}
+        onClick={async () => {
+          setCurrentUser({ username: 'guest', role: 'guest', name: 'Guest' })
+          setTimeout(() => {
+            router.push('/manual')
+          }, 150)
+        }}
         tabIndex={0}
         aria-label="Lihat Manual/Panduan sebagai Guest"
       >

@@ -136,7 +136,7 @@ const manualContent = {
         </div>
         <h4 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">Cara Mengakses:</h4>
         <ol className="list-decimal pl-6 mb-4 text-gray-700 dark:text-gray-300 space-y-1 text-sm">
-          <li>Login sebagai Admin atau Pemilih.</li>
+          <li>Login sebagai Petugas KPU atau Pemilih.</li>
           <li>Klik tab <b>QUICK COUNT</b> pada menu utama.</li>
           <li>Data akan ter-update otomatis setiap beberapa detik.</li>
         </ol>
