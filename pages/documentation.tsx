@@ -5,6 +5,12 @@ import { useVoting } from '../components/VotingContext'
 
 const DocumentationPage = () => {
   const { currentUser, isAuthChecked } = useVoting();
+  if (!isAuthChecked) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="loader" style={{width:48,height:48,border:'6px solid #eee',borderTop:'6px solid #888',borderRadius:'50%',animation:'spin 1s linear infinite'}} />
+      <style>{`@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`}</style>
+    </div>
+  )
   return (
     <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl w-full bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl ring-1 ring-slate-200/60 dark:ring-gray-700/60 transition-all duration-300">
       <section className="section active rounded-2xl bg-transparent p-0 px-6 sm:px-10">

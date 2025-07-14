@@ -466,10 +466,10 @@ const LoginScreen = () => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="login-password">Password:</label>
-                  <div className="input-icon-group">
+                  <div className="input-icon-group relative">
                     <Lock size={18} className="input-icon" />
                     <input type={showLoginPassword ? 'text' : 'password'} id="login-password" ref={passwordRef} required placeholder="Masukkan password Anda" />
-                    <button type="button" className="show-password-btn" onClick={() => setShowLoginPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
+                    <button type="button" className="show-password-btn absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setShowLoginPassword(v => !v)} tabIndex={-1} aria-label="Tampilkan Password">
                       {showLoginPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
