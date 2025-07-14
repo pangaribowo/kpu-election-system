@@ -2,6 +2,7 @@ import React from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import { useState } from 'react'
+import { FiCheckSquare } from 'react-icons/fi'
 
 const VotingPanel = () => {
   const {
@@ -135,8 +136,11 @@ const VotingPanel = () => {
   return (
     <section id="voting" className="section active py-8 px-4">
       <div className="voting-container container mx-auto">
-        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
-          PILIH KANDIDAT ANDA
+        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8 flex items-center justify-center gap-2">
+          <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 mr-1">
+            <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={24} />
+          </span>
+          <span className="drop-shadow-sm">PILIH KANDIDAT ANDA</span>
         </h2>
         <div id="candidates-list" className="candidates-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {candidates.map((candidate, idx) => {

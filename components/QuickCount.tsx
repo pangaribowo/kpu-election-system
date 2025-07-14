@@ -162,9 +162,6 @@ const QuickCount = () => {
         <SkeletonQuickCount />
       ) : (
         <div className="quickcount-container container mx-auto">
-          <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
-            QUICK COUNT REALTIME
-          </h2>
           {error && (
             <div className="text-center text-red-500 mb-4">{error}</div>
           )}

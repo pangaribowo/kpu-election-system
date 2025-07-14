@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { FiBookOpen, FiDownload, FiTerminal, FiSettings, FiCloud, FiFolder, FiUsers, FiShield, FiArrowLeft, FiHome } from 'react-icons/fi'
+import { FiBookOpen, FiDownload, FiTerminal, FiSettings, FiCloud, FiFolder, FiUsers, FiShield, FiArrowLeft, FiHome, FiFileText } from 'react-icons/fi'
 import { useVoting } from '../components/VotingContext'
 
 const DocumentationPage = () => {
@@ -14,7 +14,9 @@ const DocumentationPage = () => {
   return (
     <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl w-full bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl ring-1 ring-slate-200/60 dark:ring-gray-700/60 transition-all duration-300">
       <section className="section active rounded-2xl bg-transparent p-0 px-6 sm:px-10">
-        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6 flex items-center gap-2 text-center justify-center"><FiBookOpen /> DOKUMENTASI TEKNIS</h1>
+        <h1 className="section-title text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6 flex items-center gap-2 text-center justify-center">
+          <FiFileText /> DOKUMENTASI TEKNIS
+        </h1>
         <div className="mb-8 text-gray-700 dark:text-gray-300 leading-relaxed text-justify">
           <b>Sistem Voting KPU</b> adalah aplikasi open source berbasis web untuk pemilihan umum, organisasi, atau internal. Halaman ini berisi panduan instalasi, konfigurasi, dan kontribusi.
         </div>
@@ -22,7 +24,7 @@ const DocumentationPage = () => {
           <h2 className="text-xl font-semibold text-blue-500 dark:text-blue-300 mb-2 flex items-center gap-2"><FiDownload /> Instalasi</h2>
           <ol className="list-decimal ml-6 text-gray-700 dark:text-gray-300 space-y-1">
             <li>Pastikan <b>Node.js &gt;= 18</b> dan <b>npm</b> sudah terpasang.</li>
-            <li>Clone repo: <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">git clone https://github.com/pangaribowo/kpu-election-system.git</code></li>
+            <li>Clone repo: <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded break-all whitespace-pre-wrap overflow-x-auto">git clone https://github.com/pangaribowo/kpu-election-system.git</code></li>
             <li>Masuk folder: <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">cd kpu-election-system</code></li>
             <li>Install depedensi: <code className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">npm install</code></li>
           </ol>
@@ -49,12 +51,11 @@ const DocumentationPage = () => {
           <ul className="list-disc ml-6 text-gray-700 dark:text-gray-300 space-y-1">
             <li>Deploy ke <b>layanan penyedia server</b>, atau server Node.js lain.</li>
             <li>Pastikan variabel environment sudah diatur di platform deployment.</li>
-            <li>Ikuti petunjuk deploy Next.js di <a href="https://nextjs.org/docs/deployment" className="text-blue-500 underline" target="_blank" rel="noopener noreferrer">Next.js Docs</a>.</li>
           </ul>
         </div>
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2"><FiFolder /> Struktur Folder</h2>
-          <pre className="bg-slate-100 dark:bg-slate-800 rounded p-4 text-xs overflow-x-auto mb-2"><code>{`kpu-election-system/
+          <pre className="bg-slate-100 dark:bg-slate-800 rounded p-4 text-xs overflow-x-auto mb-2"><code className="break-all whitespace-pre-wrap">{`kpu-election-system/
   components/
   interfaces/
   lib/
@@ -80,14 +81,18 @@ const DocumentationPage = () => {
         <div className="flex justify-center mt-8">
           {isAuthChecked && (
             (!currentUser || currentUser.role === 'guest') ? (
-              <Link href="/login" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                <FiArrowLeft size={20} className="-ml-1" />
-                Kembali ke Halaman Login
+              <Link href="/login" legacyBehavior>
+                <a className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                  <FiArrowLeft size={20} className="-ml-1" />
+                  Kembali ke Halaman Login
+                </a>
               </Link>
             ) : (
-              <Link href="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                <FiHome size={20} className="-ml-1" />
-                Kembali ke Dashboard
+              <Link href="/" legacyBehavior>
+                <a className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                  <FiHome size={20} className="-ml-1" />
+                  Kembali ke Dashboard
+                </a>
               </Link>
             )
           )}

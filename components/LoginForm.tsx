@@ -232,17 +232,17 @@ const LoginScreen = () => {
             phone_verified: !!data.user.phone_confirmed_at,
           })
         }
-        setActiveTab('voting')
-        setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
-        // Sinkronisasi ke tabel users
-        const syncRes = await fetch('/api/users/sync', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, phone: userMeta.phone, name: userMeta.name, username: userMeta.username, role: userMeta.role })
-        })
-        if (!syncRes.ok) {
-          const err = await syncRes.json().catch(() => null)
-          setNotification({ message: err?.error || 'Login berhasil, tapi gagal sinkronisasi user ke database.', type: 'warning' })
+          setActiveTab('voting')
+          setNotification({ message: `Selamat datang, ${userMeta.name}!`, type: 'success' })
+          // Sinkronisasi ke tabel users
+          const syncRes = await fetch('/api/users/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, phone: userMeta.phone, name: userMeta.name, username: userMeta.username, role: userMeta.role })
+          })
+          if (!syncRes.ok) {
+            const err = await syncRes.json().catch(() => null)
+            setNotification({ message: err?.error || 'Login berhasil, tapi gagal sinkronisasi user ke database.', type: 'warning' })
         }
       }
     } catch (err) {

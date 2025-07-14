@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useVoting } from '../components/VotingContext'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
+import { FiUser } from 'react-icons/fi'
 
 const ProfilePage = () => {
   const { currentUser, setCurrentUser, setNotification } = useVoting()
@@ -112,7 +113,12 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-xl mx-auto my-10 bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
-      <h2 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4 text-center tracking-wide">PROFIL SAYA</h2>
+      <h1 className="section-title text-3xl font-bold text-blue-700 dark:text-blue-300 mb-8 flex items-center justify-center gap-2">
+        <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900 mr-1">
+          <FiUser className="text-blue-500 dark:text-blue-400" size={24} />
+        </span>
+        <span className="drop-shadow-sm">PROFIL SAYA</span>
+      </h1>
       <div className="flex items-center gap-4 mb-6">
         {currentUser && currentUser.name && (
           <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center text-3xl text-blue-500 font-bold">

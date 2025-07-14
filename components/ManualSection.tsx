@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { FiChevronDown, FiArrowLeft, FiHome } from 'react-icons/fi'
 import { useVoting } from './VotingContext'
+import Link from 'next/link'
 
 const manualContent = {
   overview: (
@@ -318,11 +319,8 @@ const ManualSection = () => {
   return (
     <section id="manual" className="section active py-8 px-4">
       <div className="manual-container container mx-auto">
-        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
-          MANUAL PENGGUNAAN
-        </h2>
         <div className="manual-content bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
-          <div className="manual-nav flex flex-wrap sm:flex-nowrap overflow-x-auto bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+          <div className="manual-nav flex flex-wrap sm:flex-nowrap overflow-x-auto bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 rounded-t-xl">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
@@ -348,15 +346,19 @@ const ManualSection = () => {
             <div className="flex justify-center mt-8">
               {isAuthChecked && (
                 (!currentUser || currentUser.role === 'guest') ? (
-                  <a href="/login" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                    <FiArrowLeft size={20} className="-ml-1" />
-                    Kembali ke Halaman Login
-                  </a>
+                  <Link href="/login" legacyBehavior>
+                    <a className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                      <FiArrowLeft size={20} className="-ml-1" />
+                      Kembali ke Halaman Login
+                    </a>
+                  </Link>
                 ) : (
-                  <a href="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                    <FiHome size={20} className="-ml-1" />
-                    Kembali ke Dashboard
-                  </a>
+                  <Link href="/" legacyBehavior>
+                    <a className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                      <FiHome size={20} className="-ml-1" />
+                      Kembali ke Dashboard
+                    </a>
+                  </Link>
                 )
               )}
             </div>
