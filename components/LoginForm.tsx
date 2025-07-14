@@ -520,9 +520,18 @@ const LoginScreen = () => {
               <form id="otp-login-form" className="login-form fade-in">
                 <div className="form-group">
                   <label htmlFor="otp-phone">Nomor HP:</label>
-                  <div className="input-icon-group">
-                    <Phone size={18} className="input-icon" />
-                    <input type="tel" id="otp-phone" value={otpPhone} disabled placeholder="Contoh: +6281234567890" className="rounded-full" />
+                  <div className="flex rounded-md shadow-sm">
+                    <span className="inline-flex items-center px-3 rounded-l-md rounded-r-none border border-r-0 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
+                      +62
+                    </span>
+                    <input
+                      type="tel"
+                      id="otp-phone"
+                      value={otpPhone}
+                      disabled
+                      className="rounded-none rounded-r-md border border-gray-300 dark:border-gray-700 flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                      placeholder="Contoh: 821xxxxxxx"
+                    />
                   </div>
                   <div className="text-yellow-600 text-sm mt-1">Verifikasi dengan nomor HP akan segera hadir (Coming Soon)</div>
                 </div>

@@ -160,13 +160,15 @@ const RegisterForm = () => {
       <div className="form-group">
         <label htmlFor="reg-phone">Nomor HP:</label>
         <div className="flex rounded-md shadow-sm">
-          <span className="inline-flex items-center px-3 rounded-l-md rounded-r-none border border-r-0 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm"><Phone size={18} className="input-icon" />+62</span>
+          <span className="inline-flex items-center px-3 rounded-l-md rounded-r-none border border-r-0 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
+            +62
+          </span>
           <input
             type="tel"
             id="reg-phone"
             ref={phoneRef}
             required
-            className="rounded-none rounded-r-md border border-gray-300 dark:border-gray-700 flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 pl-9"
+            className="rounded-none rounded-r-md border border-gray-300 dark:border-gray-700 flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             placeholder="Contoh: 821xxxxxxx"
             pattern="^[1-9][0-9]{8,12}$"
             maxLength={13}
