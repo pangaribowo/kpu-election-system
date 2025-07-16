@@ -35,7 +35,10 @@ const VotingPanel = () => {
     }
     // CEGAH VOTING JIKA NOMOR HP BELUM DIISI/TERVERIFIKASI
     if (!currentUser.phone || currentUser.phone === '-' || currentUser.phone.trim() === '') {
-      setNotification({ message: 'Anda harus melengkapi nomor HP yang valid sebelum dapat melakukan voting. Silakan lengkapi profil Anda.', type: 'error' })
+      setNotification({ message: 'Anda harus melengkapi nomor HP yang valid sebelum dapat melakukan voting. Anda akan diarahkan ke halaman profil.', type: 'error' })
+      setTimeout(() => {
+        window.location.href = '/profile';
+      }, 1200);
       return
     }
     // Cek status verifikasi email

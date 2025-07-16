@@ -71,13 +71,17 @@ const ProfilePage = () => {
         userId = dataUser.id
         setCurrentUser && setCurrentUser({ ...currentUser, ...dataUser })
       }
+      // Gabungkan +62 dengan input sebelum submit
+      let phone = form.phone.trim()
+      if (!/^[0-9]{9,13}$/.test(phone)) throw new Error('Nomor HP minimal 9 digit dan maksimal 13 digit, hanya angka.')
+      phone = '+62' + phone
       const res = await fetch('/api/users/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: userId,
           name: form.name,
-          phone: form.phone,
+          phone,
         })
       })
       const data = await res.json()
@@ -163,7 +167,35 @@ const ProfilePage = () => {
           </div>
           <div>
             <label className="block mb-1 font-medium">Nomor HP</label>
-            <input type="text" name="phone" value={form.phone} onChange={handleChange} className="input-modern w-full dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600" required placeholder="Format: +6281234567890" />
+            <div className="flex rounded-md shadow-sm">
+              <span className="inline-flex items-center px-3 rounded-l-md rounded-r-none border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
+                +62
+              </span>
+              <input
+                type="text"
+                name="phone"
+                value={form.phone.startsWith('+62') ? form.phone.slice(3) : form.phone}
+                onChange={e => {
+                  // Hanya angka, tidak boleh diawali 0, 62, atau +
+                  let value = e.target.value.replace(/[^0-9]/g, '')
+                  if (/^(0|62|\+62|\+)/.test(value)) {
+                    setError('Nomor HP tidak boleh diawali 0, 62, atau +. Masukkan hanya angka setelah +62.');
+                  } else if (value.length < 9 || value.length > 13) {
+                    setError('Nomor HP minimal 9 digit dan maksimal 13 digit.');
+                  } else {
+                    setError('');
+                  }
+                  setForm({ ...form, phone: value })
+                }}
+                className="rounded-none rounded-r-md border border-gray-300 dark:border-gray-600 flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                required
+                placeholder="Contoh: 895xxxxxxx"
+                maxLength={13}
+                inputMode="numeric"
+                autoComplete="tel"
+              />
+            </div>
+            <small className="input-helper text-gray-500 dark:text-gray-400">Masukkan nomor tanpa 0, 62, atau + di depan, contoh: 895xxxxxxx</small>
           </div>
           {error && <div className="text-red-500 text-sm">{error}</div>}
           {success && <div className="text-green-500 text-sm">{success}</div>}
