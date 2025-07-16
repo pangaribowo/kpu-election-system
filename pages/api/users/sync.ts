@@ -57,13 +57,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Jika diawali 0, hapus 0
     if (raw.startsWith('0')) raw = raw.slice(1);
     // Jika tidak diawali +62, tambahkan
-    if (!raw.startsWith('+62')) raw = '+62' + raw.replace(/^\+?62?/, '');
+    if (!raw.startsWith('+62')) raw = '+62' + raw.replace(/^ 62?/, '');
     // Pastikan setelah +62 hanya angka
     const after62 = raw.replace('+62', '');
     if (!/^[0-9]{9,13}$/.test(after62)) {
       return res.status(400).json({ error: 'Nomor HP hanya boleh berisi angka setelah +62 dan panjang 9-13 digit' });
     }
     normPhone = '+62' + after62;
+  } else {
+    normPhone = null;
   }
   if (normPhone && normPhone !== '-' && normPhone.trim() !== '') {
     const phoneRegex = /^\+62[0-9]{9,13}$/;
@@ -72,12 +74,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
   // Upsert user tanpa field provider
-  const { data, error } = await supabase
+  const { data, error, status, statusText } = await supabase
     .from('users')
     .upsert([
-      { email, phone, name, username, role }
+      { email, phone: normPhone, name, username, role }
     ], { onConflict: 'email' })
     .select()
-  if (error) return res.status(500).json({ error: 'Gagal upsert user' })
+  if (error) return res.status(500).json({ error: error.message || 'Gagal upsert user', detail: error.details, status, statusText })
   return res.status(200).json(data && data[0] ? data[0] : {})
 } 
