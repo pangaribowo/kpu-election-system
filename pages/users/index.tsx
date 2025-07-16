@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useVoting } from "../../components/VotingContext";
 import { useRouter } from "next/router";
 import { supabase } from '../../lib/supabaseClient'
-import { FiCheckCircle, FiXCircle, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiChevronsLeft, FiChevronsRight, FiUsers } from 'react-icons/fi'
+import { FiCheckCircle, FiXCircle, FiChevronLeft, FiChevronRight, FiSearch, FiX, FiChevronsLeft, FiChevronsRight, FiUsers, FiChevronDown, FiChevronUp, FiArrowDown, FiArrowUp, FiClock } from 'react-icons/fi'
 
 // Fungsi masking nama: F********* A*** P**********
 function maskName(name: string) {
@@ -30,7 +30,41 @@ const UsersPage = () => {
   const [searchLoading, setSearchLoading] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
   const [voteFilter, setVoteFilter] = useState<'all' | 'voted' | 'notvoted'>('all')
+  const [sortBy, setSortBy] = useState<'name-asc' | 'name-desc' | 'register-newest' | 'register-oldest'>('name-asc');
 
+  // Filter user sesuai voteFilter (pindahkan ke atas sebelum filteredUsers)
+  const filterUsers = (list: any[]) => {
+    if (voteFilter === 'voted') return list.filter(u => u.hasVoted)
+    if (voteFilter === 'notvoted') return list.filter(u => !u.hasVoted)
+    return list
+  }
+
+  // Variabel hasil filter+sort (tanpa slice)
+  const filteredUsers = React.useMemo(() => {
+    let filtered = filterUsers(users);
+    if (searchResult !== null || voteFilter !== 'all') {
+      if (sortBy === 'name-asc') filtered = filtered.sort((a, b) => (a.name || a.username).localeCompare(b.name || b.username));
+      if (sortBy === 'name-desc') filtered = filtered.sort((a, b) => (b.name || b.username).localeCompare(a.name || a.username));
+      if (sortBy === 'register-newest') filtered = filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      if (sortBy === 'register-oldest') filtered = filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    }
+    console.log('filteredUsers:', filtered.length, filtered);
+    return filtered;
+  }, [users, voteFilter, sortBy, searchResult]);
+
+  // Hitung totalPages dari filteredUsers
+  useEffect(() => {
+    const newTotalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE) || 1;
+    setTotalPages(newTotalPages);
+    if (page > newTotalPages) setPage(newTotalPages);
+  }, [filteredUsers, page]);
+
+  // Reset page ke 1 setiap kali filter vote atau search berubah
+  useEffect(() => {
+    setPage(1)
+  }, [voteFilter, search])
+
+  // Ambil semua user jika filter vote bukan 'all', agar filter + pagination bisa dihandle di frontend
   useEffect(() => {
     if (isAuthChecked && !currentUser) {
       router.replace('/login');
@@ -42,8 +76,18 @@ const UsersPage = () => {
     }
     if (!isAuthChecked) return;
     setLoading(true);
+    let sort = 'name';
+    let direction = 'asc';
+    if (sortBy === 'name-asc') { sort = 'name'; direction = 'asc'; }
+    if (sortBy === 'name-desc') { sort = 'name'; direction = 'desc'; }
+    if (sortBy === 'register-newest') { sort = 'created_at'; direction = 'desc'; }
+    if (sortBy === 'register-oldest') { sort = 'created_at'; direction = 'asc'; }
+    // Jika filter vote bukan 'all', ambil semua user (tanpa limit/offset)
+    const url = voteFilter === 'all'
+      ? `/api/users?limit=${USERS_PER_PAGE}&offset=${(page - 1) * USERS_PER_PAGE}&sort=${sort}&direction=${direction}&voteFilter=all`
+      : `/api/users?sort=${sort}&direction=${direction}&voteFilter=${voteFilter}`;
     const fetchUsers = () => {
-      fetch(`/api/users?limit=${USERS_PER_PAGE}&offset=${(page - 1) * USERS_PER_PAGE}`, {
+      fetch(url, {
         headers: { "x-user-auth": currentUser?.username || "demo" },
       })
         .then((res) => {
@@ -52,8 +96,8 @@ const UsersPage = () => {
         })
         .then((data) => {
           setUsers(data.users);
-          setTotalPages(Math.ceil(data.total / USERS_PER_PAGE));
           setLoading(false);
+          console.log('Jumlah user dari backend:', data.users.length, 'voteFilter:', voteFilter);
         })
         .catch((err) => {
           setError(err.message);
@@ -69,11 +113,7 @@ const UsersPage = () => {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [isAuthChecked, currentUser, page])
-
-  if (!isAuthChecked) return null;
-  if (!currentUser) return null;
-  if (currentUser.role === 'guest') return null;
+  }, [isAuthChecked, currentUser, page, sortBy, voteFilter])
 
   // Handler search
   const handleSearch = async (e: React.FormEvent) => {
@@ -106,12 +146,32 @@ const UsersPage = () => {
       })
   }
 
-  // Filter user sesuai voteFilter
-  const filterUsers = (list: any[]) => {
-    if (voteFilter === 'voted') return list.filter(u => u.hasVoted)
-    if (voteFilter === 'notvoted') return list.filter(u => !u.hasVoted)
-    return list
+  // Gabungkan filter, sort, dan pagination
+  const processUsers = (list: any[]) => {
+    let filtered = filterUsers(list);
+    // Sort hanya untuk hasil search atau filter, karena data utama sudah diurutkan backend
+    if (searchResult !== null || voteFilter !== 'all') {
+      if (sortBy === 'name-asc') filtered = filtered.sort((a, b) => (a.name || a.username).localeCompare(b.name || b.username));
+      if (sortBy === 'name-desc') filtered = filtered.sort((a, b) => (b.name || b.username).localeCompare(a.name || a.username));
+      if (sortBy === 'register-newest') filtered = filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      if (sortBy === 'register-oldest') filtered = filtered.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    }
+    // Pagination manual jika filter vote bukan 'all'
+    if (voteFilter !== 'all') {
+      const start = (page - 1) * USERS_PER_PAGE;
+      const end = start + USERS_PER_PAGE;
+      return filtered.slice(start, end);
+    }
+    return filtered;
   }
+
+  // Saat render list user, lakukan slice sesuai page
+  const pagedUsers = filteredUsers.slice((page - 1) * USERS_PER_PAGE, page * USERS_PER_PAGE);
+
+  // Setelah semua hook, baru pengecekan dan return null jika perlu
+  if (!isAuthChecked) return null;
+  if (!currentUser) return null;
+  if (currentUser.role === 'guest') return null;
 
   // Pagination bar
   const renderPagination = () => (
@@ -206,69 +266,88 @@ const UsersPage = () => {
             <span className="hidden sm:inline">Cari</span>
           </button>
         </form>
-        {/* Filter vote */}
-        <div className="flex justify-center gap-2 mb-4">
-          <button
-            type="button"
-            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-              ${voteFilter === 'all'
-                ? 'bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 border-blue-600 dark:border-blue-400 shadow-lg scale-105'
-                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900'}`}
-            onClick={() => setVoteFilter('all')}
-          >
-            Semua
-          </button>
-          <button
-            type="button"
-            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-              ${voteFilter === 'voted'
-                ? 'bg-green-600 dark:bg-green-400 text-white dark:text-gray-900 border-green-600 dark:border-green-400 shadow-lg scale-105'
-                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-green-900'}`}
-            onClick={() => setVoteFilter('voted')}
-          >
-            Sudah Vote
-          </button>
-          <button
-            type="button"
-            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-              ${voteFilter === 'notvoted'
-                ? 'bg-red-600 dark:bg-red-400 text-white dark:text-gray-900 border-red-600 dark:border-red-400 shadow-lg scale-105'
-                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900'}`}
-            onClick={() => setVoteFilter('notvoted')}
-          >
-            Belum Vote
-          </button>
+        {/* Filter vote & Dropdown sort modern dalam satu baris */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 max-w-md mx-auto">
+          <div className="flex justify-center gap-2">
+            <button
+              type="button"
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                ${voteFilter === 'all'
+                  ? 'bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 border-blue-600 dark:border-blue-400 shadow-lg scale-105'
+                  : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900'}`}
+              onClick={() => setVoteFilter('all')}
+            >
+              Semua
+            </button>
+            <button
+              type="button"
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                ${voteFilter === 'voted'
+                  ? 'bg-green-600 dark:bg-green-400 text-white dark:text-gray-900 border-green-600 dark:border-green-400 shadow-lg scale-105'
+                  : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-green-900'}`}
+              onClick={() => setVoteFilter('voted')}
+            >
+              Sudah Vote
+            </button>
+            <button
+              type="button"
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                ${voteFilter === 'notvoted'
+                  ? 'bg-red-600 dark:bg-red-400 text-white dark:text-gray-900 border-red-600 dark:border-red-400 shadow-lg scale-105'
+                  : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900'}`}
+              onClick={() => setVoteFilter('notvoted')}
+            >
+              Belum Vote
+            </button>
+          </div>
+          <div className="flex items-center gap-2 justify-center sm:justify-end">
+            <label className="mr-2 text-sm font-medium text-gray-600 dark:text-gray-300">Urutkan:</label>
+            <select
+              className="rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 px-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-200"
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as any)}
+              aria-label="Urutkan user"
+            >
+              <option value="name-asc">Nama A-Z</option>
+              <option value="name-desc">Nama Z-A</option>
+              <option value="register-newest">Register Terbaru</option>
+              <option value="register-oldest">Register Terlama</option>
+            </select>
+          </div>
         </div>
         {/* Hasil search */}
         {searchLoading ? (
           <div className="text-center py-6 text-gray-500 dark:text-gray-400 animate-pulse">Mencari user...</div>
         ) : searchResult !== null ? (
           searchResult.length > 0 ? (
-            <ul className="user-list list-none p-0">
-              {(currentUser.role === 'admin' ? filterUsers(searchResult) : filterUsers(searchResult.filter(u => u.role === 'user'))).map((user, idx) => {
-                const statusVote = user.hasVoted ? (
-                  <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
-                    <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
-                    <span className="hidden sm:inline">Sudah Vote</span>
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1 text-red-500 dark:text-red-400 font-semibold animate-pulse">
-                    <FiXCircle className="text-red-500 dark:text-red-400 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" size={18} />
-                    <span className="hidden sm:inline">Belum Vote</span>
-                  </span>
-                )
-                const isAdmin = currentUser.role === 'admin';
-                const displayName = isAdmin
-                  ? (user.name || user.username)
-                  : maskName(user.name || user.username);
-                return (
-                  <li key={user.id} className="user-item py-3 px-4 mb-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 last:border-b-0 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 group">
-                    <span className="text-gray-800 dark:text-gray-100 font-medium truncate max-w-[60%]">{displayName}</span>
-                    {statusVote}
-                  </li>
-                )
-              })}
-            </ul>
+            <>
+              <ul className="user-list list-none p-0">
+                {(currentUser.role === 'admin' ? pagedUsers : pagedUsers.filter(u => u.role === 'user')).map((user, idx) => {
+                  const statusVote = user.hasVoted ? (
+                    <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
+                      <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
+                      <span className="hidden sm:inline">Sudah Vote</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1 text-red-500 dark:text-red-400 font-semibold animate-pulse">
+                      <FiXCircle className="text-red-500 dark:text-red-400 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" size={18} />
+                      <span className="hidden sm:inline">Belum Vote</span>
+                    </span>
+                  )
+                  const isAdmin = currentUser.role === 'admin';
+                  const displayName = isAdmin
+                    ? (user.name || user.username)
+                    : maskName(user.name || user.username);
+                  return (
+                    <li key={user.id} className="user-item py-3 px-4 mb-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 last:border-b-0 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 group">
+                      <span className="text-gray-800 dark:text-gray-100 font-medium truncate max-w-[60%]">{displayName}</span>
+                      {statusVote}
+                    </li>
+                  )
+                })}
+              </ul>
+              {totalPages >= 1 && renderPagination()}
+            </>
           ) : (
             <div className="text-center py-6 text-gray-500 dark:text-gray-400">
               User tidak ditemukan.<br />
@@ -278,7 +357,7 @@ const UsersPage = () => {
         ) : (
           <>
             <ul className="user-list list-none p-0">
-              {(currentUser.role === 'admin' ? filterUsers(users) : filterUsers(users.filter(u => u.role === 'user'))).map((user, idx) => {
+              {(currentUser.role === 'admin' ? pagedUsers : pagedUsers.filter(u => u.role === 'user')).map((user, idx) => {
                 const statusVote = user.hasVoted ? (
                   <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
                     <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
@@ -303,7 +382,7 @@ const UsersPage = () => {
                 )
               })}
             </ul>
-            {renderPagination()}
+            {totalPages >= 1 && renderPagination()}
           </>
         )}
       </section>

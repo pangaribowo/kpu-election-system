@@ -10,10 +10,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
-  // Ambil query limit, offset, dan search
+  // Ambil query limit, offset, search, dan sort
   const limit = parseInt(req.query.limit as string) || 15
   const offset = parseInt(req.query.offset as string) || 0
   const search = (req.query.search as string)?.trim() || ''
+  const sort = (req.query.sort as string) || 'name';
+  const direction = (req.query.direction as string) === 'asc' ? 'asc' : 'desc';
+  const voteFilter = (req.query.voteFilter as string) || 'all';
 
   // Cek role dari header (x-user-auth), jika bukan admin, filter role user saja
   let roleFilter = undefined
@@ -37,13 +40,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Ambil user + status voting dengan pagination atau search
   let query = supabase
     .from('users')
-    .select('id, username, name, role, email, phone, voting:voting!user_id(id)')
-    .order('name', { ascending: true })
+    .select('id, username, name, role, email, phone, created_at, voting:voting!user_id(id)')
   if (roleFilter) query = query.eq('role', roleFilter)
   if (search) {
     query = query.ilike('name', search)
+  }
+  if (sort === 'created_at') {
+    query = query.order('created_at', { ascending: direction === 'asc' })
   } else {
-    query = query.range(offset, offset + limit - 1)
+    query = query.order('name', { ascending: direction === 'asc' })
   }
   const { data, error } = await query
   if (error) {
