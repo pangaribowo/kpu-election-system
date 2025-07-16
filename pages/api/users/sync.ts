@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: 'Format email tidak valid' })
   }
   // Validasi & normalisasi format phone HANYA jika phone diisi dan bukan '-' atau kosong/null
-  let normPhone = phone;
+  let normPhone = null;
   if (phone && phone !== '-' && phone.trim() !== '') {
     let raw = phone.trim();
     // Jika diawali 0, hapus 0
@@ -64,10 +64,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Nomor HP hanya boleh berisi angka setelah +62 dan panjang 9-13 digit' });
     }
     normPhone = '+62' + after62;
-  } else {
-    normPhone = null;
-  }
-  if (normPhone && normPhone !== '-' && normPhone.trim() !== '') {
     const phoneRegex = /^\+62[0-9]{9,13}$/;
     if (!phoneRegex.test(normPhone)) {
       return res.status(400).json({ error: 'Format nomor HP harus +62 diikuti 9-13 digit angka, contoh: +6281234567890' })
