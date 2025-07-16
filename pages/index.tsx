@@ -155,7 +155,12 @@ const Dashboard = () => {
             <div className="dashboard-stat bg-slate-100 dark:bg-gray-800 rounded-xl px-7 py-5 min-w-[120px] shadow transition-colors duration-300">
               <div className="stat-label text-slate-500 dark:text-slate-300 text-base mb-1">Status Voting</div>
               <div className="stat-value text-xl md:text-2xl font-bold flex items-center justify-center gap-2">
-                {hasVoted ? (
+                {currentUser.role === 'admin' ? (
+                  <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-300 font-semibold bg-blue-50 dark:bg-blue-900 px-3 py-1 rounded-full text-xs shadow-sm">
+                    <FiHome className="text-blue-500 dark:text-blue-300" size={18} />
+                    Admin tidak perlu voting
+                  </span>
+                ) : hasVoted ? (
                   <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold"><FiCheckCircle /> Sudah Voting</span>
                 ) : (
                   <span className="inline-flex items-center gap-1 text-yellow-600 dark:text-yellow-400 font-semibold"><FiAlertCircle /> Belum Voting</span>
