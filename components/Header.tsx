@@ -14,16 +14,16 @@ const Header = () => {
   }
 
   return (
-    <header className="w-full bg-white dark:bg-gray-900 shadow-xl rounded-xl mb-6 transition-colors duration-300">
-      <div className="container mx-auto px-4 py-4 sm:py-6 flex flex-col items-center justify-center gap-2 relative min-h-[80px] bg-slate-100/90 dark:bg-gray-800/90 rounded-xl">
+    <header className="w-full bg-white dark:bg-gray-900 shadow-xl rounded-xl mb-6 transition-colors duration-300 relative">
+      {/* Toggle dark mode fixed kanan atas di semua layar */}
+      <div className="fixed top-4 right-4 z-50">
+        <DarkModeToggle />
+      </div>
+      <div className="container mx-auto px-4 py-4 sm:py-6 flex flex-col items-center justify-center gap-2 min-h-[80px] bg-slate-100/90 dark:bg-gray-800/90 rounded-xl">
         {/* Judul dan subjudul */}
         <div className="flex flex-col items-center w-full">
           <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight mb-1 drop-shadow-sm select-none">SISTEM VOTING KPU</span>
           <span className="text-gray-600 dark:text-gray-300 text-base sm:text-lg font-medium mb-1 select-none">Aman, Cepat, Transparan</span>
-        </div>
-        {/* Toggle dark mode absolute kanan atas */}
-        <div className="absolute right-4 top-4 md:fixed md:right-8 md:top-8 z-50">
-          <DarkModeToggle />
         </div>
       </div>
       {/* Neon line modern dengan animasi glow */}
