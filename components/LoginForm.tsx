@@ -528,17 +528,27 @@ const LoginScreen = () => {
               <form id="otp-login-form" className="login-form fade-in">
                 <div className="form-group">
                   <label htmlFor="otp-phone">Nomor HP:</label>
-                  <div className="flex rounded-md shadow-sm">
-                    <span className="inline-flex items-center px-3 rounded-l-md rounded-r-none border border-r-0 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
+                  <div className="flex w-full">
+                    <span
+                      style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+                      className="inline-flex items-center px-3 py-2.5 rounded-l-md border border-r-0 border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm"
+                    >
                       +62
                     </span>
                     <input
                       type="tel"
                       id="otp-phone"
                       value={otpPhone}
-                      disabled
-                      className="rounded-none rounded-r-md border border-gray-300 dark:border-gray-700 flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                      onChange={e => setOtpPhone(e.target.value)}
+                      style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+                      className="flex-1 min-w-0 rounded-none rounded-r-md border border-gray-300 dark:border-gray-700 p-2.5 text-sm bg-white dark:bg-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 border-l-0 focus:ring-blue-500 focus:border-blue-500"
+                      required
                       placeholder="Contoh: 821xxxxxxx"
+                      autoComplete="tel"
+                      inputMode="numeric"
+                      maxLength={13}
+                      pattern="^[1-9][0-9]{8,12}$"
+                      disabled
                     />
                   </div>
                   <div className="text-yellow-600 text-sm mt-1">Verifikasi dengan nomor HP akan segera hadir (Coming Soon)</div>

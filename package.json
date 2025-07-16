@@ -9,6 +9,7 @@
     "deploy": "next build && gh-pages -d out"
   },
   "dependencies": {
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.50.4",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.0",

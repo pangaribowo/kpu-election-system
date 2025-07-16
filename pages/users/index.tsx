@@ -267,8 +267,13 @@ const UsersPage = () => {
           </button>
         </form>
         {/* Filter vote & Dropdown sort modern dalam satu baris */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 max-w-md mx-auto">
-          <div className="flex justify-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 w-full max-w-2xl mx-auto px-2">
+          <div className="flex flex-1 justify-center sm:justify-start gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <style jsx>{`
+              div[style]::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
           <button
             type="button"
             className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
@@ -300,7 +305,7 @@ const UsersPage = () => {
             Belum Vote
           </button>
           </div>
-          <div className="flex items-center gap-2 justify-center sm:justify-end">
+          <div className="flex items-center gap-2 justify-center sm:justify-end mt-1 sm:mt-0">
             <label className="mr-2 text-sm font-medium text-gray-600 dark:text-gray-300">Urutkan:</label>
             <select
               className="rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 px-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm transition-all duration-200"
