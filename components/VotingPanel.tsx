@@ -205,12 +205,25 @@ const VotingPanel = () => {
                   <div><span className="font-semibold">Misi:</span> {candidate.mission || '-'}</div>
                 </div>
                 <button
-                  className={`vote-btn w-full py-2 px-4 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-${colorClass}-400 focus:ring-offset-2
-                    dark:focus:ring-offset-gray-800
-                    ${isDisabled ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed' : `bg-${colorClass}-600 hover:bg-${colorClass}-700 text-white dark:bg-${colorClass}-500 dark:hover:bg-${colorClass}-400 dark:text-white active:scale-95`}`}
-                  onClick={() => handleVote(candidate.id)}
+                  className={`vote-btn w-full py-3 px-6 rounded-xl font-bold text-lg shadow-2xl ring-4 ring-white/90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-yellow-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent transition-all duration-200 active:scale-97
+                    ${isDisabled ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed opacity-70' : `bg-white/80 dark:bg-white/20 backdrop-blur-md border-2 border-white/60 hover:bg-white/90 dark:hover:bg-white/30 hover:border-yellow-300/80 shadow-2xl`} relative overflow-hidden`}
+                  aria-label={buttonText}
+                  onClick={e => {
+                    // Ripple effect
+                    const btn = e.currentTarget;
+                    const circle = document.createElement('span');
+                    const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+                    const radius = diameter / 2;
+                    circle.style.width = circle.style.height = `${diameter}px`;
+                    circle.style.left = `${e.clientX - btn.getBoundingClientRect().left - radius}px`;
+                    circle.style.top = `${e.clientY - btn.getBoundingClientRect().top - radius}px`;
+                    circle.className = 'ripple';
+                    btn.appendChild(circle);
+                    setTimeout(() => circle.remove(), 600);
+                    if (!isDisabled && votingLoading === null) handleVote(candidate.id);
+                  }}
                   disabled={isDisabled || votingLoading !== null}
-                  style={{ position: 'relative', overflow: 'hidden' }}
+                  style={{ position: 'relative', overflow: 'hidden', marginTop: 12 }}
                 >
                   {votingLoading === candidate.id ? (
                     <span className="flex items-center justify-center gap-2">
@@ -218,18 +231,26 @@ const VotingPanel = () => {
                       <span className={`text-${colorClass}-700 dark:text-${colorClass}-200`}>Memilih...</span>
                     </span>
                   ) : (
-                    <span className={`font-bold`}>{buttonText}</span>
+                    <span className={`font-bold text-blue-700 dark:text-white`}>{buttonText}</span>
                   )}
+                  <style jsx>{`
+                    .ripple {
+                      position: absolute;
+                      border-radius: 50%;
+                      transform: scale(0);
+                      animation: ripple 0.6s linear;
+                      background: rgba(255,255,255,0.5);
+                      pointer-events: none;
+                      z-index: 10;
+                    }
+                    @keyframes ripple {
+                      to {
+                        transform: scale(2.5);
+                        opacity: 0;
+                      }
+                    }
+                  `}</style>
                 </button>
-                {/* Animasi ripple pada klik (opsional, bisa pakai JS/React state jika ingin lebih advance) */}
-                <style jsx>{`
-                  .loader {
-                    border-top-color: #fff;
-                    border-right-color: #fff;
-                    border-bottom-color: #fff;
-                    border-left-color: #3b82f6;
-                  }
-                `}</style>
               </div>
             );
           })}
