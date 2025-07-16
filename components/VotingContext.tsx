@@ -156,11 +156,17 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
     async function fetchVotingStatus() {
       if (currentUser && currentUser.role === 'user') {
         try {
-          const res = await fetch(`/api/voting?username=${encodeURIComponent(currentUser.username)}`)
+          const res = await fetch(`/api/voting?username=${encodeURIComponent(currentUser.username)}`, { cache: 'no-store' })
+          if (!res.ok) {
+            setHasVoted(false)
+            console.error('VotingContext: fetch status voting gagal', res.status)
+            return
+          }
           const data = await res.json()
           setHasVoted(!!data.hasVoted)
         } catch (err) {
           setHasVoted(false)
+          console.error('VotingContext: error fetch status voting', err)
         }
       } else {
         setHasVoted(false)

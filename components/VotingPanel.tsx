@@ -78,9 +78,24 @@ const VotingPanel = () => {
         setCandidates(newCandidates)
       }
       // Fetch status voting user ke backend
-      const statusRes = await fetch(`/api/voting?username=${encodeURIComponent(currentUser.username)}`)
-      const statusData = await statusRes.json()
-      setHasVoted(!!statusData.hasVoted)
+      try {
+        const statusRes = await fetch(`/api/voting?username=${encodeURIComponent(currentUser.username)}`, { cache: 'no-store' })
+        if (!statusRes.ok) {
+          setNotification({ message: 'Gagal cek status voting. Silakan refresh halaman.', type: 'error' })
+          setHasVoted(false)
+          setVotingLoading(null)
+          console.error('VotingPanel: fetch status voting gagal', statusRes.status)
+          return
+        }
+        const statusData = await statusRes.json()
+        setHasVoted(!!statusData.hasVoted)
+      } catch (err) {
+        setNotification({ message: 'Terjadi kesalahan saat cek status voting. Silakan refresh halaman.', type: 'error' })
+        setHasVoted(false)
+        setVotingLoading(null)
+        console.error('VotingPanel: error fetch status voting', err)
+        return
+      }
       setNotification({ message: `Terima kasih! Anda telah memilih ${candidates.find((c) => c.id === candidateId)?.name}`, type: 'success' })
       setVotingLoading(null)
     } catch (err) {
