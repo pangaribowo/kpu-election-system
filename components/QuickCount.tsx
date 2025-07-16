@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import CountUp from 'react-countup'
+import { getValidColor, getCandidateBg, getCandidateTextColor } from '../utils/colors';
 
 const QuickCount = () => {
   const { candidates, votes, setVotes, setCandidates } = useVoting()
@@ -121,6 +122,15 @@ const QuickCount = () => {
     percentages = sortedCandidates.map((candidate) => ({ id: candidate.id, value: 0, raw: 0, remainder: 0 }))
   }
 
+  // Daftar warna yang didukung
+  const SUPPORTED_COLORS = ['blue', 'green', 'orange', 'purple', 'red', 'indigo'] as const;
+  type SupportedColor = typeof SUPPORTED_COLORS[number];
+  function getValidColorClass(color: string | undefined): SupportedColor {
+    return SUPPORTED_COLORS.includes((color || '').toLowerCase() as SupportedColor)
+      ? (color || 'blue').toLowerCase() as SupportedColor
+      : 'blue';
+  }
+
   // Komponen skeleton loader untuk quick count
   const SkeletonQuickCount = () => (
     <div className="quickcount-container container mx-auto">
@@ -194,10 +204,13 @@ const QuickCount = () => {
                 let percentage = percentObj ? percentObj.value : 0;
                 if (typeof percentage !== 'number' || isNaN(percentage)) percentage = 0;
                 const percentStr = percentage.toFixed(1);
+                const colorClass = getValidColor(candidate.color);
+                const rowBg = getCandidateBg(candidate.color);
+                const textColor = getCandidateTextColor(candidate.color);
                 return (
-                  <div key={candidate.id} className="result-item mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow min-h-[72px] flex flex-col gap-2">
+                  <div key={candidate.id} className="result-item mb-4 p-4 rounded-lg shadow min-h-[72px] flex flex-col gap-2" style={{background: rowBg, color: textColor}}>
                     <div className="result-info flex flex-col xs:flex-row xs:justify-between xs:items-center mb-2 gap-1 xs:gap-0">
-                      <div className="result-name text-lg font-medium text-gray-700 dark:text-gray-200 truncate">{candidate.name}</div>
+                      <div className="result-name text-lg font-medium truncate" style={{color: textColor}}>{candidate.name}</div>
                     </div>
                     <div
                       className="result-bar w-full min-w-[80px] bg-slate-200/80 dark:bg-gray-700/80 rounded-full h-4 sm:h-5 shadow-inner overflow-hidden flex items-center"
@@ -207,14 +220,11 @@ const QuickCount = () => {
                       aria-valuemax={100}
                     >
                       <div
-                        className="result-fill h-full rounded-full transition-all duration-700 ease-in-out flex items-center pl-2"
+                        className={`result-fill h-full rounded-full transition-all duration-700 ease-in-out flex items-center pl-2 bg-${colorClass}-500`}
                         style={{
                           width: `${percentStr}%`,
                           minWidth: percentage > 0 ? '8px' : '0px',
-                          background: candidate.color
-                            ? candidate.color
-                            : 'linear-gradient(90deg, #3b82f6 60%, #60a5fa 100%)',
-                          color: percentage > 20 ? '#fff' : '#2563eb',
+                          color: percentage > 20 ? '#fff' : textColor,
                           fontWeight: 600,
                           fontSize: '0.95rem',
                         }}
@@ -229,12 +239,12 @@ const QuickCount = () => {
                         )}
                       </div>
                       {percentage <= 20 && (
-                        <span className="ml-2 text-blue-700 dark:text-blue-300 font-semibold">
+                        <span className="ml-2 font-semibold" style={{color: textColor}}>
                           <CountUp
                             start={prevStats.current.votes[candidate.id] || 0}
                             end={votes[candidate.id] || 0}
                             duration={isUpdating ? 0.7 : 0.2}
-                          /> suara ({percentStr}%)
+                          /> suara ({percentStr}% )
                         </span>
                       )}
                     </div>

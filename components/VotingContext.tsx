@@ -6,6 +6,7 @@ export type Candidate = {
   id: number
   name: string
   vision: string
+  mission?: string | null
   color: string
   votes: number
 }
@@ -78,6 +79,7 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
               id: k.id,
               name: k.nama,
               vision: k.visi,
+              mission: k.misi, // Ambil mission dari API
               color: k.color || 'blue',
               votes: k.suara,
             }

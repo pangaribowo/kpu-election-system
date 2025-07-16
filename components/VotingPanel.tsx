@@ -3,6 +3,7 @@ import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import { useState } from 'react'
 import { FiCheckSquare } from 'react-icons/fi'
+import { getValidColor, getCandidateBg, getCandidateTextColor } from '../utils/colors';
 
 const VotingPanel = () => {
   const {
@@ -68,7 +69,8 @@ const VotingPanel = () => {
             id: k.id,
             name: k.nama,
             vision: k.visi,
-            color: candidates.find((c) => c.id === k.id)?.color || 'blue',
+            mission: k.misi, // Tambahkan mission
+            color: k.color || 'blue', // Ambil color dari API, fallback ke blue jika undefined
             votes: k.suara,
           }
         })
@@ -89,7 +91,7 @@ const VotingPanel = () => {
 
   // Status voting
   let statusContent = null;
-  if (currentUser?.role !== "user") {
+  if (!currentUser || !currentUser.username) {
     statusContent = (
       <div className="status-info text-center p-5 bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-500 dark:border-blue-700 rounded-lg mt-5">
         <h3 className="text-blue-600 dark:text-blue-400 mb-2 text-lg font-semibold">
@@ -151,32 +153,36 @@ const VotingPanel = () => {
               : votingLoading === candidate.id
               ? "Memilih..."
               : "PILIH";
+            const colorClass = getValidColor(candidate.color);
+            const cardBg = getCandidateBg(candidate.color);
+            const textColor = getCandidateTextColor(candidate.color);
             return (
               <div
                 key={candidate.id}
-                className={`candidate-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-blue-500 dark:hover:border-blue-400 relative group`}
-                style={{ position: 'relative', overflow: 'hidden' }}
+                className={`candidate-card theme-${colorClass} shadow-lg rounded-xl p-6 text-center transition-all duration-300 transform hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-${colorClass}-500 dark:hover:border-${colorClass}-400 relative group`}
+                style={{ position: 'relative', overflow: 'hidden', background: cardBg, color: textColor }}
               >
                 <div
-                  className={`candidate-number w-12 h-12 mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white rounded-full theme-${candidate.color} bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg`}
+                  className={`candidate-number w-12 h-12 mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-white rounded-full theme-${colorClass} bg-gradient-to-br from-${colorClass}-500 to-${colorClass}-700 shadow-lg`}
                 >
                   {idx + 1}
                 </div>
-                <div className="candidate-name text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center justify-center gap-2">
+                <div className="candidate-name text-xl font-semibold mb-2 flex items-center justify-center gap-2" style={{color: textColor}}>
                   {candidate.name}
                   {isVoted && (
-                    <span className="inline-block align-middle text-green-500 animate-bounce" title="Kandidat yang dipilih">
+                    <span className="inline-block align-middle text-green-200 animate-bounce" title="Kandidat yang dipilih">
                       <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
                     </span>
                   )}
                 </div>
-                <div className="candidate-vision text-sm text-gray-600 dark:text-gray-300 mb-4 h-20 overflow-y-auto">
-                  {candidate.vision}
+                <div className="candidate-vision-mission flex flex-col gap-1 mb-4 h-24 overflow-y-auto" style={{color: textColor}}>
+                  <div><span className="font-semibold">Visi:</span> {candidate.vision || '-'}</div>
+                  <div><span className="font-semibold">Misi:</span> {candidate.mission || '-'}</div>
                 </div>
                 <button
-                  className={`vote-btn w-full py-2 px-4 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                  className={`vote-btn w-full py-2 px-4 rounded-lg font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-${colorClass}-400 focus:ring-offset-2
                     dark:focus:ring-offset-gray-800
-                    ${isDisabled ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-white active:scale-95'}`}
+                    ${isDisabled ? 'bg-gray-300 dark:bg-gray-700 text-black dark:text-white cursor-not-allowed' : `bg-${colorClass}-600 hover:bg-${colorClass}-700 text-white dark:bg-${colorClass}-500 dark:hover:bg-${colorClass}-400 dark:text-white active:scale-95`}`}
                   onClick={() => handleVote(candidate.id)}
                   disabled={isDisabled || votingLoading !== null}
                   style={{ position: 'relative', overflow: 'hidden' }}
@@ -184,10 +190,10 @@ const VotingPanel = () => {
                   {votingLoading === candidate.id ? (
                     <span className="flex items-center justify-center gap-2">
                       <span className="loader border-2 border-t-2 border-t-white border-white/30 rounded-full w-5 h-5 animate-spin"></span>
-                      <span className="text-blue-700 dark:text-blue-200">Memilih...</span>
+                      <span className={`text-${colorClass}-700 dark:text-${colorClass}-200`}>Memilih...</span>
                     </span>
                   ) : (
-                    <span className="text-blue-50 dark:text-white font-bold">{buttonText}</span>
+                    <span className={`font-bold`}>{buttonText}</span>
                   )}
                 </button>
                 {/* Animasi ripple pada klik (opsional, bisa pakai JS/React state jika ingin lebih advance) */}

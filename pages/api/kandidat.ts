@@ -1,6 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { supabase } from '../../lib/supabaseClient'
 
+const SUPPORTED_COLORS = ['blue', 'green', 'orange', 'purple', 'red', 'indigo'];
+function getValidColor(color) {
+  return SUPPORTED_COLORS.includes((color || '').toLowerCase()) ? color.toLowerCase() : 'blue';
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Cek role admin (sementara dari body, bisa diimprove pakai session)
   const role = req.body?.role || req.query?.role || req.headers['x-user-role']
@@ -13,9 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!name || !vision || !color) {
       return res.status(400).json({ error: 'Nama, visi, dan warna wajib diisi.' })
     }
+    const validColor = getValidColor(color);
     const { error } = await supabase
       .from('kandidat')
-      .insert([{ nama: name, visi: vision, color }])
+      .insert([{ nama: name, visi: vision, color: validColor }])
     if (error) {
       return res.status(500).json({ error: 'Gagal menambah kandidat', detail: error.message })
     }

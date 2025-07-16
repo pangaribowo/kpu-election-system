@@ -74,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Quick count: hasil suara per kandidat
     const { data: hasil, error } = await supabase
       .from('kandidat')
-      .select('id, nama, visi, misi, foto_url, voting:voting(count)')
+      .select('id, nama, visi, misi, foto_url, color, voting:voting(count)')
     if (error) {
       return res.status(500).json({ error: 'Gagal ambil hasil quick count' })
     }
@@ -85,6 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       visi: k.visi,
       misi: k.misi,
       foto_url: k.foto_url,
+      color: k.color,
       suara: k.voting && k.voting[0] && typeof k.voting[0].count === 'number' ? k.voting[0].count : 0
     }))
     // Ambil total pemilih (role 'pemilih')
