@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { FiBookOpen, FiDownload, FiTerminal, FiSettings, FiCloud, FiFolder, FiUsers, FiShield, FiArrowLeft, FiHome, FiFileText } from 'react-icons/fi'
 import { useVoting } from '../components/VotingContext'
 import { useRouter } from 'next/router'
+import { supabase } from '../lib/supabaseClient';
 
 const DocumentationPage = () => {
   const { currentUser, isAuthChecked, setCurrentUser } = useVoting();
@@ -13,6 +14,11 @@ const DocumentationPage = () => {
       <style>{`@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`}</style>
     </div>
   )
+  const handleGuestLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentUser(null);
+    router.replace('/login');
+  };
   return (
     <div className="main-container mx-auto my-10 p-6 sm:p-8 max-w-2xl w-full bg-white/90 dark:bg-gray-900/90 rounded-3xl shadow-2xl ring-1 ring-slate-200/60 dark:ring-gray-700/60 transition-all duration-300">
       <section className="section active rounded-2xl bg-transparent p-0 px-6 sm:px-10">
@@ -86,10 +92,7 @@ const DocumentationPage = () => {
               <button
                 type="button"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                onClick={() => {
-                  setCurrentUser(null);
-                  // Hapus router.push('/login') di sini
-                }}
+                onClick={handleGuestLogout}
               >
                 <FiArrowLeft size={20} className="-ml-1" />
                 Kembali ke Halaman Login

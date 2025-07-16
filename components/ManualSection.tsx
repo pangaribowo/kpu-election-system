@@ -3,6 +3,7 @@ import { FiChevronDown, FiArrowLeft, FiHome } from 'react-icons/fi'
 import { useVoting } from './VotingContext'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { supabase } from '../lib/supabaseClient';
 
 const manualContent = {
   overview: (
@@ -321,6 +322,12 @@ const ManualSection = () => {
     return content;
   };
 
+  const handleGuestLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentUser(null);
+    router.replace('/login');
+  };
+
   return (
     <section id="manual" className="section active py-8 px-4">
       <div className="manual-container w-full mx-auto">
@@ -354,10 +361,7 @@ const ManualSection = () => {
                   <button
                     type="button"
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-                    onClick={() => {
-                      setCurrentUser(null);
-                      // Hapus router.push('/login') di sini
-                    }}
+                    onClick={handleGuestLogout}
                   >
                     <FiArrowLeft size={20} className="-ml-1" />
                     Kembali ke Halaman Login
