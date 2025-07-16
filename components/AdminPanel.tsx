@@ -165,7 +165,10 @@ const AdminPanel = () => {
   return (
     <section id="admin" className="section active py-8 px-4">
       <div className="admin-container container mx-auto">
-        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
+        <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8 flex items-center justify-center gap-3">
+          <span className="inline-flex items-center justify-center w-8 h-8">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 13L19 18"/><path d="M13 19L18 14"/><path d="M16 16L22 22"/><path d="M2 2L16 16"/><rect x="3" y="13" width="6" height="2" rx="1"/><rect x="9" y="7" width="6" height="2" rx="1"/><rect x="17" y="3" width="4" height="2" rx="1"/></svg>
+          </span>
           PANEL ADMIN
         </h2>
         <div className="admin-form bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 sm:p-8 mb-8">

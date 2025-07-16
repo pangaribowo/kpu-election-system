@@ -158,8 +158,8 @@ const LoginScreen = () => {
     e.preventDefault()
     const email = emailRef.current?.value.trim() || ''
     const password = passwordRef.current?.value.trim() || ''
-    const role = roleRef.current?.value as 'admin' | 'user'
-    if (!email || !password || !role) {
+    // const role = roleRef.current?.value as 'admin' | 'user' // Tidak perlu lagi
+    if (!email || !password) {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
       return
     }
@@ -475,12 +475,13 @@ const LoginScreen = () => {
                   <small className="input-helper">Password minimal 8 karakter</small>
                 </div>
                 <div className="form-group">
-                  <label htmlFor="login-role">Role:</label>
-                  <select id="login-role" ref={roleRef} required>
+                  <label htmlFor="login-role" className="sr-only">Role:</label>
+                  {/* Dropdown role dihapus karena tidak digunakan, role diambil dari backend */}
+                  {/* <select id="login-role" ref={roleRef} required>
                     <option value="">Pilih Role</option>
                     <option value="admin">Petugas KPU</option>
                     <option value="user">Pemilih</option>
-                  </select>
+                  </select> */}
                 </div>
                 <button type="submit" className="btn-primary w-full flex justify-center items-center" disabled={loading}>{loading ? 'Memproses...' : 'Login'}</button>
                 <div className="flex justify-end mt-2">

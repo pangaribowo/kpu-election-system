@@ -144,17 +144,45 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
     >
       {/* Header modern */}
       <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative bg-white dark:bg-gray-900">
-        {/* Tombol close di kanan atas (z-50, paling atas) */}
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          aria-label="Tutup Sidebar"
-          className="btn-close-modern"
-          tabIndex={0}
-        >
-          <FiX size={18} />
-        </button>
-        <div className="flex items-center gap-2">
+        {/* Tombol close dan logout di kanan atas (z-50, paling atas) */}
+        <div className="absolute right-4 top-4 flex gap-3 z-50">
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label="Tutup Sidebar"
+            className="min-w-[44px] min-h-[44px] p-2 rounded-full bg-white/70 dark:bg-blue-900/60 border border-blue-200 dark:border-blue-700 shadow-xl backdrop-blur-md hover:bg-blue-600/90 hover:text-white dark:hover:bg-blue-500/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 active:scale-95"
+            tabIndex={0}
+            style={{ boxShadow: '0 4px 24px 0 rgba(59,130,246,0.10)' }}
+          >
+            <FiX size={22} />
+          </button>
+          {currentUser && (
+            currentUser.role === 'guest' ? (
+              <button
+                type="button"
+                onClick={() => setCurrentUser(null)}
+                aria-label="Kembali ke Login"
+                className="min-w-[44px] min-h-[44px] p-2 rounded-full bg-white/70 dark:bg-gray-900/60 border border-red-200 dark:border-red-700 shadow-xl backdrop-blur-md text-red-600 hover:bg-red-600/90 hover:text-white dark:hover:bg-red-500/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 active:scale-95"
+                tabIndex={0}
+                style={{ boxShadow: '0 4px 24px 0 rgba(239,68,68,0.10)' }}
+              >
+                <FiLogOut size={22} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleLogout}
+                aria-label="Keluar"
+                className="min-w-[44px] min-h-[44px] p-2 rounded-full bg-white/70 dark:bg-gray-900/60 border border-red-200 dark:border-red-700 shadow-xl backdrop-blur-md text-red-600 hover:bg-red-600/90 hover:text-white dark:hover:bg-red-500/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 active:scale-95"
+                tabIndex={0}
+                style={{ boxShadow: '0 4px 24px 0 rgba(239,68,68,0.10)' }}
+              >
+                <FiLogOut size={22} />
+              </button>
+            )
+          )}
+        </div>
+        <div className="flex items-center gap-2 mt-8">
           <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900">
             <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={20} />
           </span>
@@ -236,7 +264,10 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                     `}
                     onClick={() => isMobile && setOpen(false)}
                   >
-                    <span className="inline-flex items-center justify-center w-8 h-8"><FiUsers size={22} /></span>
+                    <span className="inline-flex items-center justify-center w-8 h-8">
+                      {/* Icon gavel (admin panel) */}
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 13L19 18"/><path d="M13 19L18 14"/><path d="M16 16L22 22"/><path d="M2 2L16 16"/><rect x="3" y="13" width="6" height="2" rx="1"/><rect x="9" y="7" width="6" height="2" rx="1"/><rect x="17" y="3" width="4" height="2" rx="1"/></svg>
+                    </span>
                     <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">Admin Panel</span>
                   </Link>
                 </li>
@@ -272,13 +303,13 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
         </ul>
       </nav>
       {/* Footer modern sticky */}
-      <div className="sidebar-footer shrink-0 p-4 bg-white dark:bg-gray-900">
+      {/* HAPUS tombol logout dari footer agar tidak duplikat */}
+      {/* <div className="sidebar-footer shrink-0 p-4 bg-white dark:bg-gray-900">
         {currentUser?.role === 'guest' ? (
           <button
             type="button"
             onClick={() => {
               setCurrentUser(null);
-              // Hapus router.push('/login') di sini
             }}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white dark:bg-blue-500 dark:text-white font-semibold shadow-md border border-blue-600 dark:border-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 active:scale-95 text-base"
           >
@@ -295,7 +326,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
             <span>Keluar</span>
           </button>
         )}
-      </div>
+      </div> */}
     </aside>
   );
 }
