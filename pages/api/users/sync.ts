@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
-  const { email, phone, name, username, role, provider } = req.body
+  const { email, phone, name, username, role } = req.body // Hapus provider
   if (!email || !name || !username) {
     return res.status(400).json({ error: 'Data tidak lengkap' })
   }
@@ -71,11 +71,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Format nomor HP harus +62 diikuti 9-13 digit angka, contoh: +6281234567890' })
     }
   }
-  // Upsert user dengan update field provider
+  // Upsert user tanpa field provider
   const { data, error } = await supabase
     .from('users')
     .upsert([
-      { email, phone, name, username, role, provider: provider || 'email' }
+      { email, phone, name, username, role }
     ], { onConflict: 'email' })
     .select()
   if (error) return res.status(500).json({ error: 'Gagal upsert user' })
