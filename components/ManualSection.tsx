@@ -284,8 +284,11 @@ function FAQAccordion() {
           </button>
           <div
             className={
-              'overflow-hidden transition-all duration-300 ' +
-              (openIdx === idx ? 'max-h-40 opacity-100 py-2 px-6' : 'max-h-0 opacity-0 py-0 px-6')
+              'transition-all duration-300 ' +
+              (openIdx === idx
+                ? 'opacity-100 py-2 px-6'
+                : 'max-h-0 opacity-0 py-0 px-6')
+              + ' ' + (openIdx === idx ? 'max-h-60 sm:max-h-none overflow-y-auto scrollbar-hide' : '')
             }
             style={{
               transitionProperty: 'max-height, opacity, padding',
