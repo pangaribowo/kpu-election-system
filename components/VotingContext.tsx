@@ -126,50 +126,79 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
       if (user) {
         // Ambil data user dari Supabase dan set ke context
         const userMeta = user.user_metadata || {}
-        // BEST PRACTICE 2025: username harus selalu email
-        setCurrentUser({
-          id: user.id,
-          username: user.email, // username = email
-          role: userMeta.role || 'user',
-          name: userMeta.full_name || userMeta.name || '-',
-          email: user.email,
-          phone: user.phone || '-',
-          phone_verified: !!user.phone_confirmed_at,
-        })
-        // Tambahan: Sync user Google ke tabel users custom
+        // Tambahan: Pastikan user Google benar-benar terbuat di tabel users custom
+        let userDb = null;
         if (user.app_metadata?.provider === 'google') {
-          let syncSuccess = false;
-          let lastError = null;
-          for (let attempt = 1; attempt <= 3; attempt++) {
-            try {
-              const res = await fetch('/api/users/sync', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  email: user.email,
-                  name: userMeta.full_name || userMeta.name || '-',
-                  username: user.email,
-                  phone: user.phone || '-',
-                  role: 'user',
+          // 1. Cek user di tabel users custom
+          try {
+            const res = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
+            userDb = await res.json();
+          } catch {}
+          // 2. Jika belum ada, lakukan upsert
+          if (!userDb || !userDb.id) {
+            let syncSuccess = false;
+            let lastError = null;
+            for (let attempt = 1; attempt <= 3; attempt++) {
+              try {
+                const res = await fetch('/api/users/sync', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: user.email,
+                    name: userMeta.full_name || userMeta.name || '-',
+                    username: user.email,
+                    phone: user.phone || null,
+                    role: 'user',
+                  })
                 })
-              })
-              if (res.ok) {
-                syncSuccess = true;
-                break;
-              } else {
-                const err = await res.json().catch(() => null)
-                lastError = err?.error || 'Unknown error';
-                // Log error detail ke console
+                if (res.ok) {
+                  userDb = await res.json();
+                  syncSuccess = true;
+                  break;
+                } else {
+                  const err = await res.json().catch(() => null)
+                  lastError = err?.error || 'Unknown error';
+                  // Log error detail ke console
+                  console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
+                }
+              } catch (err) {
+                lastError = err?.message || String(err)
                 console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
               }
-            } catch (err) {
-              lastError = err?.message || String(err)
-              console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
+            }
+            if (!syncSuccess) {
+              setNotification && setNotification({ message: 'Gagal sinkronisasi user Google ke database: ' + (lastError || 'Unknown error') + '. Silakan reload atau hubungi admin.', type: 'error' })
             }
           }
-          if (!syncSuccess) {
-            setNotification && setNotification({ message: 'Gagal sinkronisasi user Google ke database: ' + (lastError || 'Unknown error') + '. Silakan reload atau hubungi admin.', type: 'error' })
-          }
+        } else {
+          // Non-Google: fetch user dari tabel users custom
+          try {
+            const res = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
+            userDb = await res.json();
+          } catch {}
+        }
+        // Update context dengan data user dari tabel users (termasuk id)
+        if (userDb && userDb.id) {
+          setCurrentUser({
+            id: userDb.id,
+            username: userDb.username,
+            role: userDb.role,
+            name: userDb.name,
+            email: userDb.email,
+            phone: userDb.phone,
+            phone_verified: !!user.phone_confirmed_at,
+          })
+        } else {
+          // Fallback: set dari Supabase Auth
+          setCurrentUser({
+            id: user.id,
+            username: user.email,
+            role: userMeta.role || 'user',
+            name: userMeta.full_name || userMeta.name || '-',
+            email: user.email,
+            phone: user.phone || '-',
+            phone_verified: !!user.phone_confirmed_at,
+          })
         }
       }
       setIsAuthChecked(true)
