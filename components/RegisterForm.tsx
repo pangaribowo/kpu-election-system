@@ -87,6 +87,16 @@ const RegisterForm = () => {
       }
       // Validasi duplikasi email
       if (email && email !== '-') {
+        const { data: userData, error: userError } = await supabase.auth.admin.getUserByEmail(email)
+        if (userData && userData.user) {
+          // Cek provider
+          const provider = userData.user.app_metadata?.provider
+          if (provider === 'google') {
+            setNotification({ message: 'Email ini sudah pernah digunakan untuk login dengan Google. Silakan login dengan Google.', type: 'error' })
+            setLoading(false)
+            return
+          }
+        }
         const checkEmailRes = await fetch(`/api/users/sync?email=${encodeURIComponent(email)}`)
         const checkEmailData = await checkEmailRes.json()
         if (checkEmailData && checkEmailData.id) {

@@ -177,26 +177,32 @@ const LoginScreen = () => {
         password,
       })
       if (error) {
-        // --- Best Practice 2025: Antisipasi user hybrid (OAuth & manual) ---
-        // Jika credential salah, cek apakah user pernah login via Google
-        if (error.message?.toLowerCase().includes('invalid login credentials')) {
-          try {
-            const res = await fetch(`/api/users/sync?email=${encodeURIComponent(email)}`)
-            const userDb = await res.json()
-            // Asumsi: userDb.provider diisi 'google' jika user register/login via Google
-            if (userDb && userDb.id && (userDb.provider === 'google' || userDb.username?.includes('@gmail.com'))) {
-              setNotification({
-                message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
-                type: 'warning',
-              })
-              setLoading(false)
-              return
-            }
-          } catch {}
-          setNotification({ message: 'Email atau password salah.', type: 'error' })
-        } else {
-          setNotification({ message: error.message || 'Login gagal', type: 'error' })
+        // Jika credential salah, cek provider di Supabase Auth dan tabel custom
+        let provider = null
+        try {
+          // Cek di Supabase Auth
+          const { data: userData } = await supabase.auth.admin.getUserByEmail(email)
+          if (userData && userData.user) {
+            provider = userData.user.app_metadata?.provider
+          }
+        } catch {}
+        try {
+          // Cek di tabel custom
+          const res = await fetch(`/api/users/sync?email=${encodeURIComponent(email)}`)
+          const userDb = await res.json()
+          if (userDb && userDb.provider) {
+            provider = userDb.provider
+          }
+        } catch {}
+        if (provider === 'google') {
+          setNotification({
+            message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
+            type: 'warning',
+          })
+          setLoading(false)
+          return
         }
+        setNotification({ message: 'Email atau password salah.', type: 'error' })
         setLoading(false)
         return
       } else if (!data.user?.email_confirmed_at) {
