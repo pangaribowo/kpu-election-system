@@ -20,7 +20,8 @@ const ProfilePage = () => {
   const [resetMsg, setResetMsg] = useState('')
 
   React.useEffect(() => {
-    if (!currentUser) {
+    // Hanya redirect ke /login jika currentUser benar-benar null/undefined
+    if (typeof currentUser === 'undefined' || currentUser === null) {
       router.replace('/login')
     } else if (currentUser.role === 'guest') {
       router.replace('/manual')
