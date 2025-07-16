@@ -145,3 +145,33 @@ MIT License. Bebas digunakan, dimodifikasi, dan didistribusikan.
 - Lanjutkan pengembangan fitur sesuai prioritas di checklist.
 - Update dokumentasi & checklist secara berkala.
 - Terapkan best practice dari open source & komunitas.
+
+# Workflow Guest (Akun Bersama)
+
+## 1. Setup Akun Guest
+- Buat email guest@pangaribowo.my.id di domain/email provider Anda (bisa via Cloudflare Email Routing).
+- Register akun guest di Supabase Auth (bisa lewat dashboard atau script).
+- Verifikasi email guest.
+
+## 2. Update Metadata Guest
+- Pastikan metadata user guest di Supabase Auth:
+  ```json
+  {
+    "role": "guest",
+    "name": "Guest"
+  }
+  ```
+- Jika dashboard tidak menyediakan UI edit metadata, gunakan script `scripts/update_guest_metadata.cjs`.
+
+## 3. Login Guest di Frontend
+- Login guest menggunakan email dan password dari env:
+  - `NEXT_PUBLIC_GUEST_EMAIL=guest@pangaribowo.my.id`
+  - `NEXT_PUBLIC_GUEST_PASSWORD=guestpassword123`
+- Logic login guest di frontend otomatis membaca env ini.
+
+## 4. Pembersihan Guest
+- Script `scripts/cleanup_guest_users.cjs` akan menghapus akun guest lain yang sudah >1 hari, **kecuali** akun utama guest@pangaribowo.my.id.
+
+## 5. Best Practice
+- Jangan pernah commit password guest ke repo publik.
+- Update dokumentasi jika ada perubahan workflow guest.
