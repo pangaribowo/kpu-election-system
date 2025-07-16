@@ -77,23 +77,16 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
   // Handler logout
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    if (typeof window !== 'undefined') {
-      // Hapus hanya data user/token, JANGAN hapus localStorage.clear()
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('users');
-      localStorage.removeItem('votes');
-      // Biarkan localStorage 'theme' tetap ada
-      document.cookie = 'token=; Max-Age=0; path=/;';
-    }
     setCurrentUser?.(null);
-    // Hapus router.push('/login') di sini
   };
 
   // Auto-redirect ke login jika context gagal
   React.useEffect(() => {
-    if (isAuthChecked && !currentUser) {
+    if (isAuthChecked && (!currentUser || currentUser === null)) {
+      // Jika currentUser null (belum login sama sekali), redirect ke login
       router.replace('/login');
     }
+    // Jika currentUser.role === 'guest', jangan redirect, biarkan akses
   }, [isAuthChecked, currentUser, router]);
 
   // Mobile: klik di luar sidebar menutup
@@ -204,7 +197,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
             currentUser.role === 'guest' ? (
               <button
                 type="button"
-                onClick={() => setCurrentUser(null)}
+                onClick={handleLogout}
                 aria-label="Kembali ke Login"
                 className="min-w-[44px] min-h-[44px] flex items-center justify-center p-0 rounded-full bg-white/70 dark:bg-gray-900/60 border border-red-200 dark:border-red-700 shadow-xl backdrop-blur-md text-red-600 hover:bg-red-600/90 hover:text-white dark:hover:bg-red-500/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 active:scale-95"
                 tabIndex={0}
