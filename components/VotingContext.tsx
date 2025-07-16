@@ -136,6 +136,24 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
           phone: user.phone || '-',
           phone_verified: !!user.phone_confirmed_at,
         })
+        // Tambahan: Sync user Google ke tabel users custom
+        if (user.app_metadata?.provider === 'google') {
+          try {
+            await fetch('/api/users/sync', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: user.email,
+                name: userMeta.full_name || userMeta.name || '-',
+                username: user.email,
+                phone: user.phone || '-',
+                role: 'user',
+              })
+            })
+          } catch (err) {
+            setNotification && setNotification({ message: 'Gagal sinkronisasi user Google ke database. Silakan reload atau hubungi admin.', type: 'error' })
+          }
+        }
       }
       setIsAuthChecked(true)
     }
