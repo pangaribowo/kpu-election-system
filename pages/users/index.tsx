@@ -323,7 +323,12 @@ const UsersPage = () => {
             <>
             <ul className="user-list list-none p-0">
                 {(currentUser.role === 'admin' ? pagedUsers : pagedUsers.filter(u => u.role === 'user')).map((user, idx) => {
-                const statusVote = user.hasVoted ? (
+                const statusVote = user.role === 'admin' ? (
+                  <span className="flex items-center gap-1 text-blue-600 dark:text-blue-300 font-semibold bg-blue-50 dark:bg-blue-900 px-3 py-1 rounded-full text-xs shadow-sm">
+                    <FiUsers className="text-blue-500 dark:text-blue-300" size={16} />
+                    <span className="hidden sm:inline">Admin</span>
+                  </span>
+                ) : user.hasVoted ? (
                   <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
                     <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
                     <span className="hidden sm:inline">Sudah Vote</span>
@@ -358,7 +363,12 @@ const UsersPage = () => {
           <>
             <ul className="user-list list-none p-0">
               {(currentUser.role === 'admin' ? pagedUsers : pagedUsers.filter(u => u.role === 'user')).map((user, idx) => {
-                const statusVote = user.hasVoted ? (
+                const statusVote = user.role === 'admin' ? (
+                  <span className="flex items-center gap-1 text-blue-600 dark:text-blue-300 font-semibold bg-blue-50 dark:bg-blue-900 px-3 py-1 rounded-full text-xs shadow-sm">
+                    <FiUsers className="text-blue-500 dark:text-blue-300" size={16} />
+                    <span className="hidden sm:inline">Admin</span>
+                  </span>
+                ) : user.hasVoted ? (
                   <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
                     <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
                     <span className="hidden sm:inline">Sudah Vote</span>
