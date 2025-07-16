@@ -177,7 +177,15 @@ const LoginScreen = () => {
         password,
       })
       if (error) {
-        // Jika credential salah, cek provider di Supabase Auth dan tabel custom
+        // Logging error detail untuk debugging
+        console.error('Login error:', error)
+        // Tangani error password salah secara spesifik
+        if (error.message && error.message.toLowerCase().includes('invalid login credentials')) {
+          setNotification({ message: 'Email atau password salah.', type: 'error' })
+          setLoading(false)
+          return
+        }
+        // Jika error lain, baru cek provider
         let provider = null
         try {
           // Cek di Supabase Auth
@@ -186,7 +194,9 @@ const LoginScreen = () => {
           if (userData && userData.app_metadata) {
             provider = userData.app_metadata.provider
           }
-        } catch {}
+        } catch (err) {
+          console.error('Cek provider error:', err)
+        }
         try {
           // Cek di tabel custom
           const res = await fetch(`/api/users/sync?email=${encodeURIComponent(email)}`)
@@ -194,7 +204,9 @@ const LoginScreen = () => {
           if (userDb && userDb.provider) {
             provider = userDb.provider
           }
-        } catch {}
+        } catch (err) {
+          console.error('Cek provider custom error:', err)
+        }
         if (provider === 'google') {
           setNotification({
             message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
@@ -203,7 +215,7 @@ const LoginScreen = () => {
           setLoading(false)
           return
         }
-        setNotification({ message: 'Email atau password salah.', type: 'error' })
+        setNotification({ message: error.message || 'Gagal login. Silakan coba lagi.', type: 'error' })
         setLoading(false)
         return
       } else if (!data.user?.email_confirmed_at) {
