@@ -180,62 +180,45 @@ const LoginScreen = () => {
         // Logging error detail untuk debugging
         console.error('Login error:', error)
         // Tangani error password salah secara spesifik
-        if (error.message && error.message.toLowerCase().includes('invalid login credentials')) {
-          // Cek identities dari API
-          try {
-            const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
-            const userData = await res.json()
-            const identities = userData.identities || []
-            // Cek apakah ada provider email/manual
-            const hasEmailProvider = identities.some((id: any) => id.provider === 'email')
-            const hasGoogleProvider = identities.some((id: any) => id.provider === 'google')
-            if (hasEmailProvider) {
-              setNotification({ message: 'Email atau password salah.', type: 'error' })
-              setLoading(false)
-              return
-            } else if (hasGoogleProvider) {
-              setNotification({
-                message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.',
-                type: 'warning',
-              })
-              setLoading(false)
-              return
-            } else {
-              setNotification({ message: 'Akun tidak ditemukan.', type: 'error' })
-              setLoading(false)
-              return
-            }
-          } catch (err) {
-            console.error('Cek identities error:', err)
-            setNotification({ message: 'Email atau password salah.', type: 'error' })
-            setLoading(false)
-            return
-          }
-        }
-        // Jika error lain, baru cek provider (legacy fallback)
-        let provider = null
-        try {
-          // Cek di Supabase Auth
-          const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
-          const userData = await res.json()
-          if (userData && userData.provider) {
-            provider = userData.provider
-          }
-        } catch (err) {
-          console.error('Cek provider error:', err)
-        }
-        if (provider === 'google') {
-          setNotification({
-            message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
-            type: 'warning',
-          })
+        if (
+          error.code === 'invalid_credentials' ||
+          (error.message && error.message.toLowerCase().includes('invalid login credentials'))
+        ) {
+          setNotification({ message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.', type: 'error' })
           setLoading(false)
           return
         }
-        setNotification({ message: error.message || 'Gagal login. Silakan coba lagi.', type: 'error' })
-        setLoading(false)
-        return
-      } else if (!data.user?.email_confirmed_at) {
+        // Jika error lain, baru cek identities
+        try {
+          const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
+          const userData = await res.json()
+          const identities = userData.identities || []
+          const hasEmailProvider = identities.some((id: any) => id.provider === 'email')
+          const hasGoogleProvider = identities.some((id: any) => id.provider === 'google')
+          if (hasEmailProvider) {
+            setNotification({ message: 'Email atau password salah.', type: 'error' })
+            setLoading(false)
+            return
+          } else if (hasGoogleProvider) {
+            setNotification({
+              message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
+              type: 'warning',
+            })
+            setLoading(false)
+            return
+          } else {
+            setNotification({ message: 'Akun tidak ditemukan.', type: 'error' })
+            setLoading(false)
+            return
+          }
+        } catch (err) {
+          console.error('Cek identities error:', err)
+          setNotification({ message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.', type: 'error' })
+          setLoading(false)
+          return
+        }
+      }
+      if (!data.user?.email_confirmed_at) {
         setNotification({ message: 'Akun belum diverifikasi. Silakan cek email Anda.', type: 'error' })
       } else {
         // Ambil data user dari user_metadata
@@ -280,7 +263,9 @@ const LoginScreen = () => {
         }
       }
     } catch (err) {
-      setNotification({ message: 'Terjadi kesalahan jaringan', type: 'error' })
+      // Tangkap error global Supabase agar tidak bubble up ke UI
+      console.error('Global login error:', err)
+      setNotification({ message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.', type: 'error' })
     } finally {
       setLoading(false)
     }
