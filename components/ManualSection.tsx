@@ -232,15 +232,15 @@ const tabs = [
 const faqList = [
   {
     q: 'Bagaimana jika lupa password?',
-    a: 'Silakan hubungi administrator sistem untuk reset password atau bantuan lebih lanjut.'
+    a: 'Silakan gunakan fitur "Lupa Password" pada halaman login untuk melakukan reset password. Link reset akan dikirim ke email Anda. Jika masih mengalami kendala atau tidak menerima email, silakan hubungi administrator untuk bantuan lebih lanjut.'
   },
   {
     q: 'Bisakah mengubah pilihan setelah voting?',
     a: 'Tidak, setiap pemilih hanya dapat memberikan suara satu kali dan tidak dapat mengubah pilihan setelah dikonfirmasi.'
   },
   {
-    q: 'Apakah data aman?',
-    a: 'Data disimpan secara aman di server dan/atau browser. Untuk keamanan maksimal, gunakan koneksi HTTPS dan akun yang valid.'
+    q: 'Apakah data saya aman?',
+    a: 'Ya, data Anda dijaga kerahasiaannya dan hanya dapat diakses oleh Anda dan administrator yang berwenang. Sistem menggunakan autentikasi dan enkripsi untuk melindungi data. Pastikan Anda selalu menjaga kerahasiaan akun dan password.'
   },
   {
     q: 'Bagaimana cara menambah kandidat?',
