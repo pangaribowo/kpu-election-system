@@ -53,6 +53,15 @@ const ProfilePage = () => {
   if (!currentUser) return null
   if (currentUser.role === 'guest') return null
 
+  // Sinkronkan form dengan currentUser setiap kali currentUser berubah
+  React.useEffect(() => {
+    setForm({
+      name: currentUser?.name || '',
+      email: currentUser?.email || '',
+      phone: currentUser?.phone || '',
+    })
+  }, [currentUser])
+
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
