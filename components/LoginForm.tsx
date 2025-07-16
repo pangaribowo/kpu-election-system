@@ -177,34 +177,32 @@ const LoginScreen = () => {
         password,
       })
       if (error) {
-        // Tangani error password salah secara spesifik
-        if (
-          error.code === 'invalid_credentials' ||
-          (error.message && error.message.toLowerCase().includes('invalid login credentials'))
-        ) {
-          setNotification({ message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.', type: 'error' })
-          setLoading(false)
-          return
-        }
-        // Jika error lain, baru cek identities
+        // Selalu cek ke database custom setelah error login
         try {
-          const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
-          const userData = await res.json()
-          const identities = userData.identities || []
-          const hasEmailProvider = identities.some((id: any) => id.provider === 'email')
-          const hasGoogleProvider = identities.some((id: any) => id.provider === 'google')
-          if (hasEmailProvider) {
+          const dbRes = await fetch(`/api/users/sync?email=${encodeURIComponent(email)}`)
+          const dbUser = await dbRes.json()
+          if (dbUser && dbUser.id) {
+            // User ada di database
+            // Cek provider Google/manual
+            const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
+            const userData = await res.json()
+            const identities = userData.identities || []
+            const hasEmailProvider = identities.some((id: any) => id.provider === 'email')
+            const hasGoogleProvider = identities.some((id: any) => id.provider === 'google')
+            if (hasGoogleProvider && !hasEmailProvider) {
+              setNotification({
+                message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
+                type: 'warning',
+              })
+              setLoading(false)
+              return
+            }
+            // Jika user ada dan provider email/manual, selalu tampilkan error password salah
             setNotification({ message: 'Email atau password salah.', type: 'error' })
             setLoading(false)
             return
-          } else if (hasGoogleProvider) {
-            setNotification({
-              message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
-              type: 'warning',
-            })
-            setLoading(false)
-            return
           } else {
+            // User tidak ada di database
             setNotification({ message: 'Akun tidak ditemukan.', type: 'error' })
             setLoading(false)
             return
