@@ -47,7 +47,7 @@ const ProfilePage = () => {
         <span className="text-gray-600 dark:text-gray-300 font-bold text-center">Memeriksa sesi login...</span>
         <style>{`@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`}</style>
       </div>
-    )
+    );
   }
 
   if (!currentUser) return null
