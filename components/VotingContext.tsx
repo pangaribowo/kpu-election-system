@@ -107,113 +107,102 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line
   }, [currentUser])
 
-  // Ambil currentUser dari localStorage dan Supabase session saat mount
+  // Ambil currentUser dari Supabase session saat mount
   useEffect(() => {
     async function initUser() {
-      // 1. Cek localStorage
-      const storedUser = localStorage.getItem('currentUser')
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser)
-        setCurrentUser(parsed)
-        // Jika guest, JANGAN cek Supabase Auth
-        if (parsed.role === 'guest') {
-          setIsAuthChecked(true)
-          return
-        }
-      }
-      // 2. Cek Supabase session (hanya jika bukan guest)
+      // HAPUS: cek localStorage
+      // 1. Cek Supabase session
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Ambil data user dari Supabase dan set ke context
         const userMeta = user.user_metadata || {}
-        // Tambahan: Pastikan user Google benar-benar terbuat di tabel users custom
-        let userDb = null;
-        if (user.app_metadata?.provider === 'google') {
-          // 1. Cek user di tabel users custom
-          try {
-            const res = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
-            userDb = await res.json();
-          } catch {}
-          // 2. Jika belum ada, lakukan upsert
-          if (!userDb || !userDb.id) {
-            let syncSuccess = false;
-            let lastError = null;
-            for (let attempt = 1; attempt <= 3; attempt++) {
-              try {
-                const res = await fetch('/api/users/sync', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: user.email,
-                    name: userMeta.full_name || userMeta.name || '-',
-                    username: user.email,
-                    phone: user.phone || null,
-                    role: 'user',
-                  })
-                })
-                if (res.ok) {
-                  userDb = await res.json();
-                  syncSuccess = true;
-                  break;
-                } else {
-                  const err = await res.json().catch(() => null)
-                  lastError = err?.error || 'Unknown error';
-                  // Log error detail ke console
-                  console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
-                }
-              } catch (err) {
-                lastError = err?.message || String(err)
-                console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
-              }
-            }
-            if (!syncSuccess) {
-              setNotification && setNotification({ message: 'Gagal sinkronisasi user Google ke database: ' + (lastError || 'Unknown error') + '. Silakan reload atau hubungi admin.', type: 'error' })
-            }
-          }
-        } else {
-          // Non-Google: fetch user dari tabel users custom
-          try {
-            const res = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
-            userDb = await res.json();
-          } catch {}
-        }
-        // Update context dengan data user dari tabel users (termasuk id)
-        if (userDb && userDb.id) {
+        // Guest: role dari userMeta
+        if (userMeta.role === 'guest') {
           setCurrentUser({
-            id: userDb.id,
-            username: userDb.username,
-            role: userDb.role,
-            name: userDb.name,
-            email: userDb.email,
-            phone: userDb.phone,
-            phone_verified: !!user.phone_confirmed_at,
+            id: user.id,
+            username: user.email,
+            role: 'guest',
+            name: userMeta.name || 'Guest',
+            email: user.email,
           })
         } else {
-          // Fallback: set dari Supabase Auth
-        setCurrentUser({
-          id: user.id,
-            username: user.email,
-          role: userMeta.role || 'user',
-          name: userMeta.full_name || userMeta.name || '-',
-          email: user.email,
-          phone: user.phone || '-',
-          phone_verified: !!user.phone_confirmed_at,
-        })
+          // User/admin: cek tabel users custom
+          let userDb = null;
+          if (user.app_metadata?.provider === 'google') {
+            try {
+              const res = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
+              userDb = await res.json();
+            } catch {}
+            if (!userDb || !userDb.id) {
+              let syncSuccess = false;
+              let lastError = null;
+              for (let attempt = 1; attempt <= 3; attempt++) {
+                try {
+                  const res = await fetch('/api/users/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      email: user.email,
+                      name: userMeta.full_name || userMeta.name || '-',
+                      username: user.email,
+                      phone: user.phone || null,
+                      role: 'user',
+                    })
+                  })
+                  if (res.ok) {
+                    userDb = await res.json();
+                    syncSuccess = true;
+                    break;
+                  } else {
+                    const err = await res.json().catch(() => null)
+                    lastError = err?.error || 'Unknown error';
+                    console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
+                  }
+                } catch (err) {
+                  lastError = err?.message || String(err)
+                  console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
+                }
+              }
+              if (!syncSuccess) {
+                setNotification && setNotification({ message: 'Gagal sinkronisasi user Google ke database: ' + (lastError || 'Unknown error') + '. Silakan reload atau hubungi admin.', type: 'error' })
+              }
+            }
+          } else {
+            try {
+              const res = await fetch(`/api/users/sync?email=${encodeURIComponent(user.email)}`)
+              userDb = await res.json();
+            } catch {}
+          }
+          if (userDb && userDb.id) {
+            setCurrentUser({
+              id: userDb.id,
+              username: userDb.username,
+              role: userDb.role,
+              name: userDb.name,
+              email: userDb.email,
+              phone: userDb.phone,
+              phone_verified: !!user.phone_confirmed_at,
+            })
+          } else {
+            setCurrentUser({
+              id: user.id,
+              username: user.email,
+              role: userMeta.role || 'user',
+              name: userMeta.full_name || userMeta.name || '-',
+              email: user.email,
+              phone: user.phone || '-',
+              phone_verified: !!user.phone_confirmed_at,
+            })
+          }
         }
+      } else {
+        setCurrentUser(null)
       }
       setIsAuthChecked(true)
     }
     initUser()
   }, [])
 
-  // Simpan currentUser ke localStorage setiap kali berubah
-  useEffect(() => {
-    if (currentUser) {
-      localStorage.setItem('currentUser', JSON.stringify(currentUser))
-    } else {
-      localStorage.removeItem('currentUser')
-    }
-  }, [currentUser])
+  // HAPUS: Simpan currentUser ke localStorage setiap kali berubah
 
   // Cek status voting user ke backend saat login
   useEffect(() => {
