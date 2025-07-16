@@ -177,8 +177,6 @@ const LoginScreen = () => {
         password,
       })
       if (error) {
-        // Logging error detail untuk debugging
-        console.error('Login error:', error)
         // Tangani error password salah secara spesifik
         if (
           error.code === 'invalid_credentials' ||
@@ -212,7 +210,6 @@ const LoginScreen = () => {
             return
           }
         } catch (err) {
-          console.error('Cek identities error:', err)
           setNotification({ message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.', type: 'error' })
           setLoading(false)
           return
@@ -263,8 +260,7 @@ const LoginScreen = () => {
         }
       }
     } catch (err) {
-      // Tangkap error global Supabase agar tidak bubble up ke UI
-      console.error('Global login error:', err)
+      // Suppress error agar tidak muncul di console
       setNotification({ message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.', type: 'error' })
     } finally {
       setLoading(false)
