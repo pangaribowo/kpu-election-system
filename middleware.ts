@@ -6,12 +6,13 @@ const protectedPaths = ['/', '/admin', '/users', '/quickcount', '/profile']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+  // Jangan proteksi halaman login
+  if (pathname === '/login' || pathname.startsWith('/login')) return NextResponse.next()
   // Cek apakah path butuh proteksi
   const isProtected = protectedPaths.some((path) => pathname === path || pathname.startsWith(path + '/'))
   if (!isProtected) return NextResponse.next()
 
   // Cek token Supabase (atau token lain) di cookie
-  // Supabase menyimpan token di cookie: 'sb-access-token' (atau custom jika diatur)
   const accessToken = request.cookies.get('sb-access-token')?.value
   if (!accessToken) {
     // Redirect ke /login jika belum login
@@ -24,7 +25,7 @@ export function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 
-// Aktifkan middleware hanya untuk path yang relevan
+// Aktifkan middleware hanya untuk path yang relevan (TIDAK termasuk /login)
 export const config = {
-  matcher: ['/','/admin','/users','/quickcount','/profile'],
+  matcher: ['/', '/admin', '/users', '/quickcount', '/profile'],
 } 
