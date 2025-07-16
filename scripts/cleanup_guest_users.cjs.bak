@@ -1,0 +1,50 @@
+// scripts/cleanup_guest_users.cjs
+require('dotenv').config({ path: require('fs').existsSync('.env.local') ? '.env.local' : '.env' });
+const { createClient } = require('@supabase/supabase-js');
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error('NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY harus di-set di .env atau .env.local!');
+  process.exit(1);
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+  auth: { autoRefreshToken: false, persistSession: false }
+});
+
+async function cleanupGuestUsers() {
+  // 1. Ambil semua user guest (role: 'guest')
+  const { data, error } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+  if (error) {
+    console.error('Gagal mengambil user:', error);
+    return;
+  }
+
+  const now = new Date();
+  let deleted = 0;
+
+  for (const user of data.users) {
+    // JANGAN hapus akun guest utama
+    if (user.email === 'guest@pangaribowo.my.id') continue;
+    const role = user.user_metadata?.role;
+    const createdAt = new Date(user.created_at);
+    const ageHours = (now - createdAt) / (1000 * 60 * 60);
+
+    if (role === 'guest' && ageHours > 24) {
+      // Hapus user
+      const { error: delError } = await supabase.auth.admin.deleteUser(user.id);
+      if (delError) {
+        console.error(`Gagal hapus user guest ${user.email}:`, delError.message);
+      } else {
+        console.log(`User guest ${user.email} (${user.id}) dihapus (umur: ${ageHours.toFixed(1)} jam)`);
+        deleted++;
+      }
+    }
+  }
+
+  console.log(`Selesai. Total user guest dihapus: ${deleted}`);
+}
+
+cleanupGuestUsers(); 
