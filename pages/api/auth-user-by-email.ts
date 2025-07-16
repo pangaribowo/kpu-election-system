@@ -17,5 +17,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
   const data = await response.json()
   // data.users adalah array, ambil user pertama jika ada
-  return res.status(200).json(data?.users?.[0] || {})
+  const user = data?.users?.[0] || {}
+  // Pastikan identities selalu ada (array)
+  const identities = user.identities || []
+  // Provider utama (jika ada)
+  const provider = user.app_metadata?.provider || null
+  return res.status(200).json({
+    ...user,
+    identities,
+    provider,
+  })
 } 
