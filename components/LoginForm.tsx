@@ -195,7 +195,7 @@ const LoginScreen = () => {
               return
             } else if (hasGoogleProvider) {
               setNotification({
-                message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
+                message: 'Email atau password salah. Gunakan fitur "Lupa Password" untuk mengatur ulang password.',
                 type: 'warning',
               })
               setLoading(false)
