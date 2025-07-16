@@ -274,7 +274,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                   onClick={() => isMobile && setOpen(false)}
                 >
                   <span className="inline-flex items-center justify-center w-8 h-8"><FiHome size={22} /></span>
-                  <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">Dashboard</span>
+                  <AnimatedMarqueeText className="transition-all duration-300 ml-1 text-base max-w-[120px]">Dashboard</AnimatedMarqueeText>
                 </Link>
               </li>
               {menuItems.map((item) => (
@@ -314,7 +314,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                       {/* Icon gavel (admin panel) */}
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 13L19 18"/><path d="M13 19L18 14"/><path d="M16 16L22 22"/><path d="M2 2L16 16"/><rect x="3" y="13" width="6" height="2" rx="1"/><rect x="9" y="7" width="6" height="2" rx="1"/><rect x="17" y="3" width="4" height="2" rx="1"/></svg>
                     </span>
-                    <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">Admin Panel</span>
+                    <AnimatedMarqueeText className="transition-all duration-300 ml-1 text-base max-w-[120px]">Admin Panel</AnimatedMarqueeText>
                   </Link>
                 </li>
               )}
@@ -326,7 +326,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                   onClick={() => isMobile && setOpen(false)}
                 >
                   <span className="inline-flex items-center justify-center w-8 h-8"><FiFileText size={22} /></span>
-                  <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">Dokumentasi</span>
+                  <AnimatedMarqueeText className="transition-all duration-300 ml-1 text-base max-w-[120px]">Dokumentasi</AnimatedMarqueeText>
                 </Link>
               </li>
               */}
@@ -341,9 +341,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                   <span className="inline-flex items-center justify-center w-8 h-8">
                     <FiUser size={22} />
                   </span>
-                  <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">
-                    Profil Saya
-                  </span>
+                  <AnimatedMarqueeText className="transition-all duration-300 ml-1 text-base max-w-[120px]">Profil Saya</AnimatedMarqueeText>
                 </Link>
               </li>
             </>
