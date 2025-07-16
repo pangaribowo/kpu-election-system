@@ -138,20 +138,37 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
         })
         // Tambahan: Sync user Google ke tabel users custom
         if (user.app_metadata?.provider === 'google') {
-          try {
-            await fetch('/api/users/sync', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: user.email,
-                name: userMeta.full_name || userMeta.name || '-',
-                username: user.email,
-                phone: user.phone || '-',
-                role: 'user',
+          let syncSuccess = false;
+          let lastError = null;
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              const res = await fetch('/api/users/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: user.email,
+                  name: userMeta.full_name || userMeta.name || '-',
+                  username: user.email,
+                  phone: user.phone || '-',
+                  role: 'user',
+                })
               })
-            })
-          } catch (err) {
-            setNotification && setNotification({ message: 'Gagal sinkronisasi user Google ke database. Silakan reload atau hubungi admin.', type: 'error' })
+              if (res.ok) {
+                syncSuccess = true;
+                break;
+              } else {
+                const err = await res.json().catch(() => null)
+                lastError = err?.error || 'Unknown error';
+                // Log error detail ke console
+                console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
+              }
+            } catch (err) {
+              lastError = err?.message || String(err)
+              console.error('Gagal sync user Google (attempt', attempt, '):', lastError)
+            }
+          }
+          if (!syncSuccess) {
+            setNotification && setNotification({ message: 'Gagal sinkronisasi user Google ke database: ' + (lastError || 'Unknown error') + '. Silakan reload atau hubungi admin.', type: 'error' })
           }
         }
       }
