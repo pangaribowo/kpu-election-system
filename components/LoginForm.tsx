@@ -112,6 +112,12 @@ const LoginScreen = () => {
     // eslint-disable-next-line
   }, [])
 
+  useEffect(() => {
+    if (currentUser && currentUser.role === 'guest') {
+      router.replace('/manual');
+    }
+  }, [currentUser, router]);
+
   // Handler submit phone
   const handleSubmitPhone = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -408,13 +414,37 @@ const LoginScreen = () => {
   }
 
   const handleShowManual = async () => {
-    setCurrentUser({ username: 'guest', role: 'guest', name: 'Guest' });
-    setTimeout(() => {
-      router.push('/manual');
-    }, 150);
+    const guestEmail = process.env.NEXT_PUBLIC_GUEST_EMAIL || "guest@pangaribowo.my.id";
+    const guestPassword = process.env.NEXT_PUBLIC_GUEST_PASSWORD || "guestpassword123";
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: guestEmail,
+        password: guestPassword,
+      });
+      if (error) {
+        setNotification && setNotification({ message: error.message || 'Gagal login sebagai guest', type: 'error' });
+        return;
+      }
+      const { user } = data;
+      if (user) {
+        setCurrentUser({
+          id: user.id,
+          username: user.email,
+          role: 'guest',
+          name: 'Guest',
+          email: user.email,
+        });
+        setNotification && setNotification({ message: 'Login guest berhasil! Anda dapat melihat manual/panduan.', type: 'success' });
+        router.replace('/manual');
+      } else {
+        setNotification && setNotification({ message: 'Gagal mendapatkan session guest.', type: 'error' });
+      }
+    } catch (err: any) {
+      setNotification && setNotification({ message: err.message || 'Gagal login guest', type: 'error' });
+    }
   };
 
-  if (currentUser) return null;
+  if (currentUser && currentUser.role !== 'guest') return null;
 
   const formInputClass = "w-full p-2.5 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm";
   const formLabelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
@@ -520,7 +550,7 @@ const LoginScreen = () => {
                 aria-label="Lihat Manual/Panduan sebagai Guest"
                 onClick={() => { handleShowManual(); }}
               >
-                Lihat Manual/Panduan
+                Login sebagai Guest
               </button>
               <div className="login-or-separator">
                 <span className="login-or-text">atau login dengan nomor HP</span>
