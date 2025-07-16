@@ -3,6 +3,7 @@ import { useVoting } from './VotingContext'
 import { supabase } from '../lib/supabaseClient'
 import CountUp from 'react-countup'
 import { getValidColor, getCandidateBg, getCandidateTextColor } from '../utils/colors';
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 const QuickCount = () => {
   const { candidates, votes, setVotes, setCandidates } = useVoting()
@@ -11,6 +12,7 @@ const QuickCount = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [isUpdating, setIsUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const prevStats = React.useRef({ totalVotes: 0, totalVoted: 0, totalVoters: 0, votes: {} })
   const isFirstLoad = React.useRef(true)
   const isRealtimeActive = React.useRef(false)
@@ -84,7 +86,12 @@ const QuickCount = () => {
 
   const totalVotes = Object.values(votes).reduce((sum, v) => sum + v, 0)
   const participationRate = totalVoters > 0 ? ((totalVoted / totalVoters) * 100).toFixed(1) : '0.0'
-  const sortedCandidates = [...candidates].sort((a, b) => (votes[b.id] || 0) - (votes[a.id] || 0))
+  // Urutkan kandidat sesuai sortOrder
+  const sortedCandidates = [...candidates].sort((a, b) => {
+    const va = votes[a.id] || 0;
+    const vb = votes[b.id] || 0;
+    return sortOrder === 'desc' ? vb - va : va - vb;
+  });
 
   // Algoritma Largest Remainder Method untuk persentase
   let percentages: { id: any, value: number, raw: number, remainder: number }[] = []
@@ -197,9 +204,24 @@ const QuickCount = () => {
             </div>
           </div>
           <div id="results-chart" className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 overflow-x-auto w-full max-w-screen-sm mx-auto">
-            <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-6">Hasil Sementara</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+              <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-2 sm:mb-0">Hasil Sementara</h3>
+              <div className="flex items-center gap-2 self-end sm:self-auto">
+                <label htmlFor="sortOrder" className="text-sm font-medium text-gray-700 dark:text-gray-200">Urutkan:</label>
+                <select
+                  id="sortOrder"
+                  value={sortOrder}
+                  onChange={e => setSortOrder(e.target.value as 'desc' | 'asc')}
+                  className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-100 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  style={{minWidth:110}}
+                >
+                  <option value="desc">Terbanyak <FiChevronDown className="inline ml-1" /></option>
+                  <option value="asc">Terkecil <FiChevronUp className="inline ml-1" /></option>
+                </select>
+              </div>
+            </div>
             <div className="flex flex-col gap-3">
-              {candidates.map((candidate, idx) => {
+              {sortedCandidates.map((candidate, idx) => {
                 const percentObj = percentages.find(p => p.id === candidate.id);
                 let percentage = percentObj ? percentObj.value : 0;
                 if (typeof percentage !== 'number' || isNaN(percentage)) percentage = 0;
@@ -207,26 +229,33 @@ const QuickCount = () => {
                 const colorClass = getValidColor(candidate.color);
                 const rowBg = getCandidateBg(candidate.color);
                 const textColor = getCandidateTextColor(candidate.color);
+                // Cari kandidat dengan persen tertinggi
+                const maxPercent = Math.max(...percentages.map(p => p.value));
+                const isTop = percentage === maxPercent && maxPercent > 0;
                 return (
-                  <div key={candidate.id} className="result-item mb-4 p-4 rounded-lg shadow min-h-[72px] flex flex-col gap-2" style={{background: rowBg, color: textColor}}>
-                    <div className="result-info flex flex-col xs:flex-row xs:justify-between xs:items-center mb-2 gap-1 xs:gap-0">
-                      <div className="result-name text-lg font-medium truncate" style={{color: textColor}}>{candidate.name}</div>
+                  <div
+                    key={candidate.id}
+                    className={`result-item mb-4 rounded-lg shadow min-h-[72px] flex flex-col gap-2 transition-all duration-300 ${isTop ? 'p-6 sm:p-8 scale-105 border-4 border-yellow-300/80 shadow-2xl z-10 ring-2 ring-yellow-200/60' : 'p-4'} ${isTop ? 'bg-white/90 dark:bg-gray-900/80' : ''}`}
+                    style={{background: rowBg, color: textColor, position: isTop ? 'relative' : undefined}}
+                  >
+                    <div className={`result-info flex flex-col xs:flex-row xs:justify-between xs:items-center mb-2 gap-1 xs:gap-0 ${isTop ? 'text-2xl font-extrabold drop-shadow-lg' : ''}`}>
+                      <div className="result-name truncate" style={{color: textColor}}>{candidate.name}</div>
                     </div>
                     <div
-                      className="result-bar w-full min-w-[80px] bg-slate-200/80 dark:bg-gray-700/80 rounded-full h-4 sm:h-5 shadow-inner overflow-hidden flex items-center"
+                      className={`result-bar w-full min-w-[80px] bg-slate-200/80 dark:bg-gray-700/80 rounded-full shadow-inner overflow-hidden flex items-center transition-all duration-300 ${isTop ? 'h-7 sm:h-9' : 'h-4 sm:h-5'}`}
                       role="progressbar"
                       aria-valuenow={percentage}
                       aria-valuemin={0}
                       aria-valuemax={100}
                     >
                       <div
-                        className={`result-fill h-full rounded-full transition-all duration-700 ease-in-out flex items-center pl-2 bg-${colorClass}-500`}
+                        className={`result-fill h-full rounded-full transition-all duration-700 ease-in-out flex items-center pl-2 bg-${colorClass}-500 ${isTop ? 'text-xl font-bold' : ''}`}
                         style={{
                           width: `${percentStr}%`,
                           minWidth: percentage > 0 ? '8px' : '0px',
                           color: percentage > 20 ? '#fff' : textColor,
                           fontWeight: 600,
-                          fontSize: '0.95rem',
+                          fontSize: isTop ? '1.15rem' : '0.95rem',
                         }}
                       >
                         {percentage > 20 && (
@@ -239,7 +268,7 @@ const QuickCount = () => {
                         )}
                       </div>
                       {percentage <= 20 && (
-                        <span className="ml-2 font-semibold" style={{color: textColor}}>
+                        <span className={`ml-2 font-semibold ${isTop ? 'text-lg' : ''}`} style={{color: textColor}}>
                           <CountUp
                             start={prevStats.current.votes[candidate.id] || 0}
                             end={votes[candidate.id] || 0}
@@ -248,6 +277,9 @@ const QuickCount = () => {
                         </span>
                       )}
                     </div>
+                    {isTop && (
+                      <div className="absolute -top-4 -right-4 bg-yellow-300 text-yellow-900 font-bold px-3 py-1 rounded-full shadow-lg text-xs sm:text-sm animate-bounce z-20 select-none" style={{letterSpacing:1}}>TERBANYAK</div>
+                    )}
                   </div>
                 );
               })}
