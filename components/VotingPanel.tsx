@@ -33,6 +33,11 @@ const VotingPanel = () => {
       setNotification({ message: 'Hanya pemilih yang dapat melakukan voting!', type: 'error' })
       return
     }
+    // CEGAH VOTING JIKA NOMOR HP BELUM DIISI/TERVERIFIKASI
+    if (!currentUser.phone || currentUser.phone === '-' || currentUser.phone.trim() === '') {
+      setNotification({ message: 'Anda harus melengkapi nomor HP yang valid sebelum dapat melakukan voting. Silakan lengkapi profil Anda.', type: 'error' })
+      return
+    }
     // Cek status verifikasi email
     const { data: { session } } = await supabase.auth.getSession();
     const provider = session?.user?.app_metadata?.provider;
