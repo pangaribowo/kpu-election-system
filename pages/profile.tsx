@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabaseClient'
 import { FiUser } from 'react-icons/fi'
 
 const ProfilePage = () => {
-  const { currentUser, setCurrentUser, setNotification } = useVoting()
+  const { currentUser, setCurrentUser, setNotification, isAuthChecked } = useVoting()
   const router = useRouter()
   const [editMode, setEditMode] = useState(false)
   const [form, setForm] = useState({
@@ -20,15 +20,15 @@ const ProfilePage = () => {
   const [resetMsg, setResetMsg] = useState('')
 
   React.useEffect(() => {
-    // Hanya redirect ke /login jika currentUser benar-benar null/undefined
-    if (typeof currentUser === 'undefined' || currentUser === null) {
+    // Tunggu auth check selesai sebelum redirect
+    if (!isAuthChecked) return;
+    if (isAuthChecked && (typeof currentUser === 'undefined' || currentUser === null)) {
       router.replace('/login')
-    } else if (currentUser.role === 'guest') {
+    } else if (currentUser && currentUser.role === 'guest') {
       router.replace('/manual')
     }
-    // Reset pesan reset password saat halaman dimount
     setResetMsg('')
-  }, [currentUser, router])
+  }, [currentUser, router, isAuthChecked])
 
   // Auto-dismiss resetMsg setelah 5 detik
   React.useEffect(() => {
@@ -37,6 +37,17 @@ const ProfilePage = () => {
       return () => clearTimeout(timer)
     }
   }, [resetMsg])
+
+  // Loader jika auth belum selesai
+  if (!isAuthChecked) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px]">
+        <div className="loader" style={{width:48,height:48,border:'6px solid #eee',borderTop:'6px solid #888',borderRadius:'50%',animation:'spin 1s linear infinite', marginBottom: 16}} />
+        <span className="text-gray-600 dark:text-gray-300 font-bold text-center">Memeriksa sesi login...</span>
+        <style>{`@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`}</style>
+      </div>
+    )
+  }
 
   if (!currentUser) return null
   if (currentUser.role === 'guest') return null
