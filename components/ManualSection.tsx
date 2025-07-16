@@ -2,6 +2,7 @@ import * as React from 'react'
 import { FiChevronDown, FiArrowLeft, FiHome } from 'react-icons/fi'
 import { useVoting } from './VotingContext'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const manualContent = {
   overview: (
@@ -301,7 +302,8 @@ function FAQAccordion() {
 
 const ManualSection = () => {
   const [activeTab, setActiveTab] = React.useState("overview");
-  const { currentUser, isAuthChecked } = useVoting();
+  const { currentUser, isAuthChecked, setCurrentUser } = useVoting();
+  const router = useRouter();
 
   // It's better to move manualContent and tabs outside if they don't depend on component's state/props
   // For brevity, keeping them here but applying dark mode classes directly.
@@ -346,18 +348,21 @@ const ManualSection = () => {
             <div className="flex justify-center mt-8">
               {isAuthChecked && (
                 (!currentUser || currentUser.role === 'guest') ? (
-                  <Link href="/login" legacyBehavior>
-                    <a className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                      <FiArrowLeft size={20} className="-ml-1" />
-                      Kembali ke Halaman Login
-                    </a>
-                  </Link>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+                    onClick={() => {
+                      setCurrentUser(null);
+                      router.push('/login');
+                    }}
+                  >
+                    <FiArrowLeft size={20} className="-ml-1" />
+                    Kembali ke Halaman Login
+                  </button>
                 ) : (
-                  <Link href="/" legacyBehavior>
-                    <a className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                      <FiHome size={20} className="-ml-1" />
-                      Kembali ke Dashboard
-                    </a>
+                  <Link href="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                    <FiHome size={20} className="-ml-1" />
+                    Kembali ke Dashboard
                   </Link>
                 )
               )}

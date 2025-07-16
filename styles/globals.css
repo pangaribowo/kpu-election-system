@@ -1724,3 +1724,13 @@ digantikan dengan Tailwind class dan @apply di bawah ini */
   background: #23272f;
   color: #f3f4f6;
 }
+
+.candidate-card {
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform, box-shadow;
+}
+.candidate-card:hover, .candidate-card:focus-within {
+  transform: scale(1.045) translateY(-4px);
+  box-shadow: 0 8px 32px 0 rgba(59,130,246,0.18), 0 1.5px 6px 0 rgba(0,0,0,0.08);
+  z-index: 2;
+}

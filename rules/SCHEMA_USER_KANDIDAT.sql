@@ -24,6 +24,7 @@ CREATE TABLE kandidat (
   visi TEXT,
   misi TEXT,
   foto_url TEXT,
+  color VARCHAR(32) DEFAULT 'blue',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

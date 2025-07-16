@@ -33,7 +33,11 @@ const UsersPage = () => {
 
   useEffect(() => {
     if (isAuthChecked && !currentUser) {
-      router.replace("/login");
+      router.replace('/login');
+      return;
+    }
+    if (isAuthChecked && currentUser?.role === 'guest') {
+      router.replace('/manual');
       return;
     }
     if (!isAuthChecked) return;
@@ -47,7 +51,6 @@ const UsersPage = () => {
           return res.json();
         })
         .then((data) => {
-          console.log('API /api/users response:', data)
           setUsers(data.users);
           setTotalPages(Math.ceil(data.total / USERS_PER_PAGE));
           setLoading(false);
@@ -70,6 +73,7 @@ const UsersPage = () => {
 
   if (!isAuthChecked) return null;
   if (!currentUser) return null;
+  if (currentUser.role === 'guest') return null;
 
   // Handler search
   const handleSearch = async (e: React.FormEvent) => {

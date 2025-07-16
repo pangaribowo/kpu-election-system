@@ -45,8 +45,6 @@ const VotingPanel = () => {
     }
     try {
       setVotingLoading(candidateId)
-      // Log payload voting
-      console.log('[VOTING] Submit payload:', { kandidat_id: candidateId, username: currentUser.username })
       const res = await fetch('/api/voting', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -142,7 +140,7 @@ const VotingPanel = () => {
           </span>
           <span className="drop-shadow-sm">PILIH KANDIDAT ANDA</span>
         </h2>
-        <div id="candidates-list" className="candidates-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="candidates-list" className="candidates-grid gap-6">
           {candidates.map((candidate, idx) => {
             const isDisabled = hasVoted || currentUser?.role !== "user" || votingLoading !== null;
             const isVoted = hasVoted && votes && votes[candidate.id] > 0;

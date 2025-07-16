@@ -11,11 +11,14 @@ const QuickCountPage = () => {
   React.useEffect(() => {
     if (isAuthChecked && !currentUser) {
       router.replace('/login')
+    } else if (isAuthChecked && currentUser?.role === 'guest') {
+      router.replace('/manual')
     }
   }, [currentUser, isAuthChecked, router])
 
   if (!isAuthChecked) return null
   if (!currentUser) return null
+  if (currentUser.role === 'guest') return null
 
   return (
     <div className="container mx-auto p-4">

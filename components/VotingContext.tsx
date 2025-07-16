@@ -64,45 +64,52 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
   const [activeTab, setActiveTab] = useState('voting')
   const [notification, setNotification] = useState<{ message: string; type: string } | null>(null)
 
-  // Load default kandidat jika kosong
+  // Ambil kandidat dari backend untuk SEMUA role (user & admin)
   useEffect(() => {
-    if (candidates.length === 0) {
-      setCandidates([
-        {
-          id: 1,
-          name: 'Ahmad Rizki Pratama',
-          vision:
-            'Membangun organisasi yang inovatif dan berkelanjutan dengan fokus pada pengembangan SDM dan teknologi digital untuk mencapai visi organisasi yang lebih maju.',
-          color: 'blue',
-          votes: 0,
-        },
-        {
-          id: 2,
-          name: 'Sari Indah Permata',
-          vision:
-            'Menciptakan lingkungan kerja yang kolaboratif dan inklusif untuk mencapai visi bersama organisasi melalui program-program pemberdayaan anggota.',
-          color: 'green',
-          votes: 0,
-        },
-        {
-          id: 3,
-          name: 'Budi Santoso Wijaya',
-          vision:
-            'Mengoptimalkan potensi setiap anggota melalui program pelatihan dan pengembangan karir yang berkelanjutan serta meningkatkan kualitas pelayanan organisasi.',
-          color: 'orange',
-          votes: 0,
-        },
-      ])
+    async function fetchCandidates() {
+      try {
+        const res = await fetch('/api/voting')
+        const data = await res.json()
+        if (res.ok && data.hasil) {
+          const newVotes: Record<number, number> = {}
+          const newCandidates = data.hasil.map((k: any) => {
+            newVotes[k.id] = k.suara
+            return {
+              id: k.id,
+              name: k.nama,
+              vision: k.visi,
+              color: k.color || 'blue',
+              votes: k.suara,
+            }
+          })
+          setVotes(newVotes)
+          setCandidates(newCandidates)
+        }
+      } catch (err) {
+        // Biarkan silent error
+      }
     }
-  }, [candidates.length])
+    fetchCandidates()
+    // Subscribe ke perubahan tabel kandidat & voting (realtime)
+    const channel = supabase.channel('realtime-voting-context')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'kandidat' }, () => {
+        fetchCandidates()
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
+        fetchCandidates()
+      })
+      .subscribe()
+    return () => {
+      supabase.removeChannel(channel)
+    }
+    // eslint-disable-next-line
+  }, [currentUser])
 
   // Ambil currentUser dari localStorage dan Supabase session saat mount
   useEffect(() => {
     async function initUser() {
       // 1. Cek localStorage
       const storedUser = localStorage.getItem('currentUser')
-      // eslint-disable-next-line no-console
-      console.log('[VotingContext] read localStorage currentUser:', storedUser)
       if (storedUser) {
         const parsed = JSON.parse(storedUser)
         setCurrentUser(parsed)
@@ -142,46 +149,6 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [currentUser])
 
-  // Ambil quick count dari backend saat user login
-  useEffect(() => {
-    async function fetchQuickCount() {
-      if (currentUser && currentUser.role === 'user') {
-        try {
-          const res = await fetch('/api/voting')
-          const data = await res.json()
-          if (res.ok && data.hasil) {
-            const newVotes: Record<number, number> = {}
-            const newCandidates = data.hasil.map((k: any) => {
-              newVotes[k.id] = k.suara
-              return {
-                id: k.id,
-                name: k.nama,
-                vision: k.visi,
-                color: candidates.find((c) => c.id === k.id)?.color || 'blue',
-                votes: k.suara,
-              }
-            })
-            setVotes(newVotes)
-            setCandidates(newCandidates)
-          }
-        } catch (err) {
-          // Biarkan silent error
-        }
-      }
-    }
-    fetchQuickCount()
-    // Subscribe ke perubahan tabel voting (realtime)
-    const channel = supabase.channel('realtime-voting-context')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'voting' }, () => {
-        fetchQuickCount()
-      })
-      .subscribe()
-    return () => {
-      supabase.removeChannel(channel)
-    }
-    // eslint-disable-next-line
-  }, [currentUser])
-
   // Cek status voting user ke backend saat login
   useEffect(() => {
     async function fetchVotingStatus() {
@@ -210,11 +177,9 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // eslint-disable-next-line no-console
-    console.log('[VotingContext] currentUser:', currentUser)
   }, [currentUser])
   useEffect(() => {
     // eslint-disable-next-line no-console
-    console.log('[VotingContext] isAuthChecked:', isAuthChecked)
   }, [isAuthChecked])
 
   return (

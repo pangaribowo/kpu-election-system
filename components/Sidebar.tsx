@@ -30,12 +30,6 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
   const { setCurrentUser, currentUser, isAuthChecked } = useVoting();
   const sidebarRef = React.useRef<HTMLDivElement>(null);
 
-  // DEBUG: log currentUser dan role
-  if (typeof window !== 'undefined') {
-    // eslint-disable-next-line no-console
-    console.log('[Sidebar] currentUser:', currentUser)
-  }
-
   // Handler logout
   const handleLogout = async () => {
     await supabase.auth.signOut();

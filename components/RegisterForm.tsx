@@ -230,7 +230,7 @@ const RegisterForm = () => {
           <button type="button" className="show-password-btn absolute right-2 top-1/2 -translate-y-1/2" tabIndex={-1} aria-label="Tampilkan Password" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
             <Eye size={18} />
           </button>
-        </div>
+      </div>
         <small className="input-helper">Ketik ulang password yang sama</small>
         {showPasswordError && (
           <small className="input-helper text-red-500 dark:text-red-400 font-semibold mt-2 block" role="alert">

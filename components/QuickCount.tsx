@@ -124,9 +124,6 @@ const QuickCount = () => {
   // Komponen skeleton loader untuk quick count
   const SkeletonQuickCount = () => (
     <div className="quickcount-container container mx-auto">
-      <h2 className="section-title text-3xl font-bold text-center text-blue-700 dark:text-blue-300 mb-8">
-        QUICK COUNT REALTIME
-      </h2>
       <div className="stats-grid grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
         {[1,2].map(i => (
           <div key={i} className="stat-card bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 text-center">

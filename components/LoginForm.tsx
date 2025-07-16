@@ -12,8 +12,6 @@ const LoginScreen = () => {
     setNotification,
     currentUser,
   } = useVoting()
-  // eslint-disable-next-line no-console
-  console.log('[LoginForm] context:', { setCurrentUser, currentUser })
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -395,14 +393,8 @@ const LoginScreen = () => {
   }
 
   const handleShowManual = async () => {
-    // eslint-disable-next-line no-console
-    console.log('[LoginForm] setCurrentUser guest...')
     setCurrentUser({ username: 'guest', role: 'guest', name: 'Guest' });
     setTimeout(() => {
-      // eslint-disable-next-line no-console
-      console.log('[LoginForm] after setCurrentUser, currentUser:', currentUser)
-      // eslint-disable-next-line no-console
-      console.log('[LoginForm] localStorage currentUser:', localStorage.getItem('currentUser'))
       router.push('/manual');
     }, 150);
   };

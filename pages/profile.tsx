@@ -20,7 +20,11 @@ const ProfilePage = () => {
   const [resetMsg, setResetMsg] = useState('')
 
   React.useEffect(() => {
-    if (!currentUser || currentUser.role === 'guest') router.replace('/manual')
+    if (!currentUser) {
+      router.replace('/login')
+    } else if (currentUser.role === 'guest') {
+      router.replace('/manual')
+    }
     // Reset pesan reset password saat halaman dimount
     setResetMsg('')
   }, [currentUser, router])
@@ -33,7 +37,8 @@ const ProfilePage = () => {
     }
   }, [resetMsg])
 
-  if (!currentUser || currentUser.role === 'guest') return null
+  if (!currentUser) return null
+  if (currentUser.role === 'guest') return null
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value })

@@ -30,7 +30,9 @@ const Dashboard = () => {
   const isRealtimeActive = useRef(false)
 
   useEffect(() => {
-    if (isAuthChecked && (!currentUser || currentUser.role === 'guest')) {
+    if (isAuthChecked && !currentUser) {
+      router.replace('/login')
+    } else if (isAuthChecked && currentUser?.role === 'guest') {
       router.replace('/manual')
     }
   }, [currentUser, isAuthChecked, router])
@@ -52,10 +54,10 @@ const Dashboard = () => {
         if (!isUnmounted) {
           prevStats.current = stats
           setStats({
-            totalVoters: data.totalVoters || 0,
-            totalVoted: data.totalVoted || 0,
-            totalCandidates: data.totalCandidates || 0,
-          })
+          totalVoters: data.totalVoters || 0,
+          totalVoted: data.totalVoted || 0,
+          totalCandidates: data.totalCandidates || 0,
+        })
         }
       } catch {
         if (!isUnmounted) setStats({ totalVoters: 0, totalVoted: 0, totalCandidates: 0 })
@@ -106,7 +108,8 @@ const Dashboard = () => {
       <style>{`@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`}</style>
     </div>
   )
-  if (!currentUser || currentUser.role === 'guest') return null
+  if (!currentUser) return null
+  if (currentUser.role === 'guest') return null
 
   const participation = stats.totalVoters > 0 ? ((stats.totalVoted / stats.totalVoters) * 100).toFixed(1) : '0.0'
 

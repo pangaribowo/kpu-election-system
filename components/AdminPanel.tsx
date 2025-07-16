@@ -18,7 +18,7 @@ const AdminPanel = () => {
   const colorRef = useRef<HTMLSelectElement>(null)
 
   // Tambah kandidat
-  const handleAddCandidate = (e: React.FormEvent) => {
+  const handleAddCandidate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (currentUser?.role !== 'admin') {
       setNotification({ message: 'Akses ditolak! Hanya admin yang dapat menambah kandidat.', type: 'error' })
@@ -31,32 +31,44 @@ const AdminPanel = () => {
       setNotification({ message: 'Mohon lengkapi semua field!', type: 'error' })
       return
     }
-    const newCandidate = {
-      id: candidates.length > 0 ? Math.max(...candidates.map(c => c.id)) + 1 : 1,
-      name,
-      vision,
-      color,
-      votes: 0,
+    try {
+      const res = await fetch('/api/kandidat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, vision, color, role: currentUser.role })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Gagal menambah kandidat')
+      setNotification({ message: 'Kandidat berhasil ditambahkan!', type: 'success' })
+      if (nameRef.current) nameRef.current.value = ''
+      if (visionRef.current) visionRef.current.value = ''
+      if (colorRef.current) colorRef.current.value = 'blue'
+      // Fetch ulang kandidat (context akan auto update via VotingContext realtime, tapi bisa fetch manual jika perlu)
+    } catch (err: any) {
+      setNotification({ message: err.message || 'Gagal menambah kandidat', type: 'error' })
     }
-    setCandidates([...candidates, newCandidate])
-    setNotification({ message: 'Kandidat berhasil ditambahkan!', type: 'success' })
-    if (nameRef.current) nameRef.current.value = ''
-    if (visionRef.current) visionRef.current.value = ''
-    if (colorRef.current) colorRef.current.value = 'blue'
   }
 
   // Hapus kandidat
-  const handleRemoveCandidate = (id: number) => {
+  const handleRemoveCandidate = async (id: number) => {
     if (currentUser?.role !== 'admin') {
       setNotification({ message: 'Akses ditolak! Hanya admin yang dapat menghapus kandidat.', type: 'error' })
       return
     }
     if (window.confirm('Yakin ingin menghapus kandidat ini?')) {
-      setCandidates(candidates.filter((c) => c.id !== id))
-      const updatedVotes = { ...votes }
-      delete updatedVotes[id]
-      setVotes(updatedVotes)
-      setNotification({ message: 'Kandidat berhasil dihapus!', type: 'success' })
+      try {
+        const res = await fetch(`/api/kandidat?id=${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: currentUser.role })
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Gagal menghapus kandidat')
+        setNotification({ message: 'Kandidat berhasil dihapus!', type: 'success' })
+        // Fetch ulang kandidat (context akan auto update via VotingContext realtime, tapi bisa fetch manual jika perlu)
+      } catch (err: any) {
+        setNotification({ message: err.message || 'Gagal menghapus kandidat', type: 'error' })
+      }
     }
   }
 
