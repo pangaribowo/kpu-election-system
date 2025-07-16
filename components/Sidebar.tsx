@@ -1,5 +1,5 @@
 // tailwindcss safelist: w-0 w-64 translate-x-0 -translate-x-full
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FiHome, FiCheckSquare, FiBarChart, FiUsers, FiInfo, FiBookOpen, FiLogOut, FiX, FiUser, FiFileText } from "react-icons/fi";
@@ -23,6 +23,50 @@ interface SidebarProps {
   mode: 'drawer' | 'fixed';
   isDark: boolean;
   toggleDarkMode: () => void;
+}
+
+// Komponen AnimatedMarqueeText: teks berjalan jika overflow
+function AnimatedMarqueeText({ children, className = "", speed = 60 }) {
+  const containerRef = useRef(null);
+  const textRef = useRef(null);
+  const [isOverflow, setIsOverflow] = useState(false);
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (!containerRef.current || !textRef.current) return;
+      setIsOverflow(textRef.current.scrollWidth > containerRef.current.offsetWidth);
+    };
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
+  }, [children]);
+  return (
+    <span
+      ref={containerRef}
+      className={`relative block w-full max-w-full overflow-hidden ${className}`}
+      style={{ minHeight: 24 }}
+    >
+      <span
+        ref={textRef}
+        className={`inline-block whitespace-nowrap transition-all duration-300 ${isOverflow ? "marquee-animate" : ""}`}
+        style={isOverflow ? {
+          animation: `marquee ${speed * (textRef.current?.scrollWidth || 200) / 200}s linear infinite`,
+        } : {}}
+        tabIndex={isOverflow ? 0 : undefined}
+        aria-label={typeof children === 'string' ? children : undefined}
+      >
+        {children}
+      </span>
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .marquee-animate {
+          will-change: transform;
+        }
+      `}</style>
+    </span>
+  );
 }
 
 export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleDarkMode }: SidebarProps) {
@@ -186,9 +230,9 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
           <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900">
             <FiCheckSquare className="text-blue-500 dark:text-blue-400" size={20} />
           </span>
-          <span className="font-bold text-base text-blue-700 dark:text-blue-300 transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto max-w-[120px] truncate">
+          <AnimatedMarqueeText className="font-bold text-base text-blue-700 dark:text-blue-300 max-w-[120px]">
             Navigasi KPU
-          </span>
+          </AnimatedMarqueeText>
         </div>
         {/* Badge Guest Mode */}
         {currentUser?.role === 'guest' && (
@@ -213,7 +257,9 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                     onClick={() => isMobile && setOpen(false)}
                   >
                     <span className="inline-flex items-center justify-center w-8 h-8">{item.icon}</span>
-                    <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">{item.label}</span>
+                    <AnimatedMarqueeText className="transition-all duration-300 ml-1 text-base max-w-[120px]">
+                      {item.label}
+                    </AnimatedMarqueeText>
                   </Link>
                 </li>
               ))}
@@ -248,9 +294,9 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                       {item.label === "About" && <FiInfo size={22} />}
                       {item.label === "Manual" && <FiBookOpen size={22} />}
                     </span>
-                    <span className="transition-all duration-300 overflow-hidden whitespace-nowrap opacity-100 w-auto ml-1 text-base">
+                    <AnimatedMarqueeText className="transition-all duration-300 ml-1 text-base max-w-[120px]">
                       {item.label}
-                    </span>
+                    </AnimatedMarqueeText>
                   </Link>
                 </li>
               ))}
