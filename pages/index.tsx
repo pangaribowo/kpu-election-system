@@ -3,7 +3,7 @@ import { useVoting } from '../components/VotingContext'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Header from '../components/Header'
-import { FiCheckCircle, FiAlertCircle, FiHome } from 'react-icons/fi'
+import { FiCheckCircle, FiAlertCircle, FiHome, FiUsers, FiShield } from 'react-icons/fi'
 import { supabase } from '../lib/supabaseClient';
 import CountUp from 'react-countup'
 
@@ -157,7 +157,7 @@ const Dashboard = () => {
               <div className="stat-value text-xl md:text-2xl font-bold flex items-center justify-center gap-2">
                 {currentUser.role === 'admin' ? (
                   <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-300 font-semibold bg-blue-50 dark:bg-blue-900 px-3 py-1 rounded-full text-xs shadow-sm">
-                    <FiHome className="text-blue-500 dark:text-blue-300" size={18} />
+                    <FiShield className="text-blue-500 dark:text-blue-300" size={18} />
                     Admin tidak perlu voting
                   </span>
                 ) : hasVoted ? (
