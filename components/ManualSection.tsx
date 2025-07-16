@@ -353,7 +353,7 @@ const ManualSection = () => {
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
                     onClick={() => {
                       setCurrentUser(null);
-                      router.push('/login');
+                      // Hapus router.push('/login') di sini
                     }}
                   >
                     <FiArrowLeft size={20} className="-ml-1" />

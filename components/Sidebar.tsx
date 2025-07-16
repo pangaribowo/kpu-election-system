@@ -42,8 +42,15 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
       document.cookie = 'token=; Max-Age=0; path=/;';
     }
     setCurrentUser?.(null);
-    router.push('/login');
+    // Hapus router.push('/login') di sini
   };
+
+  // Auto-redirect ke login jika context gagal
+  React.useEffect(() => {
+    if (isAuthChecked && !currentUser) {
+      router.replace('/login');
+    }
+  }, [isAuthChecked, currentUser, router]);
 
   // Mobile: klik di luar sidebar menutup
   React.useEffect(() => {
@@ -120,8 +127,10 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
   if (isAuthChecked && !currentUser) {
     return (
       <aside className="sidebar overflow-auto z-[300] bg-white dark:bg-gray-900 flex flex-col items-center justify-center min-h-[300px]">
-        <div className="text-red-600 dark:text-red-300 font-bold text-center p-6">
-          <span>Gagal memuat context user.<br />Silakan refresh halaman atau login ulang.</span>
+        <div className="flex flex-col items-center justify-center p-6">
+          <div className="loader" style={{width:48,height:48,border:'6px solid #eee',borderTop:'6px solid #888',borderRadius:'50%',animation:'spin 1s linear infinite', marginBottom: 16}} />
+          <span className="text-gray-600 dark:text-gray-300 font-bold text-center">Mengarahkan ke halaman login...</span>
+          <style>{`@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`}</style>
         </div>
       </aside>
     )
@@ -269,7 +278,7 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
             type="button"
             onClick={() => {
               setCurrentUser(null);
-              router.push('/login');
+              // Hapus router.push('/login') di sini
             }}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white dark:bg-blue-500 dark:text-white font-semibold shadow-md border border-blue-600 dark:border-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 active:scale-95 text-base"
           >
