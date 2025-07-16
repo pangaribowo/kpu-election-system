@@ -269,36 +269,36 @@ const UsersPage = () => {
         {/* Filter vote & Dropdown sort modern dalam satu baris */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 max-w-md mx-auto">
           <div className="flex justify-center gap-2">
-            <button
-              type="button"
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-                ${voteFilter === 'all'
-                  ? 'bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 border-blue-600 dark:border-blue-400 shadow-lg scale-105'
-                  : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900'}`}
-              onClick={() => setVoteFilter('all')}
-            >
-              Semua
-            </button>
-            <button
-              type="button"
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-                ${voteFilter === 'voted'
-                  ? 'bg-green-600 dark:bg-green-400 text-white dark:text-gray-900 border-green-600 dark:border-green-400 shadow-lg scale-105'
-                  : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-green-900'}`}
-              onClick={() => setVoteFilter('voted')}
-            >
-              Sudah Vote
-            </button>
-            <button
-              type="button"
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
-                ${voteFilter === 'notvoted'
-                  ? 'bg-red-600 dark:bg-red-400 text-white dark:text-gray-900 border-red-600 dark:border-red-400 shadow-lg scale-105'
-                  : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900'}`}
-              onClick={() => setVoteFilter('notvoted')}
-            >
-              Belum Vote
-            </button>
+          <button
+            type="button"
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+              ${voteFilter === 'all'
+                ? 'bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 border-blue-600 dark:border-blue-400 shadow-lg scale-105'
+                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900'}`}
+            onClick={() => setVoteFilter('all')}
+          >
+            Semua
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+              ${voteFilter === 'voted'
+                ? 'bg-green-600 dark:bg-green-400 text-white dark:text-gray-900 border-green-600 dark:border-green-400 shadow-lg scale-105'
+                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-green-900'}`}
+            onClick={() => setVoteFilter('voted')}
+          >
+            Sudah Vote
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+              ${voteFilter === 'notvoted'
+                ? 'bg-red-600 dark:bg-red-400 text-white dark:text-gray-900 border-red-600 dark:border-red-400 shadow-lg scale-105'
+                : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900'}`}
+            onClick={() => setVoteFilter('notvoted')}
+          >
+            Belum Vote
+          </button>
           </div>
           <div className="flex items-center gap-2 justify-center sm:justify-end">
             <label className="mr-2 text-sm font-medium text-gray-600 dark:text-gray-300">Urutkan:</label>
@@ -321,31 +321,31 @@ const UsersPage = () => {
         ) : searchResult !== null ? (
           searchResult.length > 0 ? (
             <>
-              <ul className="user-list list-none p-0">
+            <ul className="user-list list-none p-0">
                 {(currentUser.role === 'admin' ? pagedUsers : pagedUsers.filter(u => u.role === 'user')).map((user, idx) => {
-                  const statusVote = user.hasVoted ? (
-                    <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
-                      <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
-                      <span className="hidden sm:inline">Sudah Vote</span>
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-red-500 dark:text-red-400 font-semibold animate-pulse">
-                      <FiXCircle className="text-red-500 dark:text-red-400 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" size={18} />
-                      <span className="hidden sm:inline">Belum Vote</span>
-                    </span>
-                  )
-                  const isAdmin = currentUser.role === 'admin';
-                  const displayName = isAdmin
-                    ? (user.name || user.username)
-                    : maskName(user.name || user.username);
-                  return (
-                    <li key={user.id} className="user-item py-3 px-4 mb-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 last:border-b-0 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 group">
-                      <span className="text-gray-800 dark:text-gray-100 font-medium truncate max-w-[60%]">{displayName}</span>
-                      {statusVote}
-                    </li>
-                  )
-                })}
-              </ul>
+                const statusVote = user.hasVoted ? (
+                  <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold animate-pulse">
+                    <FiCheckCircle className="text-green-500 dark:text-green-400 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" size={18} />
+                    <span className="hidden sm:inline">Sudah Vote</span>
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-red-500 dark:text-red-400 font-semibold animate-pulse">
+                    <FiXCircle className="text-red-500 dark:text-red-400 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6" size={18} />
+                    <span className="hidden sm:inline">Belum Vote</span>
+                  </span>
+                )
+                const isAdmin = currentUser.role === 'admin';
+                const displayName = isAdmin
+                  ? (user.name || user.username)
+                  : maskName(user.name || user.username);
+                return (
+                  <li key={user.id} className="user-item py-3 px-4 mb-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700 last:border-b-0 rounded-xl shadow-sm flex items-center justify-between transition-all duration-200 group">
+                    <span className="text-gray-800 dark:text-gray-100 font-medium truncate max-w-[60%]">{displayName}</span>
+                    {statusVote}
+                  </li>
+                )
+              })}
+            </ul>
               {totalPages >= 1 && renderPagination()}
             </>
           ) : (

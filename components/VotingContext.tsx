@@ -190,15 +190,15 @@ export const VotingProvider = ({ children }: { children: ReactNode }) => {
           })
         } else {
           // Fallback: set dari Supabase Auth
-          setCurrentUser({
-            id: user.id,
+        setCurrentUser({
+          id: user.id,
             username: user.email,
-            role: userMeta.role || 'user',
-            name: userMeta.full_name || userMeta.name || '-',
-            email: user.email,
-            phone: user.phone || '-',
-            phone_verified: !!user.phone_confirmed_at,
-          })
+          role: userMeta.role || 'user',
+          name: userMeta.full_name || userMeta.name || '-',
+          email: user.email,
+          phone: user.phone || '-',
+          phone_verified: !!user.phone_confirmed_at,
+        })
         }
       }
       setIsAuthChecked(true)

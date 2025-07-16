@@ -146,10 +146,10 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
       <div className="sidebar-header flex flex-col items-center pt-16 pb-6 relative bg-white dark:bg-gray-900">
         {/* Tombol close dan logout di kanan atas (z-50, paling atas) */}
         <div className="absolute right-4 top-4 flex gap-3 z-50 items-center">
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            aria-label="Tutup Sidebar"
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label="Tutup Sidebar"
             className="min-w-[44px] min-h-[44px] flex items-center justify-center p-0 rounded-full bg-white/70 dark:bg-blue-900/60 border border-blue-200 dark:border-blue-700 shadow-xl backdrop-blur-md hover:bg-blue-600/90 hover:text-white dark:hover:bg-blue-500/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 active:scale-95"
             tabIndex={0}
             style={{ boxShadow: '0 4px 24px 0 rgba(59,130,246,0.10)' }}
@@ -174,11 +174,11 @@ export default function Sidebar({ open, setOpen, isMobile, mode, isDark, toggleD
                 onClick={handleLogout}
                 aria-label="Keluar"
                 className="min-w-[44px] min-h-[44px] flex items-center justify-center p-0 rounded-full bg-white/70 dark:bg-gray-900/60 border border-red-200 dark:border-red-700 shadow-xl backdrop-blur-md text-red-600 hover:bg-red-600/90 hover:text-white dark:hover:bg-red-500/90 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 active:scale-95"
-                tabIndex={0}
+          tabIndex={0}
                 style={{ boxShadow: '0 4px 24px 0 rgba(239,68,68,0.10)' }}
-              >
+        >
                 <FiLogOut size={24} className="m-0" />
-              </button>
+        </button>
             )
           )}
         </div>
