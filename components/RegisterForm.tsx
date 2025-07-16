@@ -267,7 +267,7 @@ const RegisterForm = () => {
         tabIndex={0}
         aria-label="Lihat Manual/Panduan sebagai Guest"
       >
-        Lihat Manual/Panduan Tanpa Login
+        Lihat Manual/Panduan
       </button>
       <div className="text-center mt-4">
         <span className="text-sm text-gray-500 dark:text-gray-400">Sudah punya akun? </span>

@@ -520,7 +520,7 @@ const LoginScreen = () => {
                 aria-label="Lihat Manual/Panduan sebagai Guest"
                 onClick={() => { handleShowManual(); }}
               >
-                Lihat Manual/Panduan Tanpa Login
+                Lihat Manual/Panduan
               </button>
               <div className="login-or-separator">
                 <span className="login-or-text">atau login dengan nomor HP</span>
