@@ -181,31 +181,48 @@ const LoginScreen = () => {
         console.error('Login error:', error)
         // Tangani error password salah secara spesifik
         if (error.message && error.message.toLowerCase().includes('invalid login credentials')) {
-          setNotification({ message: 'Email atau password salah.', type: 'error' })
-          setLoading(false)
-          return
+          // Cek identities dari API
+          try {
+            const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
+            const userData = await res.json()
+            const identities = userData.identities || []
+            // Cek apakah ada provider email/manual
+            const hasEmailProvider = identities.some((id: any) => id.provider === 'email')
+            const hasGoogleProvider = identities.some((id: any) => id.provider === 'google')
+            if (hasEmailProvider) {
+              setNotification({ message: 'Email atau password salah.', type: 'error' })
+              setLoading(false)
+              return
+            } else if (hasGoogleProvider) {
+              setNotification({
+                message: 'Akun ini sebelumnya terdaftar menggunakan Google. Silakan login dengan Google atau gunakan fitur "Lupa Password" untuk mengatur ulang password.',
+                type: 'warning',
+              })
+              setLoading(false)
+              return
+            } else {
+              setNotification({ message: 'Akun tidak ditemukan.', type: 'error' })
+              setLoading(false)
+              return
+            }
+          } catch (err) {
+            console.error('Cek identities error:', err)
+            setNotification({ message: 'Email atau password salah.', type: 'error' })
+            setLoading(false)
+            return
+          }
         }
-        // Jika error lain, baru cek provider
+        // Jika error lain, baru cek provider (legacy fallback)
         let provider = null
         try {
           // Cek di Supabase Auth
           const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
           const userData = await res.json()
-          if (userData && userData.app_metadata) {
-            provider = userData.app_metadata.provider
+          if (userData && userData.provider) {
+            provider = userData.provider
           }
         } catch (err) {
           console.error('Cek provider error:', err)
-        }
-        try {
-          // Cek di tabel custom
-          const res = await fetch(`/api/users/sync?email=${encodeURIComponent(email)}`)
-          const userDb = await res.json()
-          if (userDb && userDb.provider) {
-            provider = userDb.provider
-          }
-        } catch (err) {
-          console.error('Cek provider custom error:', err)
         }
         if (provider === 'google') {
           setNotification({
