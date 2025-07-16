@@ -255,7 +255,7 @@ const RegisterForm = () => {
       </div>
       <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Memproses...' : 'Register'}</button>
       {/* Tombol akses manual guest */}
-      <button
+      {/* <button
         type="button"
         className="w-full mt-2 py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
         onClick={async () => {
@@ -268,6 +268,48 @@ const RegisterForm = () => {
         aria-label="Lihat Manual/Panduan sebagai Guest"
       >
         Lihat Manual/Panduan
+      </button> */}
+      <button
+        type="button"
+        className="w-full py-2 rounded-lg border border-blue-400 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-gray-800 hover:bg-blue-100 dark:hover:bg-blue-900 font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 mt-4"
+        tabIndex={0}
+        aria-label="Daftar sebagai Guest"
+        onClick={async () => {
+          const guestEmail = process.env.NEXT_PUBLIC_GUEST_EMAIL || "guest@pangaribowo.my.id";
+          const guestPassword = process.env.NEXT_PUBLIC_GUEST_PASSWORD || "guestpassword123";
+          setLoading(true);
+          try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+              email: guestEmail,
+              password: guestPassword,
+            });
+            if (error) {
+              setNotification && setNotification({ message: error.message || 'Gagal login sebagai guest', type: 'error' });
+              setLoading(false);
+              return;
+            }
+            const { user } = data;
+            if (user) {
+              setCurrentUser({
+                id: user.id,
+                username: user.email,
+                role: 'guest',
+                name: 'Guest',
+                email: user.email,
+              });
+              setNotification && setNotification({ message: 'Login guest berhasil! Anda dapat melihat manual/panduan.', type: 'success' });
+              router.replace('/manual');
+            } else {
+              setNotification && setNotification({ message: 'Gagal mendapatkan session guest.', type: 'error' });
+            }
+          } catch (err) {
+            setNotification && setNotification({ message: err.message || 'Gagal login guest', type: 'error' });
+          } finally {
+            setLoading(false);
+          }
+        }}
+      >
+        Daftar sebagai Guest
       </button>
       <div className="text-center mt-4">
         <span className="text-sm text-gray-500 dark:text-gray-400">Sudah punya akun? </span>
