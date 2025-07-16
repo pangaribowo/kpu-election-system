@@ -3,6 +3,7 @@ import { useVoting } from '../components/VotingContext'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabaseClient'
 import { FiUser } from 'react-icons/fi'
+import InputWithClear from '../components/InputWithClear'
 
 const ProfilePage = () => {
   const { currentUser, setCurrentUser, setNotification, isAuthChecked } = useVoting()
@@ -168,52 +169,76 @@ const ProfilePage = () => {
           </div>
         </>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 mt-4">
+          {/* Nama Lengkap */}
           <div>
-            <label className="block mb-1 font-medium">Nama Lengkap</label>
-            <input type="text" name="name" value={form.name} onChange={handleChange} className="input-modern w-full dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600" required />
+            <label className="block mb-1.5 font-medium text-gray-700 dark:text-gray-200">Nama Lengkap</label>
+            <div className="relative">
+              <InputWithClear
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                onClear={() => setForm({ ...form, name: '' })}
+                className="input-modern w-full pr-10 py-2.5 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600 transition-all duration-200"
+                required
+                placeholder="Nama lengkap"
+                autoComplete="name"
+              />
+            </div>
           </div>
+          {/* Email */}
           <div>
-            <label className="block mb-1 font-medium">Email</label>
-            <input type="email" name="email" value={form.email} onChange={handleChange} className="input-modern w-full dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600" required disabled />
+            <label className="block mb-1.5 font-medium text-gray-700 dark:text-gray-200">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              className="input-modern w-full py-2.5 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 dark:border-gray-600 transition-all duration-200"
+              required
+              disabled
+            />
           </div>
+          {/* Nomor HP */}
           <div>
-            <label className="block mb-1 font-medium">Nomor HP</label>
+            <label className="block mb-1.5 font-medium text-gray-700 dark:text-gray-200">Nomor HP</label>
             <div className="flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md rounded-r-none border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
+              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
                 +62
               </span>
-              <input
-                type="text"
-                name="phone"
-                value={form.phone.startsWith('+62') ? form.phone.slice(3) : form.phone}
-                onChange={e => {
-                  // Hanya angka, tidak boleh diawali 0, 62, atau +
-                  let value = e.target.value.replace(/[^0-9]/g, '')
-                  if (/^(0|62|\+62|\+)/.test(value)) {
-                    setError('Nomor HP tidak boleh diawali 0, 62, atau +. Masukkan hanya angka setelah +62.');
-                  } else if (value.length < 9 || value.length > 13) {
-                    setError('Nomor HP minimal 9 digit dan maksimal 13 digit.');
-                  } else {
-                    setError('');
-                  }
-                  setForm({ ...form, phone: value })
-                }}
-                className="rounded-none rounded-r-md border border-gray-300 dark:border-gray-600 flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                required
-                placeholder="Contoh: 895xxxxxxx"
-                maxLength={13}
-                inputMode="numeric"
-                autoComplete="tel"
-              />
+              <div className="relative flex-1">
+                <InputWithClear
+                  name="phone"
+                  value={form.phone.startsWith('+62') ? form.phone.slice(3) : form.phone}
+                  onChange={e => {
+                    let value = e.target.value.replace(/[^0-9]/g, '')
+                    if (/^(0|62|\+62|\+)/.test(value)) {
+                      setError('Nomor HP tidak boleh diawali 0, 62, atau +. Masukkan hanya angka setelah +62.');
+                    } else if (value.length < 9 || value.length > 13) {
+                      setError('Nomor HP minimal 9 digit dan maksimal 13 digit.');
+                    } else {
+                      setError('');
+                    }
+                    setForm({ ...form, phone: value })
+                  }}
+                  onClear={() => setForm({ ...form, phone: '' })}
+                  className="rounded-none rounded-r-md border border-gray-300 dark:border-gray-600 flex-1 pr-10 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-all duration-200"
+                  required
+                  placeholder="Contoh: 895xxxxxxx"
+                  maxLength={13}
+                  inputMode="numeric"
+                  autoComplete="tel"
+                />
+              </div>
             </div>
             <small className="input-helper text-gray-500 dark:text-gray-400">Masukkan nomor tanpa 0, 62, atau + di depan, contoh: 895xxxxxxx</small>
           </div>
+          {/* Error & Success */}
           {error && <div className="text-red-500 text-sm">{error}</div>}
           {success && <div className="text-green-500 text-sm">{success}</div>}
+          {/* Tombol */}
           <div className="flex gap-3 mt-2">
-            <button type="submit" className="btn-primary w-full" disabled={loading}>{loading ? 'Menyimpan...' : 'Simpan Perubahan'}</button>
-            <button type="button" className="btn-secondary w-full" onClick={() => setEditMode(false)} disabled={loading}>Batal</button>
+            <button type="submit" className="btn-primary w-full focus:ring-2 focus:ring-blue-400" disabled={loading}>{loading ? 'Menyimpan...' : 'Simpan Perubahan'}</button>
+            <button type="button" className="btn-secondary w-full focus:ring-2 focus:ring-blue-400" onClick={() => setEditMode(false)} disabled={loading}>Batal</button>
           </div>
         </form>
       )}
