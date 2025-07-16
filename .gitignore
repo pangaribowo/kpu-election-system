@@ -27,7 +27,6 @@ gento/
 
 # production
 /build
-law
 
 # misc
 .DS_Store
