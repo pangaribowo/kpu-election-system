@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
-  const { email, phone, name, username, role } = req.body
+  const { email, phone, name, username, role, provider } = req.body
   if (!email || !name || !username) {
     return res.status(400).json({ error: 'Data tidak lengkap' })
   }
@@ -71,42 +71,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Format nomor HP harus +62 diikuti 9-13 digit angka, contoh: +6281234567890' })
     }
   }
-  // Cek apakah user sudah ada (berdasarkan email SAJA, karena email unique)
-  const { data: existing, error: findError } = await supabase
+  // Upsert user dengan update field provider
+  const { data, error } = await supabase
     .from('users')
-    .select('id')
-    .eq('email', email)
-    .maybeSingle()
-  if (findError) {
-    return res.status(500).json({ error: 'Gagal cek user' })
-  }
-  if (existing) {
-    // Update user
-    // Hanya izinkan update role jika sudah ada di database, dan role bukan dari register
-    const updateObj: any = { name, username, email, phone: normPhone }
-    if (role && (role === 'admin' || role === 'user')) updateObj.role = role
-    const { error: updateError } = await supabase
-      .from('users')
-      .update(updateObj)
-      .eq('id', existing.id)
-    if (updateError) {
-      console.error('[API/users/sync] ERROR update user:', updateError)
-      return res.status(500).json({ error: 'Gagal update user', detail: updateError.message })
-    }
-    return res.status(200).json({ message: 'User diupdate' })
-  } else {
-    // Insert user
-    // Selalu set role = 'user' saat register
-    if (role && role !== 'user') {
-      return res.status(403).json({ error: 'Tidak boleh register sebagai admin!' })
-    }
-    const { error: insertError } = await supabase
-      .from('users')
-      .insert([{ name, username, role: 'user', email, phone: normPhone }]) // password dihapus
-    if (insertError) {
-      console.error('[API/users/sync] ERROR insert user:', insertError)
-      return res.status(500).json({ error: 'Gagal insert user', detail: insertError.message })
-    }
-    return res.status(201).json({ message: 'User ditambahkan' })
-  }
+    .upsert([
+      { email, phone, name, username, role, provider: provider || 'email' }
+    ], { onConflict: 'email' })
+    .select()
+  if (error) return res.status(500).json({ error: 'Gagal upsert user' })
+  return res.status(200).json(data && data[0] ? data[0] : {})
 } 
