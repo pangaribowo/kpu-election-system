@@ -11,7 +11,7 @@ const Notification = () => {
   const { notification, setNotification } = useVoting()
   useEffect(() => {
     if (notification) {
-      const timer = setTimeout(() => setNotification(null), 3000)
+      const timer = setTimeout(() => setNotification(null), 7000)
       return () => clearTimeout(timer)
     }
   }, [notification, setNotification])

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 import { useState } from 'react'
 import { FiCheckSquare } from 'react-icons/fi'
 import { getValidColor, getCandidateBg, getCandidateTextColor } from '../utils/colors';
+import { useRouter } from 'next/router'
 
 const VotingPanel = () => {
   const {
@@ -18,6 +19,7 @@ const VotingPanel = () => {
   } = useVoting()
 
   const [votingLoading, setVotingLoading] = useState<number | null>(null)
+  const router = useRouter();
 
   const handleVote = async (candidateId: number) => {
     // BEST PRACTICE 2025: Validasi context user & payload sebelum submit voting
@@ -37,8 +39,8 @@ const VotingPanel = () => {
     if (!currentUser.phone || currentUser.phone === '-' || currentUser.phone.trim() === '') {
       setNotification({ message: 'Anda harus melengkapi nomor HP yang valid sebelum dapat melakukan voting. Anda akan diarahkan ke halaman profil.', type: 'error' })
       setTimeout(() => {
-        window.location.href = '/profile';
-      }, 1200);
+        router.push('/profile');
+      }, 7000); // 7 detik agar user sempat membaca notifikasi
       return
     }
     // Cek status verifikasi email
