@@ -181,9 +181,10 @@ const LoginScreen = () => {
         let provider = null
         try {
           // Cek di Supabase Auth
-          const { data: userData } = await supabase.auth.admin.getUserByEmail(email)
-          if (userData && userData.user) {
-            provider = userData.user.app_metadata?.provider
+          const res = await fetch(`/api/auth-user-by-email?email=${encodeURIComponent(email)}`)
+          const userData = await res.json()
+          if (userData && userData.app_metadata) {
+            provider = userData.app_metadata.provider
           }
         } catch {}
         try {
