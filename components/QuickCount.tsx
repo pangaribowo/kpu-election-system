@@ -173,9 +173,11 @@ const QuickCount = () => {
   return (
     <section id="quickcount" className="section active py-8 px-4">
       {isInitialLoading ? (
-        <SkeletonQuickCount />
+        <div className="w-full max-w-2xl mx-auto px-2 sm:px-4 py-4">
+          {SkeletonQuickCount()}
+        </div>
       ) : (
-        <div className="quickcount-container container mx-auto">
+        <div className="w-full max-w-2xl mx-auto px-2 sm:px-4 py-4">
           {error && (
             <div className="text-center text-red-500 mb-4">{error}</div>
           )}
@@ -203,7 +205,7 @@ const QuickCount = () => {
               <div className="stat-label text-gray-600 dark:text-gray-300">Partisipasi</div>
             </div>
           </div>
-          <div id="results-chart" className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 overflow-x-auto w-full max-w-screen-sm mx-auto">
+          <div id="results-chart" className="results-chart bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6 overflow-x-auto w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
               <h3 className="text-xl font-semibold text-center text-gray-800 dark:text-gray-100 mb-2 sm:mb-0">Hasil Sementara</h3>
               <div className="flex items-center gap-2 self-end sm:self-auto">

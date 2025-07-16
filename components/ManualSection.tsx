@@ -320,7 +320,7 @@ const ManualSection = () => {
 
   return (
     <section id="manual" className="section active py-8 px-4">
-      <div className="manual-container container mx-auto">
+      <div className="manual-container w-full mx-auto">
         <div className="manual-content bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
           <div className="manual-nav flex flex-wrap sm:flex-nowrap overflow-x-auto bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 rounded-t-xl">
             {tabs.map((tab) => (
