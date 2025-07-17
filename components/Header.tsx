@@ -16,7 +16,7 @@ const Header = () => {
   return (
     <header className="w-full bg-white dark:bg-gray-900 shadow-xl rounded-xl mb-6 transition-colors duration-300 relative">
       {/* Toggle dark mode fixed kanan atas di semua layar, z-[9999] dan pointer-events-auto */}
-      <div className="fixed top-4 right-4 z-[9999] pointer-events-auto">
+      <div className="fixed top-4 right-4 z-30 pointer-events-auto">
         <DarkModeToggle />
       </div>
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 flex flex-col items-center justify-center gap-1 min-h-[80px] bg-slate-100/90 dark:bg-gray-800/90 rounded-xl pt-0 md:pt-0" style={{paddingTop: '64px'}}>

@@ -64,9 +64,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Notification />
       {/* Hamburger selalu tampil di kiri atas */}
       {!isLoginPage && (
-        <div className="fixed top-4 left-4 z-[10]">
+        <div className="fixed top-4 left-4 z-40">
           <button
-            className="btn-hamburger-modern"
+            className="btn-hamburger-modern z-40"
             onClick={() => setSidebarOpen(true)}
             aria-label={isSidebarOpen ? 'Tutup Sidebar' : 'Buka Sidebar'}
           >
